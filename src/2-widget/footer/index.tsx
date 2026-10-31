@@ -65,6 +65,7 @@ export function Footer({
     y: number;
     identifier: number;
   } | null>(null);
+  const suppressSwipeClickUntil = useRef(0);
 
   useEffect(() => {
     const requestPin = (event: Event) => {
@@ -261,6 +262,9 @@ export function Footer({
       className={`footer ${iconsOnly ? "is-icons-only" : ""}`}
       data-swipe-tabs={onSwipeTabs ? "true" : "false"}
       onTouchStart={(event) => {
+        // A new touch is always an independent user action. Clearing the
+        // previous swipe guard here keeps its first real tap responsive.
+        suppressSwipeClickUntil.current = 0;
         if (!onSwipeTabs || !window.matchMedia("(max-width: 512px)").matches)
           return;
         if (event.touches.length !== 1) return;
@@ -286,10 +290,33 @@ export function Footer({
           Math.abs(horizontal) <= Math.abs(vertical)
         )
           return;
+        // Some mobile browsers emit a compatibility click for the completed
+        // swipe. Block only that click; the next real touchstart clears this
+        // guard before its own click is generated.
+        suppressSwipeClickUntil.current = performance.now() + 700;
         onSwipeTabs(horizontal < 0 ? "left" : "right");
       }}
       onTouchCancel={() => {
         swipeStart.current = null;
+        suppressSwipeClickUntil.current = 0;
+      }}
+      onClickCapture={(event) => {
+        const sourceCapabilities = (
+          event.nativeEvent as MouseEvent & {
+            sourceCapabilities?: { firesTouchEvents?: boolean } | null;
+          }
+        ).sourceCapabilities;
+        if (
+          event.detail === 0 ||
+          sourceCapabilities?.firesTouchEvents === false ||
+          performance.now() > suppressSwipeClickUntil.current
+        ) {
+          suppressSwipeClickUntil.current = 0;
+          return;
+        }
+        suppressSwipeClickUntil.current = 0;
+        event.preventDefault();
+        event.stopPropagation();
       }}
     >
       <button
