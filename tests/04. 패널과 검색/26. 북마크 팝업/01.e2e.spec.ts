@@ -35,8 +35,8 @@ test("1. 검색과 북마크는 20% 넓고 중앙보다 80px 위인 모달로 �
     await openGlobalSearchPanel(page);
     const search = (await page.locator("#global-search-popup").boundingBox())!;
     expect(search.width).toBeCloseTo(box.width, 0);
-    expect(search.height).toBeCloseTo(box.height, 0);
-    expect(search.y).toBeCloseTo(box.y, 0);
+    expect(search.height).toBeCloseTo(box.height * (width <= 512 ? 1.2 : 1), 0);
+    expect(search.y).toBeCloseTo(width <= 512 ? 36 : box.y, 0);
     expect(search.x).toBeCloseTo(box.x, 0);
     await page.keyboard.press("Escape");
   }

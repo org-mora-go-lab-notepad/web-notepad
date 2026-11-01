@@ -90,6 +90,10 @@
       );
     }
 
+    &[data-dashboard-status="done"] .tab-title {
+      text-decoration-line: line-through;
+    }
+
     background: var(--tab-background, transparent);
 
     &.is-dragging {

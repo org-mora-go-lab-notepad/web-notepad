@@ -101,7 +101,7 @@
     overflow-wrap: anywhere;
     white-space: pre-wrap;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 5;
   }
 }
 
@@ -120,12 +120,6 @@
 }
 .dashboard .dashboard-card[data-drop-placement="after"]::after {
   bottom: -6px;
-}
-
-@media (min-width: 513px) {
-  .dashboard .dashboard-card-preview {
-    -webkit-line-clamp: 5;
-  }
 }
 
 @media (max-width: 512px) {

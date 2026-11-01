@@ -118,7 +118,6 @@ export const createTabLifecycleActions: StateCreator<
     });
   },
   closeTab: (tabId) => {
-    dispatchSharedTabDeleteIntent(get(), tabId);
     hideTabFromEditor(set, get, tabId);
   },
   archiveTab: (tabId) => {

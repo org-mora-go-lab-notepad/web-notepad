@@ -206,6 +206,13 @@
     .my-page-portrait {
       min-height: 0;
       height: min(62vw, 240px);
+      grid-row: 2;
+    }
+    .my-page-content {
+      display: contents;
+    }
+    .my-page-profile {
+      grid-row: 1;
     }
     a,
     button {

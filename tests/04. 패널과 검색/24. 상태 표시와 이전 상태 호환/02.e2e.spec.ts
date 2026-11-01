@@ -34,7 +34,7 @@ test("2. 이전 Closed 메모는 내용과 열린 상태를 보존하며 Done으
   });
   await expect(page.locator(".tab-title").first()).toHaveCSS(
     "text-decoration-line",
-    "none",
+    "line-through",
   );
   await page.reload();
   await expect(page.locator("textarea").first()).toHaveValue(
