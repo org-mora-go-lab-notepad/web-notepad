@@ -2,13 +2,14 @@ import { expect, test } from "@playwright/test";
 
 import { createGroupFixture, createTabFixture } from "../../__fixture__";
 import { authenticate, getApi } from "../../__util__";
+import { postApi } from "../../__util__/request";
 
 test("6. 클라이언트가 위조한 공유 검증 헤더로 잘못된 링크에 참여할 수 없다", async ({
   page,
   context,
 }) => {
   await authenticate(context);
-  const shared = await page.request.post("/api/groups/share", {
+  const shared = await postApi(page.request, "/api/groups/share", {
     data: {
       group: createGroupFixture(
         "forged-" + crypto.randomUUID(),
@@ -20,7 +21,7 @@ test("6. 클라이언트가 위조한 공유 검증 헤더로 잘못된 링크�
   expect(shared.status()).toBe(200);
   const { group } = await shared.json();
   const before = await (await getApi(page.request, "/api/groups")).json();
-  const response = await page.request.post("/api/groups/join", {
+  const response = await postApi(page.request, "/api/groups/join", {
     data: { token: group.id + ".invalid-signature" },
     headers: {
       "x-notepad-context": Buffer.from(

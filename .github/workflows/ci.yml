@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: org-mora-go-lab-notepad/web-notepad-bff
-          ref: bb3871780f2ec0713c986d37d02e628088fdff37
+          ref: fb41a00e6cc825bb2687fc6ebd2970c57190dc43
           path: web-notepad-bff
       - uses: actions/setup-node@v4
         with:

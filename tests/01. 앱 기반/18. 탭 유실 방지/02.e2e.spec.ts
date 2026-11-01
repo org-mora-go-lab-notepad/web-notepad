@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 
 import { createTabFixture, sharingTest as test } from "../../__fixture__";
 import { getApi } from "../../__util__";
+import { postApi } from "../../__util__/request";
 
 test("2. 공유 누락 거부 응답에도 현재 수정 본문을 잃지 않는다", async ({
   sharing: { owner, id },
@@ -12,7 +13,7 @@ test("2. 공유 누락 거부 응답에도 현재 수정 본문을 잃지 않는
   const added = createTabFixture(`${id}-keep`, "서버에 남길 탭");
   expect(
     (
-      await owner.request.post("/api/groups/update", {
+      await postApi(owner.request, "/api/groups/update", {
         data: {
           id,
           baseRevision: record.revision,

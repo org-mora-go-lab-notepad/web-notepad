@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import type { GroupEntry } from "@/src/4-entity/notepad";
 import { getTabStatus, useNotepadStore } from "@/src/4-entity/notepad";
 import { useI18n } from "@/src/5-shared/hook";
+import { bffFetch } from "@/src/5-shared/util";
 
 import type { GroupShareDialogProps } from "../../type";
 
@@ -81,7 +82,7 @@ export function GroupShareDialog({
   useEffect(() => {
     let active = true;
     const requestGroup = initialGroup.current;
-    fetch("/api/groups/share", {
+    bffFetch("/api/groups/share", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

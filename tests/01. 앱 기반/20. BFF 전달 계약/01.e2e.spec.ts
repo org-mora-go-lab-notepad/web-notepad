@@ -1,13 +1,14 @@
 import { expect, test } from "@playwright/test";
 
 import { authenticate, getApi, snapshot } from "../../__util__";
+import { postApi } from "../../__util__/request";
 
 test("1. 외부 Origin의 인증된 저장 요청은 BFF에서도 거부된다", async ({
   page,
   context,
 }) => {
   await authenticate(context);
-  const response = await page.request.post("/api/notepad/history", {
+  const response = await postApi(page.request, "/api/notepad/history", {
     headers: { Origin: "https://attacker.example" },
     data: { eventId: crypto.randomUUID(), snapshot: snapshot(["preserve"]) },
   });

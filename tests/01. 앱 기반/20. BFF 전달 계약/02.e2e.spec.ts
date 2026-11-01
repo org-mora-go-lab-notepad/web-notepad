@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { authenticate, getApi, snapshot } from "../../__util__";
+import { postApi } from "../../__util__/request";
 
 test("2. 개인 저장 결과와 캐시 정책을 BFF에서 그대로 전달한다", async ({
   page,
@@ -8,7 +9,7 @@ test("2. 개인 저장 결과와 캐시 정책을 BFF에서 그대로 전달한�
 }) => {
   await authenticate(context);
   const eventId = crypto.randomUUID();
-  const save = await page.request.post("/api/notepad/history", {
+  const save = await postApi(page.request, "/api/notepad/history", {
     data: { eventId, snapshot: snapshot(["BFF integration note"]) },
   });
   expect(save.status()).toBe(200);

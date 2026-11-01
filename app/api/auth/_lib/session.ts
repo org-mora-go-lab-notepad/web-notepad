@@ -51,8 +51,24 @@ export function readGroupShareToken(token: string) {
   const payload = parts.slice(0, -1).join(".");
   const expected = Buffer.from(sign("group-share:" + payload)),
     received = Buffer.from(signature);
-  return expected.length === received.length &&
+  if (
+    expected.length === received.length &&
     timingSafeEqual(expected, received)
+  )
+    return groupId;
+  const secret =
+    process.env.NOTEPAD_BFF_SECRET ??
+    (process.env.NODE_ENV === "development"
+      ? "notepad-local-bff-only"
+      : undefined);
+  if (!secret) return null;
+  const bffExpected = Buffer.from(
+    createHmac("sha256", secret)
+      .update(`share:${groupId}:${parts.length === 3 ? parts[1] : 0}`)
+      .digest("base64url"),
+  );
+  return bffExpected.length === received.length &&
+    timingSafeEqual(bffExpected, received)
     ? groupId
     : null;
 }

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { GroupSharingAccess } from "@/src/5-shared/type";
+import { bffFetch } from "@/src/5-shared/util";
 
 import { UNGROUPED_GROUP_ID } from "../../constant";
 import { useNotepadStore } from "../../store";
@@ -181,7 +182,7 @@ export function useSharedGroups(hydrated: boolean) {
         ...new Set([...current, ...sentContents.keys()]),
       ]);
       try {
-        const response = await fetch("/api/groups/update", {
+        const response = await bffFetch("/api/groups/update", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -335,7 +336,7 @@ export function useSharedGroups(hydrated: boolean) {
       setCheckingGroups(true);
       setLoadError(false);
       try {
-        const response = await fetch("/api/groups", { cache: "no-store" });
+        const response = await bffFetch("/api/groups", { cache: "no-store" });
         if (!response.ok) throw Error("Groups unavailable");
         const result = (await response.json()) as { groups: SharedRecord[] };
         if (!active) return;
@@ -471,7 +472,7 @@ export function useSharedGroups(hydrated: boolean) {
       if (!share || !userId) return;
       setInviteStatus("joining");
       try {
-        const response = await fetch("/api/groups/join", {
+        const response = await bffFetch("/api/groups/join", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token: share }),
@@ -605,7 +606,7 @@ export function useSharedGroups(hydrated: boolean) {
 
   const changeAccess = async (id: string, action: "leave" | "revoke") => {
     try {
-      const response = await fetch("/api/groups/" + action, {
+      const response = await bffFetch("/api/groups/" + action, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

@@ -6,6 +6,7 @@ import {
 
 import { signedSession } from "../__fixture__";
 import { authenticateBrowser } from "./auth";
+import { postApi } from "./request";
 import { getApi } from "./request";
 
 export const origin = { Origin: "http://localhost:3000" };
@@ -50,7 +51,7 @@ export async function historyPost(
   body: Record<string, unknown>,
   headers = origin,
 ) {
-  return page.request.post("/api/notepad/history", {
+  return postApi(page.request, "/api/notepad/history", {
     headers,
     data: body,
   });

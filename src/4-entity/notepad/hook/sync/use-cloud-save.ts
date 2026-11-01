@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { bffFetch } from "@/src/5-shared/util";
+
 import { DEFAULT_SETTINGS, UNGROUPED_GROUP_ID } from "../../constant";
 import {
   createCloudSnapshot,
@@ -215,7 +217,10 @@ export function useCloudSave(hydrated: boolean) {
       timer = setTimeout(() => void flush(), SAVE_DELAY_MS);
     };
     const reconcile = (latest: CloudRecord | null, first: boolean) => {
-      const local = createCloudSnapshot(useNotepadStore.getState());
+      // A durable unsent snapshot takes precedence over a store rehydrated by
+      // another initialization hook while the authenticated request is pending.
+      const local =
+        pending?.snapshot ?? createCloudSnapshot(useNotepadStore.getState());
       let next = local;
       if (latest) {
         const dirty =
@@ -266,7 +271,7 @@ export function useCloudSave(hydrated: boolean) {
         setStatus(null);
       }
       try {
-        const response = await fetch("/api/notepad/history", {
+        const response = await bffFetch("/api/notepad/history", {
           cache: "no-store",
         });
         if (!response.ok) throw new Error("Cloud load failed");
@@ -301,7 +306,7 @@ export function useCloudSave(hydrated: boolean) {
       const sentContents = new Map(editedContents);
       setSavingTabIds([...sentContents.keys()]);
       try {
-        const response = await fetch("/api/notepad/history", {
+        const response = await bffFetch("/api/notepad/history", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...update, userId: id }),

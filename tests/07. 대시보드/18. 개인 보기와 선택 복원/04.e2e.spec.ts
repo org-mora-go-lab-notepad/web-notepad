@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 
 import { sharingTest as test } from "../../__fixture__";
 import { dashboardColumn, openPanel, readStoredState } from "../../__util__";
+import { postApi } from "../../__util__/request";
 import { getApi } from "../../__util__/request";
 
 test("4. 동기화 기준이 없는 개인 보기 설정도 초기 서버 이력에 덮이지 않는다", async ({
@@ -24,7 +25,7 @@ test("4. 동기화 기준이 없는 개인 보기 설정도 초기 서버 이력
     await getApi(owner.request, "/api/notepad/history")
   ).json();
   const state = await readStoredState(owner);
-  const response = await owner.request.post("/api/notepad/history", {
+  const response = await postApi(owner.request, "/api/notepad/history", {
     data: {
       eventId: crypto.randomUUID(),
       baseEventId: history.latest?.eventId ?? null,

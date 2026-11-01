@@ -55,6 +55,7 @@ test("8. 푸터 스와이프 직후 메뉴·대시보드·사용자 아이콘이
     });
   await expect(footer.locator(".auth-command:not(.is-loading)")).toBeVisible();
   await expect(page.locator("textarea")).toHaveValue("First note");
+  await expect(page.locator(".initial-sync-lock")).toHaveCount(0);
   await expect(footer).toHaveAttribute("data-swipe-tabs", "true");
   await swipeTouch(footer, "left");
   await expect(page.locator("textarea")).toHaveValue("Second note");

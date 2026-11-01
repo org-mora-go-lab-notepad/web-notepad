@@ -6,6 +6,7 @@ import {
   isSharedGroupId,
   useNotepadStore,
 } from "@/src/4-entity/notepad";
+import { bffFetch } from "@/src/5-shared/util";
 
 const MOCK_BOARD_POSTS: BoardPost[] = [
   {
@@ -86,7 +87,7 @@ export function useBoard() {
   }, []);
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/board", { cache: "no-store", signal: controller.signal })
+    bffFetch("/api/board", { cache: "no-store", signal: controller.signal })
       .then(async (response) => {
         if (!response.ok) throw new Error("Board unavailable");
         const result = (await response.json()) as { posts: BoardPost[] };

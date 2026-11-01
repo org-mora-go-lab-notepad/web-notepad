@@ -9,6 +9,7 @@ import {
   readStoredState,
   writeStoredState,
 } from "../../__util__";
+import { postApi } from "../../__util__/request";
 import { getApi } from "../../__util__/request";
 
 test("4. 공유 그룹은 개인 색상 설정이 달라도 같은 상태와 컬럼 순서를 복원한다", async ({
@@ -31,7 +32,7 @@ test("4. 공유 그룹은 개인 색상 설정이 달라도 같은 상태와 컬
     createTabFixture(id + "-doing", "Doing card", { tabColor: "indigo" }),
     createTabFixture(id + "-done", "Done card", { tabColor: "teal" }),
   ];
-  const saved = await owner.request.post("/api/groups/update", {
+  const saved = await postApi(owner.request, "/api/groups/update", {
     data: {
       id,
       baseRevision: record.revision,
