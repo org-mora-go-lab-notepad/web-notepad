@@ -13,10 +13,19 @@ test("1. PC 진입점을 푸터에 고정하고 드래그 정렬한 뒤 다시 �
     .locator(".group-item")
     .getByRole("button", { name: "Pinned Group", exact: true });
   await groupEntry.click({ button: "right" });
+  await expect(page.locator(".footer-pin-menu")).toHaveCount(0);
+  await expect(
+    page.locator(".group-action-dropdown [role=menuitem]"),
+  ).toHaveText(["Close All", "Pin to footer", "Edit"]);
   await page.getByRole("menuitem", { name: "Pin to footer" }).click();
 
   const pinned = page.locator('.footer-dock-item[data-footer-item^="group:"]');
   await expect(pinned).toHaveCount(1);
+  await groupEntry.click({ button: "right" });
+  await expect(
+    page.getByRole("menuitem", { name: "Pin to footer" }),
+  ).toBeDisabled();
+  await page.keyboard.press("Escape");
   await expect(
     pinned.getByRole("button", { name: "Pinned Group" }),
   ).toBeVisible();
