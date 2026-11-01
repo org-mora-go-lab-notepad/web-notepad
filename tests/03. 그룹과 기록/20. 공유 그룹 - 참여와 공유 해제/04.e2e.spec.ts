@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 
+import { postApi } from "../../__util__/request";
 import { getApi } from "../../__util__/request";
 import { sharingTest as test } from "./__fixture__";
 import { openSharingCancellation } from "./__util__";
@@ -24,7 +25,7 @@ test("4. 공유 취소는 기존 참여자와 초대 링크 및 게시판 접근
   await expect(owner.locator("textarea").first()).toHaveValue("Keep this note");
   expect(
     (
-      await guest.request.post("/api/groups/join", { data: { token } })
+      await postApi(guest.request, "/api/groups/join", { data: { token } })
     ).status(),
   ).toBe(404);
   expect(

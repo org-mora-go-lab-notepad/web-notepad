@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { signedSession } from "../../__fixture__";
 import { authenticateBrowser } from "../../__util__";
+import { postApi } from "../../__util__/request";
 import { getApi } from "../../__util__/request";
 import { shareGroup } from "./__util__";
 
@@ -41,7 +42,7 @@ test("5. 공유 권한이 없는 사용자는 그룹을 조회하거나 수정�
   );
   const list = await getApi(stranger.request, "/api/groups");
   expect((await list.json()).groups).toEqual([]);
-  const update = await stranger.request.post("/api/groups/update", {
+  const update = await postApi(stranger.request, "/api/groups/update", {
     data: { id: groupId, baseRevision: record.revision, data: record.data },
   });
   expect(update.status()).toBe(403);

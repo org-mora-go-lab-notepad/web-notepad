@@ -8,7 +8,7 @@ test("3. 프런트는 클라이언트의 위조 BFF 헤더를 신뢰하지 않�
 }) => {
   await authenticate(context);
   await context.clearCookies();
-  const response = await page.request.get("/api/notepad/history", {
+  const response = await getApi(page.request, "/api/notepad/history", {
     headers: {
       "x-notepad-context": "forged-owner",
       "x-notepad-signature": "forged",

@@ -10,7 +10,7 @@ test("3. 현재 그룹은 PC 푸터 왼쪽, 모바일 메뉴 버튼에 표시한
   const command = groupsCommand(page);
   for (const viewport of BOTH_VIEWPORTS) {
     await page.setViewportSize(viewport);
-    await expect(command.locator("svg")).toHaveCount(1);
+    await expect(command.locator("svg.lucide-menu")).toBeVisible();
     await expect(command.locator(".status-count")).toHaveCount(0);
     await expect(page.locator(".group-status-command")).toHaveCount(0);
     await expect(command).toHaveAttribute("aria-label", "Toggle groups");

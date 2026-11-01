@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 
+import { postApi } from "../../__util__/request";
 import { getApi } from "../../__util__/request";
 import { sharingTest as test } from "./__fixture__";
 import { openSharingMenu } from "./__util__";
@@ -19,6 +20,8 @@ test("3. 그룹 나가기는 자신의 참여만 해제하고 주최자의 노�
   const ownerGroups = await (await getApi(owner.request, "/api/groups")).json();
   expect(ownerGroups.groups[0].data.tabs[0].content).toBe("Keep this note");
   expect(
-    (await guest.request.post("/api/groups/leave", { data: { id } })).status(),
+    (
+      await postApi(guest.request, "/api/groups/leave", { data: { id } })
+    ).status(),
   ).toBe(403);
 });

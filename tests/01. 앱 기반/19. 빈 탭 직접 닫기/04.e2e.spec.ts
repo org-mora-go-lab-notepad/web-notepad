@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 
 import { sharingTest as test } from "../../__fixture__";
 import { getApi } from "../../__util__";
+import { postApi } from "../../__util__/request";
 
 test("4. 공유 빈 탭 닫기 충돌 후 재시도도 다른 사용자의 본문을 보존한다", async ({
   sharing: { owner, id, group },
@@ -26,7 +27,7 @@ test("4. 공유 빈 탭 닫기 충돌 후 재시도도 다른 사용자의 본�
     );
     expect(
       (
-        await owner.request.post("/api/groups/update", {
+        await postApi(owner.request, "/api/groups/update", {
           data: {
             id,
             baseRevision: current.revision,

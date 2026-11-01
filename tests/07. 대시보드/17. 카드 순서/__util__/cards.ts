@@ -4,6 +4,7 @@ import { DEFAULT_SETTINGS } from "@/src/4-entity/notepad";
 
 import { createGroupFixture, createTabFixture } from "../../../__fixture__";
 import { beginDashboardDrag, writeStoredState } from "../../../__util__";
+import { postApi } from "../../../__util__/request";
 import { getApi } from "../../../__util__/request";
 
 export async function seedCards(page: Page) {
@@ -67,7 +68,7 @@ export async function seedSharedCards(page: Page, id: string) {
   };
   expect(
     (
-      await page.request.post("/api/groups/update", {
+      await postApi(page.request, "/api/groups/update", {
         data: {
           id,
           baseRevision: record.revision,

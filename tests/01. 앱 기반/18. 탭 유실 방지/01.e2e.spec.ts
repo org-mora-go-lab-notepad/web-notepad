@@ -46,6 +46,9 @@ test("1. 누락된 로컬 재전송 대기열과 서버 원문을 함께 복구�
     "saved",
     { timeout: 20_000 },
   );
+  await expect(page.locator("textarea").first()).toHaveValue(
+    "미전송 수정 본문",
+  );
   const state = await readStoredState(page);
   expect(state.groups[0].tabs.map((tab) => tab.content)).toEqual([
     "미전송 수정 본문",

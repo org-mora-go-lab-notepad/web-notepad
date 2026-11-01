@@ -1,10 +1,12 @@
+import { bffFetch } from "@/src/5-shared/util";
+
 import type { GroupEntry } from "../type";
 
 export async function createSharedTabLink(group: GroupEntry, tabId: string) {
   let url = new URL("/", window.location.origin);
 
   try {
-    const response = await fetch("/api/groups/share", {
+    const response = await bffFetch("/api/groups/share", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ group }),

@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-import { authenticate } from "../../__util__";
+import { authenticate, getApi } from "../../__util__";
 
-test("3. 프런트 Swagger에서 로그인 세션으로 개인 이력을 실제 조회한다", async ({
+test("3. 프런트 Swagger에서 카카오 세션의 단기 토큰으로 개인 이력을 실제 조회한다", async ({
   page,
   context,
 }) => {
@@ -11,6 +11,14 @@ test("3. 프런트 Swagger에서 로그인 세션으로 개인 이력을 실제 
   await expect(
     page.getByRole("heading", { name: "Web Notepad BFF API" }),
   ).toBeVisible();
+  const grant = await (await getApi(page.request, "/api/auth/bff")).json();
+  await page.getByRole("button", { name: "Authorize", exact: true }).click();
+  const modal = page.locator(".dialog-ux");
+  await modal.locator("input").fill(grant.token);
+  await modal
+    .getByRole("button", { name: "Apply credentials", exact: true })
+    .click();
+  await modal.getByRole("button", { name: "Close", exact: true }).click();
   const history = page.locator("#operations-History-getHistory");
   await history.locator(".opblock-summary").click();
   await history.getByRole("button", { name: "Try it out" }).click();

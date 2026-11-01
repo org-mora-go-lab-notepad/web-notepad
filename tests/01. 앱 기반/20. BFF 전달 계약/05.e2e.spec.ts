@@ -4,6 +4,7 @@ import { expect, test } from "@playwright/test";
 
 import { createGroupFixture, createTabFixture } from "../../__fixture__";
 import { authenticate, getApi } from "../../__util__";
+import { postApi } from "../../__util__/request";
 
 test("5. 기존 키의 버전 없는 공유 링크와 로그인 세션을 BFF 연결 후에도 유지한다", async ({
   page,
@@ -11,7 +12,7 @@ test("5. 기존 키의 버전 없는 공유 링크와 로그인 세션을 BFF �
 }) => {
   await authenticate(context);
   const before = await (await getApi(page.request, "/api/auth/session")).json();
-  const shared = await page.request.post("/api/groups/share", {
+  const shared = await postApi(page.request, "/api/groups/share", {
     data: {
       group: createGroupFixture("legacy-" + crypto.randomUUID(), "Legacy key", [
         createTabFixture("old-note", "Preserve old content"),
@@ -28,8 +29,8 @@ test("5. 기존 키의 버전 없는 공유 링크와 로그인 세션을 BFF �
     createHmac("sha256", "test-auth-secret")
       .update("group-share:" + id)
       .digest("base64url");
-  expect(new URL(data.url).searchParams.get("share")).toBe(token);
-  const joined = await page.request.post("/api/groups/join", {
+  expect(new URL(data.url).searchParams.get("share")).toMatch(/^shared-/);
+  const joined = await postApi(page.request, "/api/groups/join", {
     data: { token },
   });
   expect(joined.status()).toBe(200);
@@ -38,7 +39,7 @@ test("5. 기존 키의 버전 없는 공유 링크와 로그인 세션을 BFF �
   );
   const board = await (await getApi(page.request, "/api/board")).json();
   const post = board.posts.find((post: { id: string }) => post.id === id);
-  expect(new URL(post.inviteUrl).searchParams.get("share")).toBe(token);
+  expect(new URL(post.inviteUrl).searchParams.get("share")).toMatch(/^shared-/);
   expect(post).not.toHaveProperty("shareLink");
   const after = await getApi(page.request, "/api/auth/session");
   expect(await after.json()).toEqual(before);

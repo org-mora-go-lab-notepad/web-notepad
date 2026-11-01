@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { signedSession } from "../../__fixture__";
 import { authenticateBrowser } from "../../__util__";
+import { postApi } from "../../__util__/request";
 import { getApi } from "../../__util__/request";
 import { shareGroup } from "./__util__";
 
@@ -24,11 +25,11 @@ test("6. 오래된 버전의 동시 수정은 거부된다", async ({ browser })
     (item: { id: string }) => item.id === id,
   );
   const changed = { ...base.data, name: "First change" };
-  const first = await owner.request.post("/api/groups/update", {
+  const first = await postApi(owner.request, "/api/groups/update", {
     data: { id, baseRevision: base.revision, data: changed },
   });
   expect(first.status()).toBe(200);
-  const second = await owner.request.post("/api/groups/update", {
+  const second = await postApi(owner.request, "/api/groups/update", {
     data: {
       id,
       baseRevision: base.revision,

@@ -7,6 +7,7 @@ import {
   signedSession,
 } from "../../__fixture__";
 import { authenticateBrowser, openBoard, sessionHeaders } from "../../__util__";
+import { postApi } from "../../__util__/request";
 import { getApi } from "../../__util__/request";
 
 test("2. Board는 로그인한 나의 공유 그룹과 다른 사용자의 공유 그룹을 모두 표시한다", async ({
@@ -23,7 +24,7 @@ test("2. Board는 로그인한 나의 공유 그룹과 다른 사용자의 공�
       expiresAt: Date.now() + 300_000,
     }),
   );
-  const response = await request.post("/api/groups/share", {
+  const response = await postApi(request, "/api/groups/share", {
     headers,
     data: {
       group: createGroupFixture(
@@ -51,7 +52,7 @@ test("2. Board는 로그인한 나의 공유 그룹과 다른 사용자의 공�
       ownGroups.some((entry: { id: string }) => entry.id === group.id),
     ).toBe(false);
   } finally {
-    await request.post("/api/groups/revoke", {
+    await postApi(request, "/api/groups/revoke", {
       headers,
       data: { id: group.id },
     });

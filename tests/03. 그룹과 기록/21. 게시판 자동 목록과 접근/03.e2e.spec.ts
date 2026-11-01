@@ -6,6 +6,7 @@ import {
   signedSession,
 } from "../../__fixture__";
 import { openBoard, sessionHeaders } from "../../__util__";
+import { postApi } from "../../__util__/request";
 import { getApi } from "../../__util__/request";
 
 test("3. 공유 그룹 이름의 HTML은 실행하지 않고 글자로 표시하며 본문을 안전하게 제공한다", async ({
@@ -20,7 +21,7 @@ test("3. 공유 그룹 이름의 HTML은 실행하지 않고 글자로 표시하
       expiresAt: Date.now() + 300_000,
     }),
   );
-  const result = await request.post("/api/groups/share", {
+  const result = await postApi(request, "/api/groups/share", {
     headers,
     data: {
       group: createGroupFixture("safe-" + crypto.randomUUID(), title, [
@@ -51,7 +52,7 @@ test("3. 공유 그룹 이름의 HTML은 실행하지 않고 글자로 표시하
       group.tabs[0].content,
     );
   } finally {
-    await request.post("/api/groups/revoke", {
+    await postApi(request, "/api/groups/revoke", {
       headers,
       data: { id: group.id },
     });

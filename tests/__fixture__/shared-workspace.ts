@@ -3,6 +3,7 @@ import { expect, type Page, test as base } from "@playwright/test";
 import type { GroupEntry } from "@/src/4-entity/notepad";
 
 import { authenticateBrowser, groupsCommand } from "../__util__";
+import { postApi } from "../__util__/request";
 import { signedSession } from "./auth";
 import { createGroupFixture, createTabFixture } from "./notepad-state";
 
@@ -44,7 +45,7 @@ export const sharingTest = base.extend<{ sharing: Sharing }>({
       );
       const owner = await ownerContext.newPage(),
         guest = await guestContext.newPage();
-      const shared = await owner.request.post("/api/groups/share", {
+      const shared = await postApi(owner.request, "/api/groups/share", {
         data: {
           group: createGroupFixture("local-" + suffix, "Shared team", [
             createTabFixture("note-" + suffix, "Keep this note"),
@@ -56,7 +57,7 @@ export const sharingTest = base.extend<{ sharing: Sharing }>({
       const token = new URL(url).searchParams.get("share")!;
       expect(
         (
-          await guest.request.post("/api/groups/join", { data: { token } })
+          await postApi(guest.request, "/api/groups/join", { data: { token } })
         ).ok(),
       ).toBe(true);
       for (const page of [owner, guest]) {

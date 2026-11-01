@@ -2,6 +2,7 @@ import { test as base } from "@playwright/test";
 
 import type { BoardPost } from "@/src/4-entity/notepad";
 
+import { postApi } from "../__util__/request";
 import { getApi } from "../__util__/request";
 import { SESSION_COOKIE, signedSession } from "./auth";
 import { createGroupFixture, createTabFixture } from "./notepad-state";
@@ -23,7 +24,7 @@ export const boardTest = base.extend<{
     const suffix = crypto.randomUUID(),
       title = "Community " + suffix;
     const headers = { Cookie: SESSION_COOKIE + "=" + boardOwnerToken };
-    const shared = await request.post("/api/groups/share", {
+    const shared = await postApi(request, "/api/groups/share", {
       headers,
       data: {
         group: createGroupFixture("board-" + suffix, title, [
@@ -67,7 +68,7 @@ export const boardTest = base.extend<{
     try {
       await provide(post);
     } finally {
-      await request.post("/api/groups/revoke", {
+      await postApi(request, "/api/groups/revoke", {
         headers,
         data: { id: group.id },
         maxRetries: 2,

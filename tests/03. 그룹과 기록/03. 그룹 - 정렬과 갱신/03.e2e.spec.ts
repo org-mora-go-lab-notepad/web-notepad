@@ -12,9 +12,7 @@ test("3. 하단 그룹 버튼은 PC와 모바일에서 현재 그룹명을 표�
   await createGroup(page, name);
   for (const viewport of [DESKTOP_VIEWPORT, MOBILE_VIEWPORT]) {
     await page.setViewportSize(viewport);
-    await expect(groupsCommand(page).locator("svg.lucide-layers")).toHaveCount(
-      1,
-    );
+    await expect(groupsCommand(page).locator("svg.lucide-menu")).toBeVisible();
     await expect(groupsCommand(page)).toHaveAttribute(
       "aria-label",
       "Toggle groups",
