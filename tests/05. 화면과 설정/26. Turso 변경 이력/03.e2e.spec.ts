@@ -1,35 +1,42 @@
 import { expect, test } from "@playwright/test";
 
-import { getApi } from "../../__util__/request";
+import { signedSession } from "../../__fixture__";
+import { authenticateBrowser } from "../../__util__";
+import { readCloudHistory } from "./__util__";
 
-test("3. 비로그인 사용자는 이력을 조회하거나 저장할 수 없다", async ({
-  request,
+test("3. 저장 실패 뒤 대기 중인 변경을 자동 재시도한다", async ({
+  page,
+  context,
 }) => {
-  await test.step(
-    "시나리오: 3. 비로그인 사용자는 이력을 조회하거나 저장할 수 없다 — 준비 조건부터 공개 UI 또는 API 실행과 사용자 결과 검증까지 독립적으로 추적한다",
-    async () => {
-      const read = await getApi(request, "/api/notepad/history");
-
-      await test.step(
-        "검증 1: 3. 비로그인 사용자는 이력을 조회하거나 저장할 수 없다 — PRD에 기록된 사용자 결과를 이 파일의 assertion으로 직접 확인한다",
-        async () => {
-          expect(read.status()).toBe(401);
-        },
-        { box: true },
-      );
-
-      const write = await request.post("/api/notepad/history", {
-        data: { eventId: crypto.randomUUID(), snapshot: "{}" },
-      });
-
-      await test.step(
-        "검증 2: 3. 비로그인 사용자는 이력을 조회하거나 저장할 수 없다 — PRD에 기록된 사용자 결과를 이 파일의 assertion으로 직접 확인한다",
-        async () => {
-          expect(write.status()).toBe(401);
-        },
-        { box: true },
-      );
-    },
-    { box: true },
+  await authenticateBrowser(
+    context,
+    signedSession({
+      id: `cloud-retry-${crypto.randomUUID()}`,
+      nickname: "Cloud User",
+      expiresAt: Date.now() + 60_000,
+    }),
   );
+  let attempts = 0;
+  await page.route("**/api/notepad/history", async (route) => {
+    if (route.request().method() !== "POST") return route.continue();
+    attempts += 1;
+    if (attempts === 1)
+      return route.fulfill({ status: 503, body: "unavailable" });
+    return route.continue();
+  });
+  await page.goto("/");
+  await expect(page.locator("button.auth-command")).toContainText("Cloud User");
+  await page.locator("textarea").first().fill("재시도할 글");
+  await expect(page.locator(".home")).toHaveAttribute(
+    "data-cloud-save",
+    "error",
+    { timeout: 15_000 },
+  );
+  await expect(page.locator(".home")).toHaveAttribute(
+    "data-cloud-save",
+    "saved",
+    { timeout: 15_000 },
+  );
+  expect(attempts).toBe(2);
+  expect((await readCloudHistory(page)).count).toBe(1);
 });

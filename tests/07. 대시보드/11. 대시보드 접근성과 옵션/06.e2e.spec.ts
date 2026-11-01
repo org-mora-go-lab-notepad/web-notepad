@@ -17,7 +17,7 @@ test("6. Note 표시를 켜고 다시 끄면 컬럼과 눌림 상태를 함께 �
       await test.step(
         "실행 1: 6. Note 표시를 켜고 다시 끄면 컬럼과 눌림 상태를 함께 전환한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
-          await page.getByRole("button", { name: "CARD" }).click();
+          await page.getByRole("button", { name: "Card" }).click();
         },
         { box: true },
       );

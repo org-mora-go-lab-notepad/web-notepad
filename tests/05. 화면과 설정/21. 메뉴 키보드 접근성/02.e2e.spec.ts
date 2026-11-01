@@ -35,7 +35,7 @@ test("2. 검색 버튼은 키보드 Tab 순서에 포함한다", async ({ page }
         async () => {
           await page
             .locator("#group-more-menu")
-            .getByRole("button", { name: "GUIDE", exact: true })
+            .getByRole("button", { name: "Guide", exact: true })
             .focus();
         },
         { box: true },

@@ -7,7 +7,7 @@ import {
   seedStoredStateOnLoad,
 } from "../../__util__";
 
-test("6. 오늘 생성되거나 변경된 그룹이 있으면 GROUP 아이콘에 붉은 점을 표시한다", async ({
+test("6. 오늘 생성되거나 변경된 그룹이 있으면 Group 아이콘에 붉은 점을 표시한다", async ({
   page,
 }) => {
   const yesterday = Date.now() - 24 * 60 * 60 * 1000;

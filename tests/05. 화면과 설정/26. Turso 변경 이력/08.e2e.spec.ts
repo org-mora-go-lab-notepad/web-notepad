@@ -2,41 +2,70 @@ import { expect, test } from "@playwright/test";
 
 import { signedSession } from "../../__fixture__";
 import { authenticateBrowser } from "../../__util__";
-import { readCloudHistory } from "./__util__";
 
-test("8. 탭을 닫아도 저장 대기 중인 본문을 DB에 보존하고 새로고침 후 복원한다", async ({
+test("8. 로그인 사용자의 첫 진입은 상단 진행 바를 표시하고 최신 DB 동기화가 끝날 때까지 입력을 차단한다", async ({
   page,
   context,
 }) => {
   await authenticateBrowser(
     context,
     signedSession({
-      id: `cloud-close-${crypto.randomUUID()}`,
+      id: `cloud-loader-${crypto.randomUUID()}`,
       nickname: "Cloud User",
       expiresAt: Date.now() + 60_000,
     }),
   );
-  await page.goto("/");
-  await page.locator("textarea").first().fill("닫기 전에 저장할 본문");
-  await page.locator(".tab-item.is-active .tab-close").click();
-  await expect(page.locator(".home")).toHaveAttribute(
-    "data-cloud-save",
-    "saved",
-  );
-  const readSavedTab = async () => {
-    const history = await readCloudHistory(page);
-    if (!history.latest) return null;
-    return JSON.parse(history.latest.snapshot).groups[0].tabs.find(
-      (tab: { content: string }) => tab.content === "닫기 전에 저장할 본문",
-    );
-  };
-  await expect
-    .poll(readSavedTab)
-    .toMatchObject({ content: "닫기 전에 저장할 본문", open: false });
-  await page.reload();
-  await expect(page.locator("textarea").first()).toHaveValue("");
-  expect(await readSavedTab()).toMatchObject({
-    content: "닫기 전에 저장할 본문",
-    open: false,
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
   });
+  await page.route("**/api/notepad/history", async (route) => {
+    if (route.request().method() === "GET") await gate;
+    await route.continue();
+  });
+  await page.goto("/");
+  const loader = page.getByRole("status", { name: "Syncing notes" });
+  await expect(loader).toBeVisible();
+  await expect(loader).toHaveAttribute("aria-busy", "true");
+  await expect(page.locator(".loading-skeleton, .loading-mark")).toHaveCount(0);
+  await expect(page.locator(".initial-sync-progress")).toBeVisible();
+
+  const editor = page.locator("textarea").first();
+  await expect(editor).toBeVisible();
+  const loaderStyles = await loader.evaluate((element) => {
+    const lock = getComputedStyle(element);
+    const progress = getComputedStyle(
+      element.querySelector(".initial-sync-progress")!,
+    );
+    return {
+      lockPosition: lock.position,
+      pointerEvents: lock.pointerEvents,
+      touchAction: lock.touchAction,
+      progressPosition: progress.position,
+      progressTop: progress.top,
+      progressOpacity: progress.opacity,
+      progressColor: progress.backgroundImage,
+    };
+  });
+  expect(loaderStyles).toMatchObject({
+    lockPosition: "fixed",
+    pointerEvents: "auto",
+    touchAction: "none",
+    progressPosition: "fixed",
+    progressTop: "0px",
+    progressOpacity: "0.8",
+  });
+  expect(loaderStyles.progressColor).not.toBe("none");
+
+  const editorBounds = (await editor.boundingBox())!;
+  await page.mouse.click(
+    editorBounds.x + editorBounds.width / 2,
+    editorBounds.y + editorBounds.height / 2,
+  );
+  await expect(editor).not.toBeFocused();
+
+  release();
+  await expect(loader).toHaveCount(0);
+  await editor.click();
+  await expect(editor).toBeFocused();
 });

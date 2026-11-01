@@ -1,3 +1,3 @@
-import { changeGroupAccess } from "../_lib/access-request";
+import { forwardToBff } from "@/app/api/_lib/bff";
 
-export const POST = (request: Request) => changeGroupAccess(request, "revoke");
+export const POST = forwardToBff;

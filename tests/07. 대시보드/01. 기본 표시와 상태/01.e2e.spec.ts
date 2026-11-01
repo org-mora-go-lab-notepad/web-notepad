@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import { DESKTOP_VIEWPORT, MOBILE_VIEWPORT } from "../../__constant__";
 import { dashboardPanel } from "../../__util__";
 
-test("1. 그룹 버튼과 계정 사이에 CARD 명령을 표시하고 패널을 연다", async ({
+test("1. 그룹 버튼과 계정 사이에 Card 명령을 표시하고 패널을 연다", async ({
   page,
 }) => {
   await page.goto("/");
@@ -12,8 +12,17 @@ test("1. 그룹 버튼과 계정 사이에 CARD 명령을 표시하고 패널을
   const account = page.locator(".footer-auth");
 
   await page.setViewportSize(DESKTOP_VIEWPORT);
+  await expect(group.locator(".group-command-label")).toHaveText("Menu");
+  await expect(group.locator(".group-command-label")).toHaveCSS(
+    "text-transform",
+    "none",
+  );
+  await expect(command.locator(".status-label")).toHaveCSS(
+    "text-transform",
+    "none",
+  );
   await expect(command.locator("svg")).toHaveClass(/lucide-layout-dashboard/);
-  await expect(command.locator(".status-label")).toHaveText("CARD");
+  await expect(command.locator(".status-label")).toHaveText("Card");
   expect((await command.boundingBox())!.x).toBeGreaterThan(
     (await group.boundingBox())!.x,
   );
@@ -22,6 +31,11 @@ test("1. 그룹 버튼과 계정 사이에 CARD 명령을 표시하고 패널을
   );
 
   await page.setViewportSize(MOBILE_VIEWPORT);
+  await expect(command.locator(".status-label")).toHaveText("Card");
+  await expect(command.locator(".status-label")).toHaveCSS(
+    "text-transform",
+    "none",
+  );
   await expect(command.locator(".status-label")).toBeVisible();
   expect(
     (await command.locator(".status-label").boundingBox())!.y,
@@ -41,7 +55,7 @@ test("1. 그룹 버튼과 계정 사이에 CARD 명령을 표시하고 패널을
   await expect(dashboardPanel(page)).toHaveAttribute("aria-hidden", "false");
   await expect(
     dashboardPanel(page).getByRole("heading", {
-      name: "CARD",
+      name: "Card",
       exact: true,
     }),
   ).toBeVisible();

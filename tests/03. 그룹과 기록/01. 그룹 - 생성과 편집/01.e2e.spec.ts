@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { groupMenu, groupsCommand, openSystemGroupMenu } from "../../__util__";
 
-test("1. 하단 GROUP 버튼은 작업공간 왼쪽에 그룹 사이드바를 연다", async ({
+test("1. 하단 Group 버튼은 작업공간 왼쪽에 그룹 사이드바를 연다", async ({
   page,
 }) => {
   await page.goto("/");

@@ -26,7 +26,7 @@ test("5. 저장소가 차단되어도 현재 화면의 테마를 전환한다", 
     await page.goto(baseURL!);
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
     await openSettingsPanel(page);
-    await page.getByRole("switch", { name: "THEME" }).click();
+    await page.getByRole("switch", { name: "Theme" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   } finally {
     await context.close();

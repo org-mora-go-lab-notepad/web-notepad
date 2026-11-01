@@ -1,55 +1,55 @@
-import { expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 import {
-  boardTest as test,
   createGroupFixture,
   createTabFixture,
   signedSession,
 } from "../../__fixture__";
-import { authenticateBrowser, openBoard, sessionHeaders } from "../../__util__";
+import { openBoard, sessionHeaders } from "../../__util__";
 import { getApi } from "../../__util__/request";
 
-test("3. Board는 로그인한 나의 공유 그룹과 다른 사용자의 공유 그룹을 모두 표시한다", async ({
+test("3. 공유 그룹 이름의 HTML은 실행하지 않고 글자로 표시하며 본문을 안전하게 제공한다", async ({
   page,
-  context,
   request,
-  boardPost,
-  boardOwnerToken,
 }) => {
+  const title = `<img src=x onerror="window.boardInjected=1"> ${crypto.randomUUID().slice(0, 8)}`;
   const headers = sessionHeaders(
     signedSession({
       id: crypto.randomUUID(),
-      nickname: "Other owner",
+      nickname: "Owner",
       expiresAt: Date.now() + 300_000,
     }),
   );
-  const response = await request.post("/api/groups/share", {
+  const result = await request.post("/api/groups/share", {
     headers,
     data: {
-      group: createGroupFixture(
-        "other-" + crypto.randomUUID(),
-        "Other " + crypto.randomUUID(),
-        [createTabFixture("note", "Other private note")],
-      ),
+      group: createGroupFixture("safe-" + crypto.randomUUID(), title, [
+        createTabFixture("note", "Private body " + crypto.randomUUID()),
+      ]),
     },
   });
-  expect(response.ok()).toBe(true);
-  const { group } = await response.json();
+  expect(result.ok()).toBe(true);
+  const { group } = await result.json();
   try {
-    await authenticateBrowser(context, boardOwnerToken);
     await page.goto("/");
     await openBoard(page);
-    await expect(
-      page.locator(".board-entry", { hasText: boardPost.title }),
-    ).toBeVisible();
-    await expect(
-      page.locator(".board-entry", { hasText: group.name }),
-    ).toBeVisible();
-    const ownGroups = (await (await getApi(page.request, "/api/groups")).json())
-      .groups;
+    await page
+      .getByRole("searchbox", { name: "Search shared groups" })
+      .fill(title);
+    const safeEntry = page
+      .locator(".board-entry")
+      .filter({ has: page.getByText(title, { exact: true }) });
+    await expect(safeEntry).toHaveCount(1);
+    await expect(safeEntry.locator("strong")).toHaveText(title);
+    await expect(safeEntry.locator("img")).toHaveCount(0);
     expect(
-      ownGroups.some((entry: { id: string }) => entry.id === group.id),
-    ).toBe(false);
+      await page.evaluate(
+        () => (window as Window & { boardInjected?: number }).boardInjected,
+      ),
+    ).toBeUndefined();
+    expect(await (await getApi(request, "/api/board")).text()).toContain(
+      group.tabs[0].content,
+    );
   } finally {
     await request.post("/api/groups/revoke", {
       headers,

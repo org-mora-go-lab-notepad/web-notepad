@@ -6,7 +6,7 @@ import {
   openSystemGroupMenu,
 } from "../../__util__";
 
-test("4. 사이드바 아래 GROUP과 MORE 메뉴에서 기본 그룹과 가이드를 연다", async ({
+test("4. 사이드바 아래 Group과 More 메뉴에서 기본 그룹과 가이드를 연다", async ({
   page,
 }) => {
   await page.goto("/");
@@ -37,10 +37,10 @@ test("4. 사이드바 아래 GROUP과 MORE 메뉴에서 기본 그룹과 가이�
   expect(systemBox.y).toBeGreaterThanOrEqual(sectionBox.y + sectionBox.height);
   const tools = await openMoreMenu(page);
   await expect(systemGroups).toHaveCount(0);
-  await tools.getByRole("button", { name: "GUIDE" }).click();
+  await tools.getByRole("button", { name: "Guide" }).click();
   const guide = page.getByRole("dialog");
   await expect(guide.locator(".user-guide-progress")).toHaveText("1 / 11");
-  await guide.getByRole("button", { name: "SHORTCUT" }).click();
+  await guide.getByRole("button", { name: "Shortcut" }).click();
   await expect(tools).toHaveCount(0);
   await expect(page.locator("#shortcuts-panel")).toHaveAttribute(
     "aria-hidden",

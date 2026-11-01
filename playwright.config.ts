@@ -1,3 +1,5 @@
+import path from "node:path";
+
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
@@ -21,17 +23,36 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-  webServer: {
-    command: "npm run dev",
-    env: {
-      KAKAO_REST_API_KEY: "test-rest-key",
-      KAKAO_REDIRECT_URI: "http://localhost:3000/api/auth/oauth/kakao/callback",
-      AUTH_SECRET: "test-auth-secret",
-      LOCAL_DEV_LOGIN: "0",
-      TURSO_DATABASE_URL: "file:test-results/notepad-e2e.db",
+  webServer: [
+    {
+      command: "npx next dev -p 3101",
+      cwd:
+        process.env.NOTEPAD_BFF_DIR ??
+        path.resolve("../../org-mora-go-lab-notepad/web-notepad-bff"),
+      url: "http://127.0.0.1:3101/api/health",
+      env: {
+        NOTEPAD_BFF_SECRET: "test-bff-secret",
+        TURSO_DATABASE_URL:
+          "file:" + path.resolve("test-results/notepad-e2e.db"),
+        TURSO_AUTH_TOKEN: "",
+      },
+      reuseExistingServer: false,
+      timeout: 120_000,
     },
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+    {
+      command: "npm run dev",
+      env: {
+        KAKAO_REST_API_KEY: "test-rest-key",
+        KAKAO_REDIRECT_URI:
+          "http://localhost:3000/api/auth/oauth/kakao/callback",
+        AUTH_SECRET: "test-auth-secret",
+        LOCAL_DEV_LOGIN: "0",
+        NOTEPAD_BFF_URL: "http://127.0.0.1:3101",
+        NOTEPAD_BFF_SECRET: "test-bff-secret",
+      },
+      url: "http://localhost:3000",
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
+  ],
 });

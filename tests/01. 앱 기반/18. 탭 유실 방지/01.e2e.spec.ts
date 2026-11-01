@@ -1,38 +1,62 @@
 import { expect, test } from "@playwright/test";
 
-import { authenticate, getApi, historyPost, snapshot } from "../../__util__";
+import {
+  authenticate,
+  getApi,
+  historyPost,
+  readStoredState,
+  snapshot,
+} from "../../__util__";
 
-test("1. 누락된 개인 탭은 baseEventId 유무와 관계없이 삭제되지 않는다", async ({
+test("1. 누락된 로컬 재전송 대기열과 서버 원문을 함께 복구한다", async ({
   page,
   context,
 }) => {
-  await authenticate(context);
-  const original = JSON.parse(snapshot(["", "ㅎㅎ", "닫힌 원문"]));
-  original.groups[0].tabs[2].open = false;
-  const eventId = crypto.randomUUID();
+  const userId = `omission-${crypto.randomUUID()}`;
+  await authenticate(context, userId);
   expect(
     (
-      await historyPost(page, { eventId, snapshot: JSON.stringify(original) })
+      await historyPost(page, {
+        eventId: crypto.randomUUID(),
+        snapshot: snapshot(["수정할 원문", "보존할 원문"]),
+      })
     ).ok(),
   ).toBe(true);
-  const missing = { ...original, groups: [] };
-  for (const base of [{}, { baseEventId: eventId }]) {
-    const rejected = await historyPost(page, {
-      ...base,
-      eventId: crypto.randomUUID(),
-      snapshot: JSON.stringify(missing),
-    });
-    expect(rejected.status()).toBe(409);
-    expect((await rejected.json()).protectedTabIds).toEqual([
-      "tab-1",
-      "tab-2",
-      "tab-3",
-    ]);
-  }
+  await page.goto("/");
+  await expect(page.locator("textarea").first()).toHaveValue("수정할 원문");
+  await expect(page.locator(".home")).toHaveAttribute(
+    "data-cloud-save",
+    "saved",
+  );
+  await page.evaluate((id) => {
+    const key = "web-notepad-storage";
+    const stored = JSON.parse(localStorage.getItem(key)!);
+    stored.state.groups[0].tabs = [stored.state.groups[0].tabs[0]];
+    stored.state.groups[0].tabs[0].content = "미전송 수정 본문";
+    const value = JSON.stringify(stored.state);
+    localStorage.setItem(key, JSON.stringify(stored));
+    localStorage.setItem(
+      `web-notepad-cloud-pending:${id}`,
+      JSON.stringify({ eventId: crypto.randomUUID(), snapshot: value }),
+    );
+  }, userId);
+  await page.reload();
+  await expect(page.locator(".home")).toHaveAttribute(
+    "data-cloud-save",
+    "saved",
+    { timeout: 20_000 },
+  );
+  const state = await readStoredState(page);
+  expect(state.groups[0].tabs.map((tab) => tab.content)).toEqual([
+    "미전송 수정 본문",
+    "보존할 원문",
+  ]);
   const saved = await (
     await getApi(page.request, "/api/notepad/history")
   ).json();
-  expect(saved.latest.eventId).toBe(eventId);
-  expect(JSON.parse(saved.latest.snapshot).groups).toEqual(original.groups);
-  expect(saved.count).toBe(1);
+  expect(
+    JSON.parse(saved.latest.snapshot).groups[0].tabs.map(
+      (tab: { content: string }) => tab.content,
+    ),
+  ).toEqual(["미전송 수정 본문", "보존할 원문"]);
 });

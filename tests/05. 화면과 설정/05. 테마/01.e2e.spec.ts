@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import { BOTH_VIEWPORTS } from "../../__constant__";
 import { openSettingsPanel } from "../../__util__";
 
-test("1. SETTINGS의 FONT SIZE 위 THEME 토글은 좌우로 이동하며 DARK와 LIGHT를 전환한다", async ({
+test("1. Settings의 FONT SIZE 위 Theme 토글은 좌우로 이동하며 Dark와 Light를 전환한다", async ({
   page,
 }) => {
   await page.goto("/");
@@ -12,10 +12,10 @@ test("1. SETTINGS의 FONT SIZE 위 THEME 토글은 좌우로 이동하며 DARK�
     await page.setViewportSize(viewport);
     await openSettingsPanel(page);
     const headings = page.locator("#settings-panel .setting-section h3");
-    await expect(headings.nth(0)).toHaveText("THEME");
+    await expect(headings.nth(0)).toHaveText("Theme");
     await expect(headings.nth(1)).toHaveText("Font Size");
     await expect(headings.nth(0).locator("svg")).toHaveCount(1);
-    const toggle = page.getByRole("switch", { name: "THEME" });
+    const toggle = page.getByRole("switch", { name: "Theme" });
     const thumbX = () =>
       toggle.evaluate((element) => {
         const track = element.nextElementSibling!;

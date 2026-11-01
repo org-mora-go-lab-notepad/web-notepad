@@ -27,8 +27,14 @@ function sign(value: string) {
 }
 
 export function createGroupShareToken(groupId: string, version = 0) {
-  const payload = version ? groupId + "." + version : groupId;
-  return payload + "." + sign("group-share:" + payload);
+  if (
+    !/^shared-[0-9a-f-]{36}$/i.test(groupId) ||
+    !Number.isSafeInteger(version) ||
+    version < 0
+  )
+    throw new Error("Invalid share link descriptor");
+  const payload = version ? `${groupId}.${version}` : groupId;
+  return `${payload}.${sign("group-share:" + payload)}`;
 }
 
 export function readGroupShareToken(token: string) {
@@ -49,10 +55,6 @@ export function readGroupShareToken(token: string) {
     timingSafeEqual(expected, received)
     ? groupId
     : null;
-}
-
-export function groupShareVersion(token: string) {
-  return token.split(".").length === 3 ? Number(token.split(".")[1]) : 0;
 }
 
 export function createOAuthState() {

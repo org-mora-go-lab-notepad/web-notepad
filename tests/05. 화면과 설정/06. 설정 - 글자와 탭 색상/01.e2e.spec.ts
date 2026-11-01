@@ -3,13 +3,13 @@ import { expect, test } from "@playwright/test";
 import { openMoreMenu } from "../../__util__";
 import { settingsPanel } from "../__util__";
 
-test("1. MORE의 SETTINGS를 선택하면 사이드바를 닫고 설정 패널을 연다", async ({
+test("1. More의 Settings를 선택하면 사이드바를 닫고 설정 패널을 연다", async ({
   page,
 }) => {
   await page.goto("/");
   const tools = await openMoreMenu(page);
-  const settings = tools.getByRole("button", { name: "SETTINGS" });
-  await expect(settings).toContainText("SETTINGS");
+  const settings = tools.getByRole("button", { name: "Settings" });
+  await expect(settings).toContainText("Settings");
   await expect(settings.locator("svg")).toHaveClass(/lucide-settings/);
   await settings.click();
 

@@ -32,7 +32,7 @@ test("2. PC의 그룹·더보기·계정 드롭다운 진입점은 모두 푸터
     await expectPinMenu(menu.getByRole("button", { name, exact: true }));
   }
 
-  for (const name of ["GUIDE", "SEARCH", "BOOKMARK", "SETTINGS"]) {
+  for (const name of ["Guide", "Search", "Bookmark", "Settings"]) {
     const menu = await openMoreMenu(page);
     await expectPinMenu(menu.getByRole("button", { name, exact: true }));
   }

@@ -14,7 +14,7 @@ test("1. 하단 계정은 로그인, 더보기는 가이드·검색·북마크�
       .locator(".footer")
       .getByRole("link", { name: "Continue with Kakao" });
     await expect(login).toBeVisible();
-    await expect(login).toContainText("LOGIN");
+    await expect(login).toContainText("Login");
     const bounds = (await login.boundingBox())!;
     expect(bounds.x + bounds.width).toBeLessThanOrEqual(viewport.width);
     const icon = (await login.locator("svg").boundingBox())!;
@@ -38,16 +38,16 @@ test("1. 하단 계정은 로그인, 더보기는 가이드·검색·북마크�
     await trigger.click();
     const menu = page.locator("#group-more-menu");
     await expect(menu.getByRole("button")).toHaveText([
-      "GUIDE",
-      "SEARCH",
-      "BOOKMARK",
-      "SETTINGS",
+      "Guide",
+      "Search",
+      "Bookmark",
+      "Settings",
     ]);
     await expect(
       menu.getByRole("link", { name: "Continue with Kakao" }),
     ).toHaveCount(0);
-    await expect(menu.getByRole("switch", { name: "THEME" })).toHaveCount(0);
-    await expect(menu.getByRole("button", { name: "SHORTCUT" })).toHaveCount(0);
+    await expect(menu.getByRole("switch", { name: "Theme" })).toHaveCount(0);
+    await expect(menu.getByRole("button", { name: "Shortcut" })).toHaveCount(0);
     const menuBounds = (await menu.boundingBox())!;
     const footerBounds = (await page.locator(".group-more").boundingBox())!;
     if (viewport.width > 512) {

@@ -1,46 +1,69 @@
-import { expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
-import { sharingTest as test } from "../../__fixture__";
-import { getApi, historyPost, snapshot } from "../../__util__";
+import {
+  createClosedTabFixture,
+  createGroupFixture,
+  createTabFixture,
+} from "../../__fixture__";
+import {
+  authenticate,
+  getApi,
+  groupsCommand,
+  writeStoredState,
+} from "../../__util__";
 
-test("4. 공유 탭 이동은 대상 DB 저장 완료까지 원본을 보존한다", async ({
-  sharing: { owner, id },
+test("4. 공유 전환 시 개인 보관 기록을 원래 ID와 본문으로 유지한다", async ({
+  page,
+  context,
 }) => {
-  const records = await (await getApi(owner.request, "/api/groups")).json();
-  const record = records.groups.find((item: { id: string }) => item.id === id);
-  const tab = record.data.tabs[0];
-  const payload = {
-    id,
-    baseRevision: record.revision,
-    data: { ...record.data, tabs: [] },
-    deletedTabIds: [tab.id],
-    movedTabIds: [tab.id],
-  };
-  const premature = await owner.request.post("/api/groups/update", {
-    data: payload,
+  await authenticate(context);
+  const archived = createClosedTabFixture(
+    "archive-entry",
+    "team",
+    createTabFixture("old-note", "개인 보관 원문", { open: false }),
+  );
+  await writeStoredState(page, {
+    groups: [
+      createGroupFixture("ungrouped", "Ungrouped", [
+        createTabFixture("blank", ""),
+      ]),
+      createGroupFixture("team", "Team", [
+        createTabFixture("share-note", "공유할 본문"),
+      ]),
+    ],
+    activeGroupId: "team",
+    closedTabs: [archived],
   });
-  expect(premature.status()).toBe(503);
-  const blocked = (
-    await (await getApi(owner.request, "/api/groups")).json()
-  ).groups.find((item: { id: string }) => item.id === id);
-  expect(blocked.data.tabs).toEqual(record.data.tabs);
-  const destination = JSON.parse(snapshot());
-  destination.groups[0].tabs = [tab];
+  await expect(page.locator(".home")).toHaveAttribute(
+    "data-cloud-save",
+    "saved",
+  );
+  await groupsCommand(page).click();
+  const row = page.locator('[data-group-id="team"]');
+  await row.getByRole("button", { name: "Team group actions" }).click();
+  await row.getByRole("button", { name: "Share Team group" }).click();
+  await expect(
+    page
+      .getByRole("dialog", { name: "Share Team" })
+      .getByLabel("Group share link"),
+  ).toBeVisible();
+  await page
+    .getByRole("dialog", { name: "Share Team" })
+    .getByRole("button", { name: "Close", exact: true })
+    .last()
+    .click();
+  await expect
+    .poll(async () => {
+      const latest = (
+        await (await getApi(page.request, "/api/notepad/history")).json()
+      ).latest;
+      return latest ? JSON.parse(latest.snapshot).closedTabs : [];
+    })
+    .toMatchObject([{ ...archived, groupId: "ungrouped" }]);
+  const latest = (
+    await (await getApi(page.request, "/api/notepad/history")).json()
+  ).latest;
   expect(
-    (
-      await historyPost(owner, {
-        eventId: crypto.randomUUID(),
-        snapshot: JSON.stringify(destination),
-      })
-    ).ok(),
-  ).toBe(true);
-  const completed = await owner.request.post("/api/groups/update", {
-    data: payload,
-  });
-  expect(completed.ok()).toBe(true);
-  expect((await completed.json()).group.data.tabs).toEqual([]);
-  const saved = await (
-    await getApi(owner.request, "/api/notepad/history")
-  ).json();
-  expect(JSON.parse(saved.latest.snapshot).groups[0].tabs).toEqual([tab]);
+    JSON.parse(latest.snapshot).groups.map((group: { id: string }) => group.id),
+  ).not.toContain("team");
 });

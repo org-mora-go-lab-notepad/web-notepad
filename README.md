@@ -2,7 +2,7 @@
 
 탭과 그룹으로 메모를 정리하고, 대시보드와 공유 보드로 협업하는 브라우저 노트 앱입니다.
 
-**현재 버전:** `1.9.28` · **개발 서버:** `http://localhost:3000` · **E2E:** 721개
+**현재 버전:** `1.9.35` · **개발 서버:** `http://localhost:3000` · **E2E:** 707개
 
 [PRD](PRD.md) · [상세 요구사항](tests-prd/) · [E2E 가이드](tests/README.md) · [버전 이력](versions/)
 
@@ -23,12 +23,12 @@
 
 ```bash
 npm ci
-npm run dev
+npm run dev:local
 ```
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 엽니다.
 
-환경 변수 없이도 기본 메모와 로컬 공유 기능을 사용할 수 있습니다. 개발 환경에서는 테스트 계정을 제공하고, Turso 설정이 없으면 프로젝트 루트의 `web-notepad-local.db`를 자동으로 사용합니다.
+공유·저장 API는 [web-notepad-bff](https://github.com/org-mora-go-lab-notepad/web-notepad-bff)에서 제공합니다. BFF 저장소에서 한 번 `npm ci`를 실행한 뒤 프런트에서 `npm run dev:local`을 실행하면 BFF(3001)가 준비된 후 프런트(3000)를 함께 실행합니다. `Ctrl+C`로 두 서버를 함께 종료합니다. `npm run dev`는 기존처럼 프런트만 실행합니다. 카카오 인증은 이 저장소에 유지하며 로컬 개발 로그인은 Test 계정을 제공합니다. 기존 로컬 DB는 BFF의 TURSO_DATABASE_URL에 원래 파일의 절대 경로를 지정해 이어 사용합니다.
 
 ### 자주 사용하는 명령어
 
@@ -51,14 +51,14 @@ npm run dev
 cp .env.example .env.local
 ```
 
-| 환경 변수             | 필수 조건             | 용도                                      |
-| --------------------- | --------------------- | ----------------------------------------- |
-| `KAKAO_REST_API_KEY`  | 카카오 로그인 사용 시 | 카카오 애플리케이션 REST API 키           |
-| `KAKAO_REDIRECT_URI`  | 카카오 로그인 사용 시 | OAuth 콜백 주소                           |
-| `AUTH_SECRET`         | 카카오 로그인 사용 시 | 세션 서명용 긴 임의 문자열                |
-| `KAKAO_CLIENT_SECRET` | 선택                  | 카카오 Client Secret을 활성화한 경우 사용 |
-| `TURSO_DATABASE_URL`  | Turso 사용 시         | `libsql://` 형식의 데이터베이스 주소      |
-| `TURSO_AUTH_TOKEN`    | Turso 사용 시         | 서버 전용 데이터베이스 인증 토큰          |
+| 환경 변수             | 필수 조건             | 용도                                          |
+| --------------------- | --------------------- | --------------------------------------------- |
+| `KAKAO_REST_API_KEY`  | 카카오 로그인 사용 시 | 카카오 애플리케이션 REST API 키               |
+| `KAKAO_REDIRECT_URI`  | 카카오 로그인 사용 시 | OAuth 콜백 주소                               |
+| `AUTH_SECRET`         | 카카오 로그인 사용 시 | 세션 서명용 긴 임의 문자열                    |
+| `KAKAO_CLIENT_SECRET` | 선택                  | 카카오 Client Secret을 활성화한 경우 사용     |
+| `NOTEPAD_BFF_URL`     | 운영 필수             | BFF HTTPS origin (개발 기본값 localhost:3001) |
+| `NOTEPAD_BFF_SECRET`  | 운영 필수             | BFF와 공유하는 서버 전용 요청 서명 키         |
 
 로컬 카카오 콜백 기본값은 다음과 같습니다.
 
@@ -88,7 +88,7 @@ http://localhost:3000/api/auth/oauth/kakao/callback
 
 메모는 탭 단위로 관리합니다. 탭을 그룹 사이에서 이동하거나 여러 편집 영역으로 나눌 수 있으며, All Group·All My Group·All Shared Group에서 범위별 메모를 모아 볼 수 있습니다.
 
-PC 푸터에는 MENU·CARD·계정 진입점을 기본으로 표시합니다. 그룹·더보기·계정 메뉴 항목을 푸터에 고정하고 드래그해 순서를 바꿀 수 있으며, 설정에서 아이콘만 표시하도록 전환할 수 있습니다.
+PC 푸터에는 Menu·Card·계정 진입점을 기본으로 표시합니다. 그룹·더보기·계정 메뉴 항목을 푸터에 고정하고 드래그해 순서를 바꿀 수 있으며, 설정에서 아이콘만 표시하도록 전환할 수 있습니다.
 
 ### 대시보드
 
@@ -137,11 +137,11 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-현재 721개의 E2E가 등록되어 있습니다. `tests-prd/`의 각 번호 요구사항은 `tests/`의 같은 번호 `e2e.spec.ts`와 1:1로 대응합니다. 구조 검사는 번호 대응, 파일당 단일 테스트, 최소 코드 분량과 공통 리소스 배럴을 확인합니다.
+현재 프런트 707개의 E2E가 등록되어 있습니다. BE 전용 48개와 대응 문서는 BFF로 이관했습니다. 프런트 통합 테스트 실행 시 `NOTEPAD_BFF_DIR`에 BFF 체크아웃 경로를 지정합니다. 기본값은 `../../org-mora-go-lab-notepad/web-notepad-bff`이며 BFF의 `npm ci`를 먼저 실행해야 합니다. 테스트는 별도 BFF 프로세스와 로컬 파일 DB를 사용합니다. `tests-prd/`의 각 번호 요구사항은 `tests/`의 같은 번호 `e2e.spec.ts`와 1:1로 대응합니다. 구조 검사는 번호 대응, 파일당 단일 테스트, 최소 코드 분량과 공통 리소스 배럴을 확인합니다.
 
 ## 버전과 배포
 
-1. `main`에서 `1.9.28`과 같은 버전 브랜치를 생성합니다.
+1. `main`에서 `1.9.35`과 같은 버전 브랜치를 생성합니다.
 2. `package.json`과 `package-lock.json`의 버전을 함께 올립니다.
 3. 검증을 통과한 변경을 PR로 `main`에 병합합니다.
 4. 병합된 최신 `main`에서 다음 버전 브랜치를 시작합니다.
@@ -152,4 +152,13 @@ Vercel의 Production Branch는 `main`을 사용합니다. 배포 환경에서 �
 https://<배포-도메인>/api/auth/oauth/kakao/callback
 ```
 
-Turso를 사용하는 배포에는 `TURSO_DATABASE_URL`과 `TURSO_AUTH_TOKEN`을 서버 환경 변수로 설정합니다. 필요한 이력 테이블은 첫 저장 시 자동 생성됩니다.
+Turso 환경 변수는 BFF에만 설정합니다. BFF를 먼저 배포한 뒤 프런트에 `NOTEPAD_BFF_URL`, `NOTEPAD_BFF_SECRET`을 설정합니다. 기존 `AUTH_SECRET`은 프런트에서 변경 없이 유지합니다. 프런트가 세션·기존 공유 링크를 검증하고 새 링크를 서명하므로 BFF에 AUTH_SECRET을 복사하거나 SHARE_TOKEN_SECRET을 설정할 필요가 없습니다. BFF는 별도 게이트웨이 서명에 포함된 검증 결과를 확인하고 DB의 공유 활성 상태·버전을 다시 검사합니다. [전환·롤백 절차](https://github.com/org-mora-go-lab-notepad/web-notepad-bff/blob/main/docs/migration.md)를 참고하세요. 이번 코드 이관으로 운영 DB를 정리하거나 탭을 삭제하지 않습니다.
+
+## 로컬 FE–BFF 연결과 Swagger
+
+- `npm run dev:local`: 3000 → 3001로 고정 연결하고 두 프로세스의 요청 서명 키와 공유 링크 키를 일치시킵니다. 환경 파일을 덮어쓰지 않습니다.
+- BFF 위치는 `NOTEPAD_BFF_DIR`, 같은 상위 폴더의 `web-notepad-bff`, 기존 조직 폴더의 체크아웃 순서로 찾습니다. `npm run dev:local -- --check`로 경로를 확인합니다.
+- BFF의 `.env.local` DB 설정을 유지합니다. 기존 로컬 DB 파일을 초기화하거나 복사하지 않습니다.
+- [http://localhost:3000/docs](http://localhost:3000/docs): 로컬 프런트의 카카오/Test 로그인 세션으로 Swagger Try it out을 실행합니다. 브라우저에 서버 비밀키를 넣을 필요가 없습니다. 저장 요청은 실제 로컬 데이터를 변경하므로 테스트용 작업공간을 사용합니다.
+- [http://localhost:3001/docs](http://localhost:3001/docs): BFF 직접 호출용 명세입니다. health 외에는 매 요청에 서버 서명이 필요합니다.
+- 프런트 `/docs`는 개발 모드에만 제공하며 실제 API의 인증·Origin 검증은 그대로 적용합니다.

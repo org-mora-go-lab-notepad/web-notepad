@@ -47,7 +47,7 @@ test("1. 아이콘으로 여는 드롭다운의 바깥 모서리는 모두 5px�
   );
   await page.keyboard.press("Escape");
 
-  await page.getByRole("button", { name: "CARD" }).click();
+  await page.getByRole("button", { name: "Card" }).click();
   await page.locator(".dashboard-options-trigger").click();
   await expect(page.locator(".dashboard-options-menu")).toHaveCSS(
     "border-radius",

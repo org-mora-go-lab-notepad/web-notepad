@@ -6,7 +6,7 @@ export const RIGHT_PANEL_IDS = [
   "settings-panel",
 ];
 
-// The SHORTCUT command is hidden on mobile; the other panel commands remain available.
+// The Shortcut command is hidden on mobile; the other panel commands remain available.
 export const RIGHT_PANEL_VIEWPORTS = [
   { viewport: DESKTOP_VIEWPORT, panelIds: RIGHT_PANEL_IDS },
   {
