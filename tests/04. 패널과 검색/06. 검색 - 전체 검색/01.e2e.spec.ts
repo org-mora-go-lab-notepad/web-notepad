@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import { seedStoredStateOnLoad } from "../../__util__";
 import { createGlobalSearchState } from "./__fixture__";
 
-test("1. 하단 더보기의 SEARCH를 선택하면 전체 검색 팝업을 연다", async ({
+test("1. 하단 더보기의 Search를 선택하면 전체 검색 팝업을 연다", async ({
   page,
 }) => {
   await seedStoredStateOnLoad(page, createGlobalSearchState());

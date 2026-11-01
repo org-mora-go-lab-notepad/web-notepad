@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import { DESKTOP_VIEWPORT } from "../../__constant__";
 import { openMoreMenu, openPanel } from "../../__util__";
 
-test("1. Bookmark 모달을 닫은 뒤 MORE의 Bookmark 명령으로 다시 연다", async ({
+test("1. Bookmark 모달을 닫은 뒤 More의 Bookmark 명령으로 다시 연다", async ({
   page,
 }) => {
   await page.setViewportSize(DESKTOP_VIEWPORT);

@@ -54,7 +54,7 @@ test("3. 현재 그룹은 PC 푸터 왼쪽, 모바일 메뉴 버튼에 표시한
       await expect(currentGroup).toHaveAttribute("aria-expanded", "false");
       await expect(command).toHaveCSS("gap", "7px");
       await expect(command.locator(".group-current-value")).toBeHidden();
-      await expect(command.locator(".group-command-label")).toHaveText("MENU");
+      await expect(command.locator(".group-command-label")).toHaveText("Menu");
       await expect(command.locator(".group-command-label")).toBeVisible();
       await expect(page.locator(".current-group-panel")).toHaveCount(0);
     }

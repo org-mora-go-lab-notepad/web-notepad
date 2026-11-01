@@ -85,7 +85,7 @@ test("4. 선택한 언어를 메뉴·패널·하단 메뉴·편집기 안내 문
   await expect(groupStatusName(page)).toHaveText("Ungrouped");
   await page.getByRole("button", { name: "Close Settings" }).click();
   await openMoreMenu(page);
-  await expect(moreCommand(page).locator("span")).toHaveText("MORE");
+  await expect(moreCommand(page).locator("span")).toHaveText("More");
   const systemGroups = await openSystemGroupMenu(page);
   await expect(
     systemGroups.getByRole("button", { name: "All Group", exact: true }),

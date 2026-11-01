@@ -30,7 +30,7 @@ test("1. 검색 명령은 팝업 제어 대상과 펼침 상태를 제공한다"
         { box: true },
       );
 
-      const trigger = page.getByRole("button", { name: "SEARCH", exact: true });
+      const trigger = page.getByRole("button", { name: "Search", exact: true });
 
       await test.step(
         "검증 1: 1. 검색 명령은 팝업 제어 대상과 펼침 상태를 제공한다 — PRD에 기록된 사용자 결과를 이 파일의 assertion으로 직접 확인한다",

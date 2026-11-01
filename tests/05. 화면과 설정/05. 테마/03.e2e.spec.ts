@@ -9,7 +9,7 @@ test("3. 테마를 노트와 별도로 저장하고 새로고침·재접속 시 
   await page.goto("/");
   await page.locator("textarea").fill("Keep this note");
   await openSettingsPanel(page);
-  await page.getByRole("switch", { name: "THEME" }).click();
+  await page.getByRole("switch", { name: "Theme" }).click();
   expect(
     await page.evaluate(() => localStorage.getItem("web-notepad-theme")),
   ).toBe("light");

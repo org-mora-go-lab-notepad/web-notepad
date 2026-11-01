@@ -7,7 +7,7 @@ import {
 } from "../../__util__";
 import { createBookmarkGroupsState } from "./__fixture__";
 
-test("6. MORE의 BOOKMARK는 모든 그룹의 북마크 내용을 표시한다", async ({
+test("6. More의 Bookmark는 모든 그룹의 북마크 내용을 표시한다", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 800 });

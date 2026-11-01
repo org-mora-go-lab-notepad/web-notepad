@@ -38,7 +38,7 @@ test("4. 다른 브라우저 탭의 테마 변경을 현재 열린 앱에 반영
       await test.step(
         "실행 2: 4. 다른 브라우저 탭의 테마 변경을 현재 열린 앱에 반영한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
-          await other.getByRole("switch", { name: "THEME" }).click();
+          await other.getByRole("switch", { name: "Theme" }).click();
         },
         { box: true },
       );

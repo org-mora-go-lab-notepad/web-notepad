@@ -50,17 +50,17 @@ export async function openPanel(page: Page, panelId: string) {
   if (panelId === "shortcuts-panel" || panelId === "settings-panel") {
     if (panelId === "shortcuts-panel") {
       const tools = await openMoreMenu(page);
-      await tools.getByRole("button", { name: /GUIDE|사용 가이드/i }).click();
+      await tools.getByRole("button", { name: /Guide|사용 가이드/i }).click();
       await page
         .getByRole("dialog")
-        .getByRole("button", { name: /SHORTCUT|단축키/i })
+        .getByRole("button", { name: /Shortcut|단축키/i })
         .click();
     } else {
       for (let attempt = 0; attempt < 3; attempt++) {
         try {
           const more = await openMoreMenu(page);
           await more
-            .getByRole("button", { name: /SETTINGS|설정/i })
+            .getByRole("button", { name: /Settings|설정/i })
             .press("Enter", { timeout: 1500 });
           await expect(page.locator("#settings-panel")).toHaveAttribute(
             "aria-hidden",

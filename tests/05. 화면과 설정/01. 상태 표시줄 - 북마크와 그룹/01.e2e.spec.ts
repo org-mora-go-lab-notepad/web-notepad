@@ -12,7 +12,7 @@ test("1. PC와 모바일에서 더보기 버튼과 가이드·검색·북마크 
   const icon = moreCommand(page).locator("svg").first();
 
   await page.setViewportSize(DESKTOP_VIEWPORT);
-  await expect(label).toHaveText("MORE");
+  await expect(label).toHaveText("More");
   await expect(label).toBeInViewport();
   await expect(page.locator(".group-board-command")).toHaveCount(0);
   await expect(systemGroupCommand(page).locator("svg")).toBeHidden();
@@ -119,6 +119,6 @@ test("1. PC와 모바일에서 더보기 버튼과 가이드·검색·북마크 
   await moreCommand(page).click();
   await expect(page.locator("#group-system-menu")).toHaveCount(0);
   await expect(page.locator("#group-more-menu").getByRole("button")).toHaveText(
-    ["GUIDE", "SEARCH", "BOOKMARK", "SETTINGS"],
+    ["Guide", "Search", "Bookmark", "Settings"],
   );
 });

@@ -34,7 +34,7 @@ test("5. 검색 입력란은 Search everything 이름과 안내 문구를 제공
         "실행 3: 5. 검색 입력란은 Search everything 이름과 안내 문구를 제공한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
           await page
-            .getByRole("button", { name: "SEARCH", exact: true })
+            .getByRole("button", { name: "Search", exact: true })
             .click();
         },
         { box: true },

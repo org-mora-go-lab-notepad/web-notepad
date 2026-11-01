@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { openSettingsPanel, openShortcutsPanel } from "../../__util__";
 
-test("2. 하단 더보기 SETTINGS와 가이드 SHORTCUT 진입점으로 패널을 연다", async ({
+test("2. 하단 더보기 Settings와 가이드 Shortcut 진입점으로 패널을 연다", async ({
   page,
 }) => {
   await page.goto("/");

@@ -3,14 +3,14 @@ import { expect, test } from "@playwright/test";
 import { BOTH_VIEWPORTS } from "../../__constant__";
 import { openSettingsPanel } from "../../__util__";
 
-test("2. LIGHT는 작업 영역·편집기·하단 메뉴·그룹 메뉴를 일관된 밝은 색으로 표시한다", async ({
+test("2. Light는 작업 영역·편집기·하단 메뉴·그룹 메뉴를 일관된 밝은 색으로 표시한다", async ({
   page,
 }) => {
   await page.goto("/");
   for (const viewport of BOTH_VIEWPORTS) {
     await page.setViewportSize(viewport);
     await openSettingsPanel(page);
-    await page.getByRole("switch", { name: "THEME" }).click();
+    await page.getByRole("switch", { name: "Theme" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
     await page.getByRole("button", { name: "Close Settings" }).click();
     await expect(page.locator(".workspace")).toHaveCSS(
@@ -32,7 +32,7 @@ test("2. LIGHT는 작업 영역·편집기·하단 메뉴·그룹 메뉴를 일�
     );
     await page.keyboard.press("Escape");
     await openSettingsPanel(page);
-    await page.getByRole("switch", { name: "THEME" }).click();
+    await page.getByRole("switch", { name: "Theme" }).click();
     await expect(page.locator(".workspace")).toHaveCSS(
       "background-color",
       "rgb(17, 17, 16)",

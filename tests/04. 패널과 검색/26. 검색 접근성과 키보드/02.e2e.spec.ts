@@ -34,7 +34,7 @@ test("2. 검색 팝업은 Search 제목으로 이름이 지정된 dialog다", as
         "실행 3: 2. 검색 팝업은 Search 제목으로 이름이 지정된 dialog다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
           await page
-            .getByRole("button", { name: "SEARCH", exact: true })
+            .getByRole("button", { name: "Search", exact: true })
             .click();
         },
         { box: true },
