@@ -9,6 +9,7 @@ import {
   normalizeDashboardStatusNames,
   normalizeDashboardVisibility,
   normalizeLayout,
+  PERSONAL_TAB_TRANSFER_INTENT_EVENT,
   SHARED_TAB_DELETE_INTENT_EVENT,
 } from "../../util";
 import { allocateTab, createGroupEntry } from "./workspace";
@@ -37,6 +38,14 @@ export const createGroupActions: StateCreator<
     set((state) => {
       const original = state.groups.find((group) => group.id === originalId);
       if (!original) return state;
+      if (typeof window !== "undefined") {
+        for (const tab of original.tabs)
+          window.dispatchEvent(
+            new CustomEvent(PERSONAL_TAB_TRANSFER_INTENT_EVENT, {
+              detail: { tabId: tab.id, content: tab.content },
+            }),
+          );
+      }
       const tabIds = new Map(
         original.tabs.map((tab, index) => [
           tab.id,
@@ -58,8 +67,10 @@ export const createGroupActions: StateCreator<
           entry.groupId === originalId
             ? {
                 ...entry,
-                groupId: sharedGroup.id,
-                tab: { ...entry.tab, id: `${sharedGroup.id}-${entry.tab.id}` },
+                // Shared snapshots do not contain personal archive entries.
+                // Keep the original ID in personal history instead of dropping
+                // it when the group becomes shared.
+                groupId: UNGROUPED_GROUP_ID,
               }
             : entry,
         ),
@@ -138,6 +149,22 @@ export const createGroupActions: StateCreator<
     );
     if (
       source &&
+      !isSharedGroupId(source.id) &&
+      isSharedGroupId(groupId) &&
+      state.groups.some((group) => group.id === groupId) &&
+      typeof window !== "undefined"
+    ) {
+      window.dispatchEvent(
+        new CustomEvent(PERSONAL_TAB_TRANSFER_INTENT_EVENT, {
+          detail: {
+            tabId,
+            content: source.tabs.find((tab) => tab.id === tabId)!.content,
+          },
+        }),
+      );
+    }
+    if (
+      source &&
       source.id !== groupId &&
       state.groups.some((group) => group.id === groupId) &&
       isSharedGroupId(source.id) &&
@@ -145,7 +172,11 @@ export const createGroupActions: StateCreator<
     )
       window.dispatchEvent(
         new CustomEvent(SHARED_TAB_DELETE_INTENT_EVENT, {
-          detail: { groupId: source.id, tabId },
+          detail: {
+            groupId: source.id,
+            tabId,
+            content: source.tabs.find((tab) => tab.id === tabId)?.content,
+          },
         }),
       );
     set((state) => {

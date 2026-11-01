@@ -28,5 +28,14 @@ export function sanitizeCloudSnapshot(snapshot: string) {
     )
       throw new Error("Invalid snapshot tabs");
   }
+  if (
+    state.closedTabs.some(
+      (entry) =>
+        !entry?.tab ||
+        typeof entry.tab.id !== "string" ||
+        typeof entry.tab.content !== "string",
+    )
+  )
+    throw new Error("Invalid archived tabs");
   return JSON.stringify(state);
 }

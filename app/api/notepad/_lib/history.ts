@@ -2,6 +2,12 @@ import "server-only";
 
 import { type Client, createClient } from "@libsql/client";
 
+import {
+  backupBeforeRemoval,
+  hasSavedDestination,
+  snapshotTabs,
+} from "./tab-protection";
+
 let client: Client | undefined;
 let schemaReady: Promise<void> | undefined;
 const HISTORY_RETENTION = 100;
@@ -40,6 +46,8 @@ export async function saveNotepadUpdate(
   eventId: string,
   snapshot: string,
   baseEventId?: string | null,
+  deletedTabIds: string[] = [],
+  movedTabs: { id: string; content: string }[] = [],
 ) {
   const database = await ensureSchema();
   const transaction = await database.transaction("write");
@@ -66,6 +74,41 @@ export async function saveNotepadUpdate(
       baseEventId !== (latest?.eventId ?? null)
     ) {
       return { saved: false, latest };
+    }
+    if (latest) {
+      const nextIds = new Set(snapshotTabs(snapshot).map((tab) => tab.id));
+      const previous = JSON.parse(latest.snapshot) as {
+        groups: { tabs: { id: string }[] }[];
+        closedTabs: { tab: { id: string } }[];
+      };
+      const liveIds = new Set(
+        previous.groups.flatMap((group) => group.tabs.map((tab) => tab.id)),
+      );
+      const confirmedArchiveDeletes = new Set(
+        previous.closedTabs
+          .map((entry) => entry.tab.id)
+          .filter((id) => deletedTabIds.includes(id) && !liveIds.has(id)),
+      );
+      const missing = snapshotTabs(latest.snapshot).filter(
+        (tab) => !nextIds.has(tab.id),
+      );
+      const protectedTabIds: string[] = [];
+      for (const tab of missing) {
+        if (confirmedArchiveDeletes.has(tab.id)) continue;
+        const moved = movedTabs.find((item) => item.id === tab.id);
+        if (!moved || !(await hasSavedDestination(transaction, userId, moved)))
+          protectedTabIds.push(tab.id);
+      }
+      if (protectedTabIds.length)
+        return { saved: false, latest, protectedTabIds };
+      if (snapshotTabs(latest.snapshot).some((tab) => !nextIds.has(tab.id))) {
+        await backupBeforeRemoval(
+          transaction,
+          `personal:${userId}`,
+          latest.eventId,
+          latest.snapshot,
+        );
+      }
     }
     await transaction.execute({
       sql: `INSERT OR IGNORE INTO notepad_update_history

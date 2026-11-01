@@ -13,7 +13,6 @@ import {
   isSharedGroupId,
   normalizeLayout,
   setPaneActiveTabId,
-  SHARED_TAB_DELETE_INTENT_EVENT,
 } from "../../util";
 import {
   allocateTab,
@@ -121,57 +120,23 @@ export const createTabLifecycleActions: StateCreator<
     hideTabFromEditor(set, get, tabId);
   },
   archiveTab: (tabId) => {
-    dispatchSharedTabDeleteIntent(get(), tabId);
-    archiveTabEntry(set, get, tabId);
+    preserveTabEntry(set, get, tabId);
   },
   deleteTab: (tabId) => {
-    dispatchSharedTabDeleteIntent(get(), tabId);
-    deleteTabEntry(set, get, tabId);
+    // Legacy callers must not permanently remove a tab without confirmation.
+    preserveTabEntry(set, get, tabId);
   },
 });
 
-const dispatchSharedTabDeleteIntent = (state: NotepadState, tabId: string) => {
-  const group = getTabGroup(state, tabId);
-  if (!group || !isSharedGroupId(group.id) || typeof window === "undefined")
-    return;
-  window.dispatchEvent(
-    new CustomEvent(SHARED_TAB_DELETE_INTENT_EVENT, {
-      detail: { groupId: group.id, tabId },
-    }),
-  );
-};
-
-const deleteTabEntry = (
+const preserveTabEntry = (
   set: (partial: Partial<NotepadState>) => void,
   get: () => NotepadState,
   tabId: string,
 ) => {
-  const state = get();
-  const group = getTabGroup(state, tabId);
-  const tab = group?.tabs.find((item) => item.id === tabId);
-  if (!group || !tab) return;
-  const remainingTabs = group.tabs.filter((item) => item.id !== tabId);
-  if (!remainingTabs.some((item) => item.open)) {
-    const { tab: replacement, nextTabNumber } = allocateTab(state);
-    set({
-      ...updateGroup(state, group.id, (current) => ({
-        ...current,
-        ...EMPTY_SPLIT_LAYOUT,
-        splitRatio: current.splitRatio,
-        tabs: [...remainingTabs, replacement],
-        activeTabId: replacement.id,
-      })),
-      nextTabNumber,
-    });
-    return;
-  }
-  set(
-    updateGroup(state, group.id, (current) =>
-      normalizeLayout(
-        assignTabToPane({ ...current, tabs: remainingTabs }, tabId, null),
-      ),
-    ),
-  );
+  const group = getTabGroup(get(), tabId);
+  if (!group) return;
+  if (isSharedGroupId(group.id)) hideTabFromEditor(set, get, tabId);
+  else archiveTabEntry(set, get, tabId);
 };
 
 const hideTabFromEditor = (

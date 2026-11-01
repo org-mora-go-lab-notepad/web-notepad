@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 
 import { sharingTest as test } from "../../__fixture__";
 import { getApi } from "../../__util__/request";
-test("2. X로 닫아 DB에서 제거한 탭의 알람도 목록에서 제거한다", async ({
+test("2. 삭제 확인을 거쳐 제거한 탭의 알람도 목록에서 제거한다", async ({
   sharing: { owner, guest, id },
 }) => {
   const record = (
@@ -19,6 +19,7 @@ test("2. X로 닫아 DB에서 제거한 탭의 알람도 목록에서 제거한�
         bookmarks: [],
       },
       deletedTabIds: [tab.id],
+      confirmedDeletion: true,
     },
   });
   expect(response.ok()).toBe(true);

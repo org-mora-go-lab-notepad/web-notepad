@@ -29,6 +29,7 @@ type PendingGroup = {
   base: SharedRecord;
   data: SharedGroupData;
   deletedTabIds?: string[];
+  movedTabs?: { id: string; content: string }[];
 };
 const same = (left: unknown, right: unknown) =>
   JSON.stringify(left) === JSON.stringify(right);
@@ -65,6 +66,7 @@ export function useSharedGroups(hydrated: boolean) {
     const editedContents = new Map<string, string>();
     const changedBeforeLoad = new Set<string>();
     const explicitDeletes = new Map<string, Set<string>>();
+    const movedContents = new Map<string, string>();
     const pendingKey = (id: string, groupId: string) =>
       `web-notepad-shared-pending:${id}:${groupId}`;
     const share = inviteToken;
@@ -185,6 +187,13 @@ export function useSharedGroups(hydrated: boolean) {
             baseRevision: base.revision,
             data,
             deletedTabIds,
+            movedTabIds: deletedTabIds,
+            movedTabs: deletedTabIds.map((tabId) => ({
+              id: tabId,
+              content:
+                movedContents.get(tabId) ??
+                base.data.tabs.find((tab) => tab.id === tabId)!.content,
+            })),
           }),
         });
         if (response.status === 409) {
@@ -194,10 +203,28 @@ export function useSharedGroups(hydrated: boolean) {
           };
           if (!active) return;
           if (reset) {
+            const local = currentGroup(id);
+            const candidate = local ? dataForSave(id, local) : data;
+            const localIds = new Set(candidate.tabs.map((tab) => tab.id));
+            const localBookmarks = new Set(
+              candidate.bookmarks.map((bookmark) => bookmark.id),
+            );
             baselines.set(id, remote);
-            applyData(remote.data);
+            applyData({
+              ...candidate,
+              tabs: [
+                ...candidate.tabs,
+                ...remote.data.tabs.filter((tab) => !localIds.has(tab.id)),
+              ],
+              bookmarks: [
+                ...candidate.bookmarks,
+                ...remote.data.bookmarks.filter(
+                  (bookmark) => !localBookmarks.has(bookmark.id),
+                ),
+              ],
+            });
             explicitDeletes.delete(id);
-            persistPending(id, null);
+            queue(id);
             return;
           }
           const latestLocal = currentGroup(id);
@@ -219,7 +246,10 @@ export function useSharedGroups(hydrated: boolean) {
         baselines.set(id, saved);
         applySavedDeletes(id, deletedTabIds);
         const remainingDeletes = explicitDeletes.get(id);
-        for (const tabId of deletedTabIds) remainingDeletes?.delete(tabId);
+        for (const tabId of deletedTabIds) {
+          remainingDeletes?.delete(tabId);
+          movedContents.delete(tabId);
+        }
         const savedTabIds = new Set(saved.data.tabs.map((tab) => tab.id));
         for (const tabId of remainingDeletes ?? [])
           if (!savedTabIds.has(tabId)) remainingDeletes?.delete(tabId);
@@ -260,6 +290,12 @@ export function useSharedGroups(hydrated: boolean) {
         base,
         data,
         deletedTabIds: approvedDeletedTabIds(id, base, data),
+        movedTabs: approvedDeletedTabIds(id, base, data).map((tabId) => ({
+          id: tabId,
+          content:
+            movedContents.get(tabId) ??
+            base.data.tabs.find((tab) => tab.id === tabId)!.content,
+        })),
       });
       clearTimer(id);
       timers.set(
@@ -330,6 +366,8 @@ export function useSharedGroups(hydrated: boolean) {
             baselines.set(remote.id, pending?.base ?? remote);
             if (pending?.deletedTabIds?.length)
               explicitDeletes.set(remote.id, new Set(pending.deletedTabIds));
+            for (const tab of pending?.movedTabs ?? [])
+              movedContents.set(tab.id, tab.content);
             if (!currentGroup(remote.id))
               applyData(pending?.data ?? remote.data);
             else if (!pending && !changedBeforeLoad.has(remote.id))
@@ -451,6 +489,7 @@ export function useSharedGroups(hydrated: boolean) {
         baselines.clear();
         editedContents.clear();
         explicitDeletes.clear();
+        movedContents.clear();
         setSavingTabIds([]);
         timers.forEach(clearTimeout);
         timers.clear();
@@ -492,7 +531,11 @@ export function useSharedGroups(hydrated: boolean) {
     };
     const onSharedTabDeleteIntent = (event: Event) => {
       const detail = (
-        event as CustomEvent<{ groupId?: string; tabId?: string }>
+        event as CustomEvent<{
+          groupId?: string;
+          tabId?: string;
+          content?: string;
+        }>
       ).detail;
       if (
         !detail ||
@@ -504,6 +547,8 @@ export function useSharedGroups(hydrated: boolean) {
       const ids = explicitDeletes.get(detail.groupId) ?? new Set<string>();
       ids.add(detail.tabId);
       explicitDeletes.set(detail.groupId, ids);
+      if (typeof detail.content === "string")
+        movedContents.set(detail.tabId, detail.content);
     };
     window.addEventListener("shared-groups-changed", onShared);
     window.addEventListener(

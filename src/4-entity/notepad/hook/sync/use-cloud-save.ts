@@ -7,16 +7,24 @@ import {
   createCloudSnapshot,
   mergeCloudSnapshot,
   normalizePersistedState,
+  preserveMissingTabs,
 } from "../../persistence";
 import { useNotepadStore } from "../../store";
 import type { GroupEntry } from "../../type";
-import { getPaneLayout, isSharedGroupId } from "../../util";
+import {
+  getPaneLayout,
+  isSharedGroupId,
+  PERSONAL_TAB_DELETE_INTENT_EVENT,
+  PERSONAL_TAB_TRANSFER_INTENT_EVENT,
+} from "../../util";
 
 export type CloudSaveStatus = "pending" | "saving" | "saved" | "error" | null;
 type PendingUpdate = {
   eventId: string;
   snapshot: string;
   baseEventId?: string | null;
+  deletedTabIds?: string[];
+  movedTabs?: { id: string; content: string }[];
 };
 type Baseline = { eventId: string | null; snapshot: string | null };
 type CloudRecord = { eventId: string; snapshot: string; createdAt: number };
@@ -88,6 +96,8 @@ export function useCloudSave(hydrated: boolean) {
     let timer: ReturnType<typeof setTimeout> | undefined;
     let lastSnapshot = createCloudSnapshot(useNotepadStore.getState());
     const editedContents = new Map<string, string>();
+    const explicitDeletes = new Set<string>();
+    const explicitTransfers = new Map<string, string>();
     const pendingKey = (id: string) => `web-notepad-cloud-pending:${id}`;
     const baseKey = (id: string) => `web-notepad-cloud-base:${id}`;
     const localKey = (id: string) => `web-notepad-cloud-local:${id}`;
@@ -189,6 +199,11 @@ export function useCloudSave(hydrated: boolean) {
               snapshot,
               baseEventId: baseline.eventId,
             };
+      pending.deletedTabIds = [...explicitDeletes];
+      pending.movedTabs = [...explicitTransfers].map(([id, content]) => ({
+        id,
+        content,
+      }));
       writeLocal(pendingKey(userId), pending);
       writeLocal(localKey(userId), snapshot);
       setStatus("pending");
@@ -292,14 +307,49 @@ export function useCloudSave(hydrated: boolean) {
         });
         if (!valid(id, version)) return;
         if (response.status === 409) {
-          const { latest } = (await response.json()) as {
+          const { latest, protectedTabIds } = (await response.json()) as {
             latest: CloudRecord | null;
+            protectedTabIds?: string[];
           };
+          if (!valid(id, version)) return;
+          if (latest && protectedTabIds?.length) {
+            const state = useNotepadStore.getState();
+            // The destination save uses a different queue. Leave the source in
+            // the DB and retry until that save commits, including after reload.
+            if (
+              state.groups.some(
+                (group) =>
+                  isSharedGroupId(group.id) &&
+                  group.tabs.some((tab) =>
+                    protectedTabIds.some(
+                      (id) => tab.id === id || tab.id === `${group.id}-${id}`,
+                    ),
+                  ),
+              )
+            )
+              throw new Error("Waiting for durable tab destination");
+            const repaired = preserveMissingTabs(
+              createCloudSnapshot(state),
+              latest.snapshot,
+              protectedTabIds,
+            );
+            apply(repaired, true);
+            rememberBase({
+              eventId: latest.eventId,
+              snapshot: latest.snapshot,
+            });
+            queue(repaired);
+            return;
+          }
           if (valid(id, version)) reconcile(latest, false);
           return;
         }
         if (!response.ok) throw new Error("Cloud save failed");
         rememberBase({ eventId: update.eventId, snapshot: update.snapshot });
+        for (const tabId of update.deletedTabIds ?? [])
+          explicitDeletes.delete(tabId);
+        for (const tab of update.movedTabs ?? [])
+          explicitTransfers.delete(tab.id);
         setLastSavedAt(Date.now());
         for (const [tabId, content] of sentContents)
           if (editedContents.get(tabId) === content)
@@ -384,6 +434,8 @@ export function useCloudSave(hydrated: boolean) {
         setServerLoaded(false);
         setLastSavedAt(null);
         generation += 1;
+        explicitDeletes.clear();
+        explicitTransfers.clear();
         clearTimer();
         pending = null;
         initialized = false;
@@ -418,8 +470,13 @@ export function useCloudSave(hydrated: boolean) {
           restored &&
           typeof restored.eventId === "string" &&
           typeof restored.snapshot === "string"
-        )
+        ) {
           pending = restored;
+          for (const id of restored.deletedTabIds ?? [])
+            explicitDeletes.add(id);
+          for (const tab of restored.movedTabs ?? [])
+            explicitTransfers.set(tab.id, tab.content);
+        }
         await pull();
       } catch {
         if (active) {
@@ -439,6 +496,25 @@ export function useCloudSave(hydrated: boolean) {
       clearTimer();
       void flush(true);
     };
+    const onDeleteIntent = (event: Event) => {
+      const id = (event as CustomEvent<{ tabId?: string }>).detail?.tabId;
+      if (typeof id === "string") explicitDeletes.add(id);
+    };
+    window.addEventListener(PERSONAL_TAB_DELETE_INTENT_EVENT, onDeleteIntent);
+    const onTransferIntent = (event: Event) => {
+      const detail = (
+        event as CustomEvent<{ tabId?: string; content?: string }>
+      ).detail;
+      if (
+        typeof detail?.tabId === "string" &&
+        typeof detail.content === "string"
+      )
+        explicitTransfers.set(detail.tabId, detail.content);
+    };
+    window.addEventListener(
+      PERSONAL_TAB_TRANSFER_INTENT_EVENT,
+      onTransferIntent,
+    );
     window.addEventListener("notepad-auth-changed", refreshSession);
     window.addEventListener("focus", refresh);
     window.addEventListener("online", refresh);
@@ -449,6 +525,14 @@ export function useCloudSave(hydrated: boolean) {
       flushBeforeLeave();
       active = false;
       unsubscribe();
+      window.removeEventListener(
+        PERSONAL_TAB_TRANSFER_INTENT_EVENT,
+        onTransferIntent,
+      );
+      window.removeEventListener(
+        PERSONAL_TAB_DELETE_INTENT_EVENT,
+        onDeleteIntent,
+      );
       clearTimer();
       window.removeEventListener("notepad-auth-changed", refreshSession);
       window.removeEventListener("focus", refresh);

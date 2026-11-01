@@ -22,6 +22,9 @@ export async function POST(request: Request) {
       : {};
   const data = input.data as SharedGroupData | undefined;
   const deletedTabIds = input.deletedTabIds ?? [];
+  const movedTabIds = input.movedTabIds ?? [];
+  const movedTabs = input.movedTabs ?? [];
+  const confirmedDeletion = input.confirmedDeletion ?? false;
   if (
     typeof input.id !== "string" ||
     !/^shared-[0-9a-f-]{36}$/i.test(input.id) ||
@@ -38,6 +41,21 @@ export async function POST(request: Request) {
     !deletedTabIds.every(
       (tabId) => typeof tabId === "string" && tabId.length <= 200,
     ) ||
+    !Array.isArray(movedTabIds) ||
+    typeof confirmedDeletion !== "boolean" ||
+    !Array.isArray(movedTabs) ||
+    JSON.stringify(movedTabs).length > 5_000_000 ||
+    !movedTabs.every(
+      (tab) =>
+        tab &&
+        typeof tab.id === "string" &&
+        typeof tab.content === "string" &&
+        movedTabIds.includes(tab.id),
+    ) ||
+    movedTabIds.length > 1_000 ||
+    !movedTabIds.every(
+      (tabId) => typeof tabId === "string" && deletedTabIds.includes(tabId),
+    ) ||
     !data.tabs.every(
       (tab) =>
         tab && typeof tab.id === "string" && typeof tab.content === "string",
@@ -52,11 +70,19 @@ export async function POST(request: Request) {
       Number(input.baseRevision),
       data,
       deletedTabIds,
+      movedTabIds,
+      confirmedDeletion,
+      movedTabs,
     );
     if (result.kind === "forbidden")
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     if (result.kind === "missing")
       return NextResponse.json({ error: "Group unavailable" }, { status: 404 });
+    if (result.kind === "destination-pending")
+      return NextResponse.json(
+        { error: "Tab destination is not saved yet" },
+        { status: 503 },
+      );
     if (result.kind === "conflict")
       return NextResponse.json({ group: result.record }, { status: 409 });
     if (result.kind === "unsafe")
