@@ -75,8 +75,11 @@ export function useHomeNavigation({ hydrated, addTabToPane }: Options) {
 
   const restoreView = useCallback(
     (snapshot: ViewSnapshot) => {
-      if (window.matchMedia("(max-width: 512px)").matches) {
-        updateGroupMenuOpen(snapshot.groupMenuOpen ?? false);
+      if (
+        window.matchMedia("(max-width: 512px)").matches &&
+        snapshot.groupMenuOpen !== undefined
+      ) {
+        updateGroupMenuOpen(snapshot.groupMenuOpen);
       }
       const state = useNotepadStore.getState();
       const exists =

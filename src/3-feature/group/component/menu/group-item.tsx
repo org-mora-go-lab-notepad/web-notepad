@@ -67,9 +67,13 @@ export function GroupItem({
     const rowHeight = window.matchMedia("(max-width: 512px)").matches ? 44 : 40;
     const menuHeight =
       dropdownRef.current?.getBoundingClientRect().height ?? 4 * rowHeight + 12;
+    const menuWidth = dropdownRef.current?.getBoundingClientRect().width ?? 216;
     const below = rect.bottom + 8;
     setMenuPosition({
-      left: Math.max(8, Math.min(rect.right - 164, window.innerWidth - 172)),
+      left: Math.max(
+        8,
+        Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 8),
+      ),
       top:
         below + menuHeight <= window.innerHeight - 8
           ? below
@@ -283,17 +287,19 @@ export function GroupItem({
             >
               {editable && (
                 <>
-                  <button
-                    type="button"
-                    role={contextActions ? "menuitem" : undefined}
-                    onClick={() => {
-                      onCloseTabs();
-                      onToggleActions();
-                    }}
-                  >
-                    <XSquare size={16} />
-                    <span>{t.closeGroupTabs}</span>
-                  </button>
+                  {!contextActions && (
+                    <button
+                      type="button"
+                      role={contextActions ? "menuitem" : undefined}
+                      onClick={() => {
+                        onCloseTabs();
+                        onToggleActions();
+                      }}
+                    >
+                      <XSquare size={16} />
+                      <span>{t.closeGroupTabs}</span>
+                    </button>
+                  )}
                   {contextActions && (
                     <button
                       type="button"
@@ -323,19 +329,21 @@ export function GroupItem({
                         <span>{t.shareGroup}</span>
                       </button>
                     )}
-                  <button
-                    type="button"
-                    aria-label={t.editGroupFor(name)}
-                    role={contextActions ? "menuitem" : undefined}
-                    title={t.edit}
-                    onClick={() => {
-                      onToggleActions();
-                      setEditingName(name);
-                    }}
-                  >
-                    <Pencil size={16} />
-                    <span>{t.edit}</span>
-                  </button>
+                  {!contextActions && (
+                    <button
+                      type="button"
+                      aria-label={t.editGroupFor(name)}
+                      role={contextActions ? "menuitem" : undefined}
+                      title={t.edit}
+                      onClick={() => {
+                        onToggleActions();
+                        setEditingName(name);
+                      }}
+                    >
+                      <Pencil size={16} />
+                      <span>{t.edit}</span>
+                    </button>
+                  )}
                   {!contextActions && !shared && (
                     <button
                       type="button"

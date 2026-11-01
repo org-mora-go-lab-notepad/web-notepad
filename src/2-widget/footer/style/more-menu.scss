@@ -1,0 +1,106 @@
+@use "../../../5-shared/style/variable" as v;
+@use "../../../3-feature/theme";
+
+.footer {
+  .footer-more {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .more-command {
+    width: 40px;
+    height: 35px;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--color-command);
+    cursor: pointer;
+
+    &:hover,
+    &[aria-expanded="true"] {
+      color: v.$ink;
+      background: transparent;
+    }
+
+    &:focus-visible {
+      outline: 2px solid v.$signal;
+      outline-offset: 2px;
+    }
+  }
+
+  .group-more-menu {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 12px);
+    z-index: 90;
+    width: max-content;
+    min-width: 176px;
+    max-width: calc(100vw - 16px);
+    padding: 5px;
+    border: 1px solid v.$line;
+    border-radius: 5px;
+    background: v.$raised;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 20%);
+    touch-action: manipulation;
+
+    .theme {
+      min-height: 44px;
+      margin-top: 5px;
+      padding: 5px 10px;
+      gap: 12px;
+      border-top: 1px solid v.$line;
+      .theme-label {
+        font: inherit;
+        font-size: calc(#{v.font(14px)} + 1px);
+      }
+    }
+
+    button {
+      width: 100%;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 10px;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      color: v.$ink;
+      font: inherit;
+      font-size: calc(#{v.font(14px)} + 1px);
+      text-align: left;
+      white-space: nowrap;
+
+      &:hover,
+      &:focus-visible {
+        background: v.$line;
+      }
+
+      > svg {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
+      }
+    }
+  }
+
+  @media (max-width: 512px) {
+    .footer-more {
+      top: calc((100% - env(safe-area-inset-bottom)) / 2);
+      right: 4px;
+    }
+    .more-command {
+      width: 44px;
+      height: 61.2px;
+    }
+    .group-more-menu button {
+      min-height: 44px;
+    }
+  }
+}

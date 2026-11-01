@@ -1,7 +1,9 @@
 @use "../../5-shared/style/variable" as v;
+@use "./style/more-menu";
 
 .footer {
   --status-icon-growth: 0px;
+  z-index: 55;
   display: flex;
   align-items: center;
   min-width: 0;
@@ -34,6 +36,7 @@
   }
 
   .status-meta {
+    padding-inline: 40px;
     width: 100%;
     min-width: 0;
     display: flex;
@@ -45,8 +48,9 @@
     min-width: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: safe center;
     gap: 25px;
+    padding-inline: 14px;
     overflow-x: auto;
     scrollbar-width: none;
 
@@ -56,6 +60,31 @@
   }
 
   .footer-dock-item {
+    position: relative;
+    transition: opacity 120ms ease;
+
+    &.is-dragging {
+      opacity: 0.4;
+    }
+    &.is-drop-before::before,
+    &.is-drop-after::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      bottom: 3px;
+      width: 3px;
+      border-radius: 3px;
+      background: v.$signal;
+      box-shadow: 0 0 0 2px v.$strip;
+      pointer-events: none;
+    }
+    &.is-drop-before::before {
+      left: -14px;
+    }
+    &.is-drop-after::after {
+      right: -14px;
+    }
+
     min-width: 0;
     flex: 0 0 auto;
     display: flex;
@@ -228,13 +257,13 @@
     }
 
     .status-meta {
-      padding: 0;
+      padding: 0 48px 0 0;
       display: block;
     }
 
     .footer-dock {
       height: 100%;
-      padding: 6px 21px calc(6px + env(safe-area-inset-bottom));
+      padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0;

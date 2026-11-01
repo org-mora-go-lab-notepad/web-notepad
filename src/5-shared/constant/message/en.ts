@@ -106,6 +106,7 @@ export const en = {
   statusDone: "Done",
   dashboardEmpty: "None",
   group: "Group",
+  defaultGroup: "Default Group",
   sidebar: "Group",
   sidebarTitle: "Menu",
   toggleSidebar: "Toggle groups",

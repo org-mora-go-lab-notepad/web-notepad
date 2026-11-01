@@ -110,6 +110,7 @@ export const ko: Messages = {
   statusInProgress: "진행 중",
   statusDone: "완료",
   group: "그룹",
+  defaultGroup: "기본 그룹",
   sidebar: "그룹",
   sidebarTitle: "메뉴",
   toggleSidebar: "그룹 열기 또는 닫기",

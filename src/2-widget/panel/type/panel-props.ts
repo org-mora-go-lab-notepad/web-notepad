@@ -42,7 +42,4 @@ export type PanelProps = {
   onMoveGroup: ComponentProps<typeof Group>["onMoveGroup"];
   onToggleGroupPin: ComponentProps<typeof Group>["onTogglePinGroup"];
   onOpenShortcuts: () => void;
-  onOpenSettings: ComponentProps<typeof Group>["onOpenSettings"];
-  onToggleBookmarks: ComponentProps<typeof Group>["onToggleBookmarks"];
-  onToggleSearch: ComponentProps<typeof Group>["onToggleSearch"];
 };

@@ -68,10 +68,10 @@ export function DashboardStatusEditor({
         <div className="dashboard-status-editor-fields">
           {DASHBOARD_STATUSES.map((status) => (
             <label key={status}>
-              <span>{labels[status]}</span>
+              <span>{defaults[status] || labels[status]}</span>
               <input
                 value={draft[status] ?? ""}
-                placeholder={defaults[status] ?? labels[status]}
+                placeholder=""
                 maxLength={30}
                 onChange={(event) =>
                   setDraft((current) => ({

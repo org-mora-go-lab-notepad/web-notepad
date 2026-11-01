@@ -119,7 +119,7 @@ export function useBoard() {
             ownerName: "Me",
             title: group.name,
             description: "",
-            noteCount: tabs.length,
+            noteCount: group.tabs.filter((tab) => tab.content.trim()).length,
             bookmarkCount: tabs.filter((tab) => tab.bookmarked).length,
             notes: tabs.map(
               ({

@@ -26,8 +26,8 @@ test("1. 검색과 북마크는 20% 넓고 중앙보다 80px 위인 모달로 �
       ),
     ).toBe("rgba(0, 0, 0, 0.65)");
     const widthWithMenu = (await workspace.boundingBox())!.width;
-    expect(widthWithMenu).toBeLessThanOrEqual(before);
-    if (width >= 768) expect(widthWithMenu).toBeLessThan(before);
+    expect(widthWithMenu).toBeCloseTo(before, 0);
+    await expect(page.locator("#groups-menu")).toHaveCount(0);
     await expect(
       popup.locator(".side-panel-resizer, .side-panel-pin, .side-panel-drawer"),
     ).toHaveCount(0);
