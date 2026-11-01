@@ -5,6 +5,7 @@ import { createHash, createHmac } from "node:crypto";
 import { cookies } from "next/headers";
 
 import { readSession, SESSION_COOKIE } from "../auth/_lib/session";
+import { signResponseLinks, verifiedShareLink } from "./share-links";
 
 export async function forwardToBff(request: Request) {
   const headers = { "Cache-Control": "private, no-store" };
@@ -53,6 +54,11 @@ export async function forwardToBff(request: Request) {
         version: 1,
         issuedAt: Date.now(),
         user,
+        verifiedShareLink: verifiedShareLink(
+          incoming.pathname,
+          request.method,
+          body,
+        ),
         url: request.url,
         method: request.method,
         origin: request.headers.get("origin"),
@@ -78,6 +84,25 @@ export async function forwardToBff(request: Request) {
     for (const name of ["content-type", "allow", "retry-after"])
       if (upstream.headers.has(name))
         responseHeaders.set(name, upstream.headers.get(name)!);
+    if (
+      upstream.ok &&
+      ((incoming.pathname === "/api/groups/share" &&
+        request.method === "POST") ||
+        (incoming.pathname === "/api/board" && request.method === "GET"))
+    ) {
+      return Response.json(
+        signResponseLinks(
+          incoming.pathname,
+          request.method,
+          await upstream.json(),
+          request.url,
+        ),
+        {
+          status: upstream.status,
+          headers: responseHeaders,
+        },
+      );
+    }
     return new Response(upstream.body, {
       status: upstream.status,
       headers: responseHeaders,

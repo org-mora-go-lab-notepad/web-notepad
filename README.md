@@ -2,7 +2,7 @@
 
 탭과 그룹으로 메모를 정리하고, 대시보드와 공유 보드로 협업하는 브라우저 노트 앱입니다.
 
-**현재 버전:** `1.9.35` · **개발 서버:** `http://localhost:3000` · **E2E:** 704개
+**현재 버전:** `1.9.35` · **개발 서버:** `http://localhost:3000` · **E2E:** 707개
 
 [PRD](PRD.md) · [상세 요구사항](tests-prd/) · [E2E 가이드](tests/README.md) · [버전 이력](versions/)
 
@@ -137,7 +137,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-현재 프런트 704개의 E2E가 등록되어 있습니다. BE 전용 48개와 대응 문서는 BFF로 이관했습니다. 프런트 통합 테스트 실행 시 `NOTEPAD_BFF_DIR`에 BFF 체크아웃 경로를 지정합니다. 기본값은 `../../org-mora-go-lab-notepad/web-notepad-bff`이며 BFF의 `npm ci`를 먼저 실행해야 합니다. 테스트는 별도 BFF 프로세스와 로컬 파일 DB를 사용합니다. `tests-prd/`의 각 번호 요구사항은 `tests/`의 같은 번호 `e2e.spec.ts`와 1:1로 대응합니다. 구조 검사는 번호 대응, 파일당 단일 테스트, 최소 코드 분량과 공통 리소스 배럴을 확인합니다.
+현재 프런트 707개의 E2E가 등록되어 있습니다. BE 전용 48개와 대응 문서는 BFF로 이관했습니다. 프런트 통합 테스트 실행 시 `NOTEPAD_BFF_DIR`에 BFF 체크아웃 경로를 지정합니다. 기본값은 `../../org-mora-go-lab-notepad/web-notepad-bff`이며 BFF의 `npm ci`를 먼저 실행해야 합니다. 테스트는 별도 BFF 프로세스와 로컬 파일 DB를 사용합니다. `tests-prd/`의 각 번호 요구사항은 `tests/`의 같은 번호 `e2e.spec.ts`와 1:1로 대응합니다. 구조 검사는 번호 대응, 파일당 단일 테스트, 최소 코드 분량과 공통 리소스 배럴을 확인합니다.
 
 ## 버전과 배포
 
@@ -152,7 +152,7 @@ Vercel의 Production Branch는 `main`을 사용합니다. 배포 환경에서 �
 https://<배포-도메인>/api/auth/oauth/kakao/callback
 ```
 
-Turso 환경 변수는 BFF에만 설정합니다. BFF를 먼저 배포한 뒤 프런트에 `NOTEPAD_BFF_URL`, `NOTEPAD_BFF_SECRET`을 설정합니다. 기존 공유 링크를 유지하도록 BFF의 `SHARE_TOKEN_SECRET`은 기존 프런트의 AUTH_SECRET과 같아야 합니다. [전환·롤백 절차](https://github.com/org-mora-go-lab-notepad/web-notepad-bff/blob/main/docs/migration.md)를 참고하세요. 이번 코드 이관으로 운영 DB를 정리하거나 탭을 삭제하지 않습니다.
+Turso 환경 변수는 BFF에만 설정합니다. BFF를 먼저 배포한 뒤 프런트에 `NOTEPAD_BFF_URL`, `NOTEPAD_BFF_SECRET`을 설정합니다. 기존 `AUTH_SECRET`은 프런트에서 변경 없이 유지합니다. 프런트가 세션·기존 공유 링크를 검증하고 새 링크를 서명하므로 BFF에 AUTH_SECRET을 복사하거나 SHARE_TOKEN_SECRET을 설정할 필요가 없습니다. BFF는 별도 게이트웨이 서명에 포함된 검증 결과를 확인하고 DB의 공유 활성 상태·버전을 다시 검사합니다. [전환·롤백 절차](https://github.com/org-mora-go-lab-notepad/web-notepad-bff/blob/main/docs/migration.md)를 참고하세요. 이번 코드 이관으로 운영 DB를 정리하거나 탭을 삭제하지 않습니다.
 
 ## 로컬 FE–BFF 연결과 Swagger
 

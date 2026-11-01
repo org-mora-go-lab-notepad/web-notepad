@@ -26,6 +26,17 @@ function sign(value: string) {
     .digest("base64url");
 }
 
+export function createGroupShareToken(groupId: string, version = 0) {
+  if (
+    !/^shared-[0-9a-f-]{36}$/i.test(groupId) ||
+    !Number.isSafeInteger(version) ||
+    version < 0
+  )
+    throw new Error("Invalid share link descriptor");
+  const payload = version ? `${groupId}.${version}` : groupId;
+  return `${payload}.${sign("group-share:" + payload)}`;
+}
+
 export function readGroupShareToken(token: string) {
   const parts = token.split(".");
   if (parts.length !== 2 && parts.length !== 3) return null;

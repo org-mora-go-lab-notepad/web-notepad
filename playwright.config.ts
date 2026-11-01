@@ -32,7 +32,6 @@ export default defineConfig({
       url: "http://127.0.0.1:3101/api/health",
       env: {
         NOTEPAD_BFF_SECRET: "test-bff-secret",
-        SHARE_TOKEN_SECRET: "test-auth-secret",
         TURSO_DATABASE_URL:
           "file:" + path.resolve("test-results/notepad-e2e.db"),
         TURSO_AUTH_TOKEN: "",

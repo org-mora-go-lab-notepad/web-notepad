@@ -39,10 +39,6 @@ const frontendCli = nextCli(frontend),
   bffCli = nextCli(bff);
 const gatewaySecret =
   process.env.NOTEPAD_BFF_SECRET || "notepad-local-bff-only";
-const shareSecret =
-  process.env.AUTH_SECRET ??
-  process.env.KAKAO_REST_API_KEY ??
-  "web-notepad-local-development-session";
 const bffUrl = "http://127.0.0.1:3001";
 if (process.argv.includes("--check")) {
   console.log(
@@ -111,11 +107,14 @@ if (process.argv.includes("--check")) {
     const backendEnv = {
       ...inheritedEnv,
       NOTEPAD_BFF_SECRET: gatewaySecret,
-      SHARE_TOKEN_SECRET: shareSecret,
     };
     // Kakao credentials stay in the frontend; BFF loads its own .env.local DB settings.
     for (const key of Object.keys(backendEnv))
-      if (key === "AUTH_SECRET" || key.startsWith("KAKAO_"))
+      if (
+        key === "AUTH_SECRET" ||
+        key === "SHARE_TOKEN_SECRET" ||
+        key.startsWith("KAKAO_")
+      )
         delete backendEnv[key];
     launch(bff, bffCli, 3001, backendEnv);
     const deadline = Date.now() + 60_000;
