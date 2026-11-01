@@ -109,8 +109,8 @@ export function useBoard() {
       localGroups
         .filter((group) => !isSharedGroupId(group.id))
         .map((group) => {
-          const tabs = group.tabs.filter(
-            (tab) => tab.open && hasBoardVisibleSharedContent(tab.content),
+          const tabs = group.tabs.filter((tab) =>
+            hasBoardVisibleSharedContent(tab.content),
           );
           return {
             id: `local-${group.id}`,
@@ -130,6 +130,8 @@ export function useBoard() {
                 bookmarked,
                 selectedLines,
                 updatedAt,
+                dashboardStatus,
+                tabColor,
               }) => ({
                 id,
                 title,
@@ -137,6 +139,8 @@ export function useBoard() {
                 bookmarked,
                 selectedLines,
                 updatedAt,
+                dashboardStatus,
+                tabColor,
               }),
             ),
             memberCount: 1,

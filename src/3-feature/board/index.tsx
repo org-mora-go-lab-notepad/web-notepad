@@ -13,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import {
+  type CSSProperties,
   useCallback,
   useContext,
   useEffect,
@@ -26,7 +27,12 @@ import {
   ALL_GROUP_ID,
   ALL_MY_GROUP_ID,
   ALL_SHARED_GROUP_ID,
+  type BoardPost,
+  DASHBOARD_STATUSES,
+  getStatusColor,
+  getTabStatus,
   UNGROUPED_GROUP_ID,
+  useNotepadStore,
 } from "@/src/4-entity/notepad";
 import { GroupSharingContext, useI18n } from "@/src/5-shared/hook";
 import { ConfirmPopup, FixedPageHeader, SearchField } from "@/src/5-shared/ui";
@@ -83,11 +89,25 @@ export function Board({ onReturnHome }: { onReturnHome?: () => void }) {
   } | null>(null);
   const noteTabsRef = useRef<HTMLDivElement>(null);
   const [noteTabFog, setNoteTabFog] = useState({ left: false, right: false });
+  const cycle = useNotepadStore((state) => state.settings.tabColorCycle);
+  const noteStatus = useCallback(
+    (note: BoardPost["notes"][number]) =>
+      getTabStatus(
+        {
+          dashboardStatus: note.dashboardStatus,
+          tabColor: note.tabColor ?? cycle[0],
+        },
+        cycle,
+      ),
+    [cycle],
+  );
   const orderedNotes = useMemo(
     () =>
       selected
         ? [...selected.notes].sort(
             (left, right) =>
+              DASHBOARD_STATUSES.indexOf(noteStatus(left)) -
+                DASHBOARD_STATUSES.indexOf(noteStatus(right)) ||
               Number(right.bookmarked) - Number(left.bookmarked) ||
               left.title.localeCompare(right.title, language, {
                 numeric: true,
@@ -95,7 +115,7 @@ export function Board({ onReturnHome }: { onReturnHome?: () => void }) {
               }),
           )
         : [],
-    [language, selected],
+    [language, selected, noteStatus],
   );
   const activeNote =
     orderedNotes.find((note) => note.id === activeNoteId) ?? orderedNotes[0];
@@ -340,6 +360,15 @@ export function Board({ onReturnHome }: { onReturnHome?: () => void }) {
                     key={note.id}
                     type="button"
                     className={note.bookmarked ? "is-bookmarked" : undefined}
+                    data-status={noteStatus(note)}
+                    data-tab-color={
+                      note.tabColor ?? getStatusColor(noteStatus(note), cycle)
+                    }
+                    style={
+                      {
+                        "--board-note-accent": `var(--color-tab-${note.tabColor ?? getStatusColor(noteStatus(note), cycle)})`,
+                      } as CSSProperties
+                    }
                     role="tab"
                     aria-selected={note.id === activeNote?.id}
                     aria-controls="board-active-note"

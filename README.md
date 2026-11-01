@@ -2,7 +2,7 @@
 
 탭과 그룹으로 메모를 정리하고, 대시보드와 공유 보드로 협업하는 브라우저 노트 앱입니다.
 
-**현재 버전:** `1.9.38` · **개발 서버:** `http://localhost:3000` · **E2E:** 718개
+**현재 버전:** `1.9.38` · **개발 서버:** `http://localhost:3000` · **E2E:** 721개
 
 [PRD](PRD.md) · [상세 요구사항](tests-prd/) · [E2E 가이드](tests/README.md) · [버전 이력](versions/)
 
@@ -137,7 +137,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-현재 프런트 718개의 E2E가 등록되어 있습니다. BE 전용 48개와 대응 문서는 BFF로 이관했습니다. 프런트 통합 테스트 실행 시 `NOTEPAD_BFF_DIR`에 BFF 체크아웃 경로를 지정합니다. 기본값은 `../../org-mora-go-lab-notepad/web-notepad-bff`이며 BFF의 `npm ci`를 먼저 실행해야 합니다. 테스트는 별도 BFF 프로세스와 로컬 파일 DB를 사용합니다. `tests-prd/`의 각 번호 요구사항은 `tests/`의 같은 번호 `e2e.spec.ts`와 1:1로 대응합니다. 구조 검사는 번호 대응, 파일당 단일 테스트, 최소 코드 분량과 공통 리소스 배럴을 확인합니다.
+현재 프런트 721개의 E2E가 등록되어 있습니다. BE 전용 48개와 대응 문서는 BFF로 이관했습니다. 프런트 통합 테스트 실행 시 `NOTEPAD_BFF_DIR`에 BFF 체크아웃 경로를 지정합니다. 기본값은 `../../org-mora-go-lab-notepad/web-notepad-bff`이며 BFF의 `npm ci`를 먼저 실행해야 합니다. 테스트는 별도 BFF 프로세스와 로컬 파일 DB를 사용합니다. `tests-prd/`의 각 번호 요구사항은 `tests/`의 같은 번호 `e2e.spec.ts`와 1:1로 대응합니다. 구조 검사는 번호 대응, 파일당 단일 테스트, 최소 코드 분량과 공통 리소스 배럴을 확인합니다.
 
 ## 버전과 배포
 
