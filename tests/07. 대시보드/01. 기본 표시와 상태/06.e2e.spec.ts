@@ -22,7 +22,7 @@ test("6. PC 대시보드를 페이지 전체 영역으로 확장하고 기존 �
   await openPanel(page, "dashboard-panel");
 
   const panel = dashboardPanel(page);
-  const expand = panel.getByRole("button", { name: "Expand dashboard" });
+  const expand = panel.getByRole("button", { name: "Expand card" });
   const options = panel.locator(".dashboard-options-trigger");
   const expandBounds = (await expand.boundingBox())!;
   const optionsBounds = (await options.boundingBox())!;
@@ -32,7 +32,7 @@ test("6. PC 대시보드를 페이지 전체 영역으로 확장하고 기존 �
 
   await expand.click();
   await expect(
-    panel.getByRole("button", { name: "Collapse dashboard" }),
+    panel.getByRole("button", { name: "Collapse card" }),
   ).toHaveAttribute("aria-pressed", "true");
   const expandedBounds = (await panel.boundingBox())!;
   expect(expandedBounds.x).toBe(0);
@@ -46,6 +46,6 @@ test("6. PC 대시보드를 페이지 전체 영역으로 확장하고 기존 �
     ),
   ).toBe("dashboard-panel");
 
-  await panel.getByRole("button", { name: "Collapse dashboard" }).click();
+  await panel.getByRole("button", { name: "Collapse card" }).click();
   await expect(panel).not.toHaveCSS("width", `${page.viewportSize()!.width}px`);
 });

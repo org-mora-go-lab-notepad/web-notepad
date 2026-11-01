@@ -20,7 +20,7 @@ test("9. PC 메뉴와 대시보드는 푸터 위에서 열리고 전체 확장�
   const dashboardBox = (await dashboard.boundingBox())!;
   expect(dashboardBox.y + dashboardBox.height).toBeCloseTo(footerBox.y, 0);
 
-  await page.getByRole("button", { name: "Expand Dashboard" }).click();
+  await page.getByRole("button", { name: "Expand card" }).click();
   await expect(page.locator(".side-panel.dashboard")).toHaveClass(
     /is-expanded/,
   );
