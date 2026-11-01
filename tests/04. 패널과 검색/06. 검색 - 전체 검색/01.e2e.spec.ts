@@ -9,7 +9,7 @@ test("1. 하단 더보기의 Search를 선택하면 전체 검색 팝업을 연�
   await seedStoredStateOnLoad(page, createGlobalSearchState());
   await page.locator(".group-select-command").click();
   await page.locator(".more-command").click();
-  const search = page.locator(".group .global-search-command");
+  const search = page.locator(".footer .global-search-command");
   await expect(search).toBeVisible();
   await expect(
     page.locator('.header button[aria-controls="global-search-popup"]'),

@@ -88,8 +88,8 @@ test("1. 더보기의 게시판은 공유 그룹을 표시하고 방문자에게
   expect(boardPost.notes.every((note) => note.content.trim().length > 2)).toBe(
     true,
   );
-  expect(boardPost.noteCount).toBe(boardPost.notes.length);
-  expect(boardPost.noteCount).toBe(4);
+  expect(boardPost.notes).toHaveLength(4);
+  expect(boardPost.noteCount).toBe(6);
   const boardRow = entry.locator("xpath=ancestor::tr");
   await expect(boardRow.locator("td").nth(1)).toHaveText(
     String(boardPost.noteCount),

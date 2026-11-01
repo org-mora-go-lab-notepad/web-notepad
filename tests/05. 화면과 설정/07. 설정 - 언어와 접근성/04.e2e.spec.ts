@@ -43,7 +43,7 @@ test("4. 선택한 언어를 메뉴·패널·하단 메뉴·편집기 안내 문
 
   await page.getByRole("button", { name: "설정 닫기" }).click();
   const tools = await openHeaderMenu(page);
-  await expect(moreCommand(page).locator("span")).toHaveText("더보기");
+  await expect(moreCommand(page)).toHaveText("");
   await expect(moreCommand(page)).toHaveAccessibleName("더보기");
   await expect(tools.getByRole("button", { name: "검색" })).toBeVisible();
   await expect(
@@ -85,7 +85,8 @@ test("4. 선택한 언어를 메뉴·패널·하단 메뉴·편집기 안내 문
   await expect(groupStatusName(page)).toHaveText("Ungrouped");
   await page.getByRole("button", { name: "Close Settings" }).click();
   await openMoreMenu(page);
-  await expect(moreCommand(page).locator("span")).toHaveText("More");
+  await expect(moreCommand(page)).toHaveAccessibleName("More");
+  await expect(moreCommand(page)).toHaveText("");
   const systemGroups = await openSystemGroupMenu(page);
   await expect(
     systemGroups.getByRole("button", { name: "All Group", exact: true }),

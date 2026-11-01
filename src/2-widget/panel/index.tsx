@@ -47,9 +47,6 @@ export function Panel({
   onToggleGroupPin,
   onMoveGroup,
   onOpenShortcuts,
-  onOpenSettings,
-  onToggleBookmarks,
-  onToggleSearch,
 }: PanelProps) {
   const [guideOpen, setGuideOpen] = useState(false);
   useEffect(() => {
@@ -96,11 +93,6 @@ export function Panel({
         onRename={onRenameGroup}
         onTogglePinGroup={onToggleGroupPin}
         onMoveGroup={onMoveGroup}
-        onOpenGuide={() => setGuideOpen(true)}
-        onOpenSettings={onOpenSettings}
-        onToggleBookmarks={onToggleBookmarks}
-        onToggleSearch={onToggleSearch}
-        searchOpen={openPanel === "global-search"}
       />
       <GlobalSearch
         groups={groups}

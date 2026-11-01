@@ -46,7 +46,7 @@ test("6. UI 문구의 선택을 막고 입력과 본문 복사를 위한 선택�
         element.value.slice(element.selectionStart, element.selectionEnd),
       ),
     ).toBe("Selectable note");
-    await page.locator(".group .global-search-command").click();
+    await page.locator(".footer .global-search-command").click();
     const dialog = page.getByRole("dialog");
     const input = dialog.getByRole("searchbox");
     await expect(input).toHaveCSS("user-select", "text");

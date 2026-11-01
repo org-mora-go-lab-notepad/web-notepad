@@ -11,6 +11,7 @@ test("4. 검색 팝업을 열고 닫아도 고정 대시보드를 유지한다",
   await page.goto("/");
   await openPanel(page, "dashboard-panel");
   const pinnedWorkspaceWidth = (await workspaceBounds(page)).width;
+  await page.locator(".group-select-command").click();
   await openGlobalSearchPanel(page);
   const workspaceWidthWithMenu = (await workspaceBounds(page)).width;
 

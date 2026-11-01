@@ -34,9 +34,7 @@ test("1. 공유 중인 주최자의 그룹 메뉴에는 공유하기와 공유 �
     await owner.keyboard.press("Escape");
     await row.locator(".group-select").click({ button: "right" });
     await expect(row.locator("[role=menuitem]")).toHaveText(
-      language === "en"
-        ? ["Close All", "Pin to footer", "Edit"]
-        : ["모두 닫기", "푸터에 고정", "수정"],
+      language === "en" ? ["Pin to footer"] : ["푸터에 고정"],
     );
     await expect(owner.locator(".footer-pin-menu")).toHaveCount(0);
     await owner.keyboard.press("Escape");

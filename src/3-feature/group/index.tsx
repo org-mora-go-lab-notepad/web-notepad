@@ -1,16 +1,6 @@
 "use client";
 
-import {
-  Bookmark,
-  BookOpen,
-  ChevronDown,
-  ChevronRight,
-  Ellipsis,
-  Layers,
-  Search,
-  Settings,
-  X,
-} from "lucide-react";
+import { ChevronDown, ChevronRight, Layers, X } from "lucide-react";
 import {
   Fragment,
   useCallback,
@@ -51,11 +41,6 @@ function GroupSidebar({
   onRemove,
   onRename,
   onMoveGroup,
-  onOpenGuide,
-  onOpenSettings,
-  onToggleBookmarks,
-  onToggleSearch,
-  searchOpen,
 }: GroupMenuProps) {
   const { t } = useI18n();
   const sharing = useContext(GroupSharingContext);
@@ -115,9 +100,7 @@ function GroupSidebar({
   const reorder = useGroupReorder(onMoveGroup);
   const [deletingGroupId, setDeletingGroupId] = useState<string | null>(null);
   const [actionsGroupId, setActionsGroupId] = useState<string | null>(null);
-  const [footerMenuOpen, setFooterMenuOpen] = useState<
-    "groups" | "more" | null
-  >(null);
+  const [footerMenuOpen, setFooterMenuOpen] = useState<"groups" | null>(null);
   const moreRef = useRef<HTMLDivElement>(null);
   const [sharingGroup, setSharingGroup] = useState<GroupEntry | null>(null);
   const shareFocusTarget = useRef<string | null>(null);
@@ -182,10 +165,7 @@ function GroupSidebar({
       if (document.querySelector("dialog:modal")) return;
       event.preventDefault();
       if (footerMenuOpen) {
-        const trigger =
-          footerMenuOpen === "groups"
-            ? ".system-group-command"
-            : ".more-command";
+        const trigger = ".system-group-command";
         setFooterMenuOpen(null);
         moreRef.current?.querySelector<HTMLButtonElement>(trigger)?.focus();
         return;
@@ -454,7 +434,7 @@ function GroupSidebar({
             }
           >
             <Layers size={18} strokeWidth={1.8} aria-hidden="true" />
-            <span>{t.group}</span>
+            <span>{t.defaultGroup}</span>
           </button>
           {footerMenuOpen === "groups" && (
             <div
@@ -528,86 +508,6 @@ function GroupSidebar({
               />
             </div>
           )}
-          <span className="group-more-divider" aria-hidden="true" />
-          <div className="more-command-slot">
-            <button
-              className="more-command"
-              type="button"
-              aria-expanded={footerMenuOpen === "more"}
-              aria-controls="group-more-menu"
-              aria-haspopup="menu"
-              onClick={() =>
-                setFooterMenuOpen((current) =>
-                  current === "more" ? null : "more",
-                )
-              }
-            >
-              <Ellipsis size={25} strokeWidth={1.8} aria-hidden="true" />
-              <span>{t.more}</span>
-            </button>
-            {footerMenuOpen === "more" && (
-              <div className="group-more-menu" id="group-more-menu" role="menu">
-                <button
-                  type="button"
-                  onContextMenu={(event) =>
-                    requestFooterPin(event, "action:guide")
-                  }
-                  onClick={() => {
-                    setFooterMenuOpen(null);
-                    onClose();
-                    onOpenGuide();
-                  }}
-                >
-                  <BookOpen size={18} aria-hidden="true" />
-                  <span>{t.guide}</span>
-                </button>
-                <button
-                  className="global-search-command"
-                  type="button"
-                  onContextMenu={(event) =>
-                    requestFooterPin(event, "action:search")
-                  }
-                  aria-expanded={searchOpen}
-                  aria-controls="global-search-popup"
-                  aria-haspopup="dialog"
-                  onClick={() => {
-                    setFooterMenuOpen(null);
-                    onToggleSearch();
-                  }}
-                >
-                  <Search size={18} aria-hidden="true" />
-                  <span>{t.search}</span>
-                </button>
-                <button
-                  type="button"
-                  onContextMenu={(event) =>
-                    requestFooterPin(event, "action:bookmarks")
-                  }
-                  onClick={() => {
-                    setFooterMenuOpen(null);
-                    onToggleBookmarks();
-                  }}
-                >
-                  <Bookmark size={18} aria-hidden="true" />
-                  <span>{t.bookmark}</span>
-                </button>
-                <button
-                  type="button"
-                  onContextMenu={(event) =>
-                    requestFooterPin(event, "action:settings")
-                  }
-                  onClick={() => {
-                    setFooterMenuOpen(null);
-                    onClose();
-                    onOpenSettings();
-                  }}
-                >
-                  <Settings size={18} aria-hidden="true" />
-                  <span>{t.settings}</span>
-                </button>
-              </div>
-            )}
-          </div>
         </div>
         <div
           className="group-menu-resizer"

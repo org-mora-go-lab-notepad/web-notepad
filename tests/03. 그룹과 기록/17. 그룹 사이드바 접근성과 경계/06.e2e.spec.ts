@@ -4,6 +4,11 @@ test("6. 사이드바의 열림과 닫힘 상태를 새로고침 후 복원한�
   page,
 }) => {
   await page.goto("/");
+  await page.locator(".dashboard-command").click();
+  await expect(page.locator("#dashboard-panel")).toHaveAttribute(
+    "aria-hidden",
+    "false",
+  );
   const menuButton = page.getByRole("button", { name: "Toggle groups" });
 
   await menuButton.click();

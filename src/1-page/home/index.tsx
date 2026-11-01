@@ -180,13 +180,24 @@ export function Home() {
       router.replace("/board");
       return;
     }
+    if (panel === "guide") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("panel");
+      window.history.replaceState(window.history.state, "", url);
+      window.dispatchEvent(new Event("notepad-open-guide"));
+      return;
+    }
     if (panel === "groups") {
       closeSidePanels();
       if (!groupMenuOpen) toggleGroupMenu();
       return;
     }
-    if (panel === "settings" || panel === "dashboard") {
-      closeGroupMenu();
+    if (
+      panel === "settings" ||
+      panel === "dashboard" ||
+      panel === "bookmarks" ||
+      panel === "global-search"
+    ) {
       if (openPanel !== panel) toggleSidePanel(panel);
     }
   }, [
@@ -254,7 +265,6 @@ export function Home() {
       <AccountActionsContext
         value={{
           onOpenSettings: () => {
-            closeGroupMenu();
             if (openPanel !== "settings") toggleSidePanel("settings");
           },
         }}
@@ -310,8 +320,8 @@ export function Home() {
                   onOpenGuide={() =>
                     window.dispatchEvent(new Event("notepad-open-guide"))
                   }
+                  searchOpen={openPanel === "global-search"}
                   onOpenSettings={() => {
-                    closeGroupMenu();
                     if (openPanel !== "settings") toggleSidePanel("settings");
                   }}
                   onToggleBookmarks={() => toggleSidePanel("bookmarks")}
@@ -398,11 +408,6 @@ export function Home() {
                 onToggleGroupPin={toggleGroupPin}
                 onMoveGroup={moveGroup}
                 onOpenShortcuts={() => toggleSidePanel("shortcuts")}
-                onOpenSettings={() => {
-                  if (openPanel !== "settings") toggleSidePanel("settings");
-                }}
-                onToggleBookmarks={() => toggleSidePanel("bookmarks")}
-                onToggleSearch={() => toggleSidePanel("global-search")}
               />
             </main>
           </SavingTabsContext>

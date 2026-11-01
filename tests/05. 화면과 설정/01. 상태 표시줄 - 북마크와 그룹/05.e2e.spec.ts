@@ -21,12 +21,12 @@ test("5. PC에서 그룹 동작 아이콘 메뉴에는 Bookmark가 없다", asyn
   ).toHaveText(["Close All", "Share", "Edit", "Delete"]);
   await page.keyboard.press("Escape");
   await row.locator(".group-select").click({ button: "right" });
-  await expect(row.locator("[role=menuitem]")).toHaveText([
-    "Close All",
-    "Pin to footer",
-    "Edit",
-  ]);
-  await row.getByRole("menuitem", { name: "Edit Work group" }).click();
+  await expect(row.locator("[role=menuitem]")).toHaveText(["Pin to footer"]);
+  const menuBox = (await row.locator(".group-action-dropdown").boundingBox())!;
+  expect(menuBox.width).toBeGreaterThanOrEqual(216);
+  await page.keyboard.press("Escape");
+  await row.locator(".group-actions > button").click();
+  await row.getByRole("button", { name: "Edit Work group" }).click();
   await expect(page.locator(".group-edit-form input")).toHaveValue("Work");
   await page.keyboard.press("Escape");
   await expect(page.locator(".group-current-value")).toHaveText(

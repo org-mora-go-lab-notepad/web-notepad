@@ -30,6 +30,7 @@ import {
   type FooterPinRequestDetail,
 } from "@/src/5-shared/util";
 
+import { MoreMenu } from "./component";
 import type { FooterProps } from "./type";
 
 const CORE_ITEMS = new Set<string>(CORE_FOOTER_ITEM_IDS);
@@ -39,15 +40,16 @@ export function Footer({
   dashboardOpen,
   activeGroupName,
   groupsOpen,
+  searchOpen = false,
   groups = [],
   onSwipeTabs,
   onToggleDashboard,
   onToggleGroups,
   onSelectGroup = () => undefined,
-  onOpenGuide = () => undefined,
-  onOpenSettings = () => undefined,
-  onToggleBookmarks = () => undefined,
-  onToggleSearch = () => undefined,
+  onOpenGuide,
+  onOpenSettings,
+  onToggleBookmarks,
+  onToggleSearch,
 }: FooterProps) {
   const { t } = useI18n();
   const router = useRouter();
@@ -60,6 +62,33 @@ export function Footer({
     y: number;
   } | null>(null);
   const draggingItem = useRef<string | null>(null);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dropTarget, setDropTarget] = useState<{
+    id: string;
+    side: "before" | "after";
+  } | null>(null);
+  const dockRef = useRef<HTMLDivElement>(null);
+  const finishDrag = () => {
+    draggingItem.current = null;
+    setDraggingId(null);
+    setDropTarget(null);
+  };
+  const findDropTarget = (clientX: number) => {
+    const items = Array.from(
+      dockRef.current?.querySelectorAll<HTMLElement>("[data-footer-item]") ??
+        [],
+    );
+    if (!items.length) return null;
+    const next = items.find((item) => {
+      const rect = item.getBoundingClientRect();
+      return clientX < rect.left + rect.width / 2;
+    });
+    const target = next ?? items[items.length - 1];
+    const id = target.dataset.footerItem!;
+    return id === draggingItem.current
+      ? null
+      : { id, side: next ? ("before" as const) : ("after" as const) };
+  };
   const swipeStart = useRef<{
     x: number;
     y: number;
@@ -122,11 +151,19 @@ export function Footer({
       onSelectGroup(id.slice("group:".length));
       return;
     }
-    if (id === "action:guide") onOpenGuide();
-    else if (id === "action:search") onToggleSearch();
-    else if (id === "action:bookmarks") onToggleBookmarks();
-    else if (id === "action:settings") onOpenSettings();
-    else if (id === "account:my-page") router.push("/my-page");
+    if (id === "action:guide") {
+      if (onOpenGuide) onOpenGuide();
+      else router.push("/?panel=guide");
+    } else if (id === "action:search") {
+      if (onToggleSearch) onToggleSearch();
+      else router.push("/?panel=global-search");
+    } else if (id === "action:bookmarks") {
+      if (onToggleBookmarks) onToggleBookmarks();
+      else router.push("/?panel=bookmarks");
+    } else if (id === "action:settings") {
+      if (onOpenSettings) onOpenSettings();
+      else router.push("/?panel=settings");
+    } else if (id === "account:my-page") router.push("/my-page");
     else if (id === "account:board") router.push("/board");
     else if (id === "account:logout") {
       const response = await fetch("/api/auth/logout", { method: "POST" });
@@ -134,18 +171,24 @@ export function Footer({
     }
   };
 
-  const moveItem = (fromId: string, toId: string) => {
-    if (fromId === toId) return;
+  const moveItem = (fromId: string, toId: string, side: "before" | "after") => {
+    if (
+      fromId === toId ||
+      !footerItems.includes(fromId) ||
+      !footerItems.includes(toId)
+    )
+      return;
     const next = footerItems.filter((id) => id !== fromId);
     const targetIndex = next.indexOf(toId);
-    next.splice(targetIndex < 0 ? next.length : targetIndex, 0, fromId);
+    next.splice(targetIndex + (side === "after" ? 1 : 0), 0, fromId);
+    if (next.every((value, index) => value === footerItems[index])) return;
     setFooterItems(next);
   };
 
   const itemFrame = (id: string, content: ReactNode) => (
     <div
       key={id}
-      className={`footer-dock-item ${CORE_ITEMS.has(id) ? "is-core" : "is-custom"} ${id.replace(":", "-")}`}
+      className={`footer-dock-item ${CORE_ITEMS.has(id) ? "is-core" : "is-custom"} ${id.replace(":", "-")} ${draggingId === id ? "is-dragging" : ""} ${dropTarget?.id === id ? `is-drop-${dropTarget.side}` : ""}`}
       data-footer-item={id}
       draggable
       onPointerDown={(event) => {
@@ -157,24 +200,12 @@ export function Footer({
           return;
         }
         draggingItem.current = id;
+        setDraggingId(id);
+        setPinMenu(null);
         event.dataTransfer.effectAllowed = "move";
         event.dataTransfer.setData("text/plain", id);
       }}
-      onDragOver={(event) => {
-        if (!draggingItem.current) return;
-        event.preventDefault();
-        event.dataTransfer.dropEffect = "move";
-      }}
-      onDrop={(event) => {
-        event.preventDefault();
-        const fromId =
-          draggingItem.current || event.dataTransfer.getData("text/plain");
-        draggingItem.current = null;
-        if (fromId) moveItem(fromId, id);
-      }}
-      onDragEnd={() => {
-        draggingItem.current = null;
-      }}
+      onDragEnd={finishDrag}
       onContextMenu={(event) => {
         if (
           CORE_ITEMS.has(id) ||
@@ -336,6 +367,13 @@ export function Footer({
         suppressSwipeClickUntil.current = 0;
       }}
       onClickCapture={(event) => {
+        if (
+          event.target instanceof Element &&
+          event.target.closest(".group-more-menu")
+        ) {
+          suppressSwipeClickUntil.current = 0;
+          return;
+        }
         const sourceCapabilities = (
           event.nativeEvent as MouseEvent & {
             sourceCapabilities?: { firesTouchEvents?: boolean } | null;
@@ -366,8 +404,42 @@ export function Footer({
         {activeGroupName}
       </button>
       <div className="status-meta">
-        <div className="footer-dock">{footerItems.map(renderItem)}</div>
+        <div
+          className="footer-dock"
+          ref={dockRef}
+          onDragOver={(event) => {
+            if (!draggingItem.current) return;
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "move";
+            setDropTarget(findDropTarget(event.clientX));
+            const rect = event.currentTarget.getBoundingClientRect();
+            if (event.clientX < rect.left + 24)
+              event.currentTarget.scrollLeft -= 12;
+            else if (event.clientX > rect.right - 24)
+              event.currentTarget.scrollLeft += 12;
+          }}
+          onDragLeave={(event) => {
+            if (
+              !event.currentTarget.contains(event.relatedTarget as Node | null)
+            )
+              setDropTarget(null);
+          }}
+          onDrop={(event) => {
+            const fromId = draggingItem.current;
+            if (!fromId) return;
+            event.preventDefault();
+            const target = findDropTarget(event.clientX);
+            if (target) moveItem(fromId, target.id, target.side);
+            finishDrag();
+          }}
+        >
+          {footerItems.map(renderItem)}
+        </div>
       </div>
+      <MoreMenu
+        searchOpen={searchOpen}
+        onActivate={(id) => void activateItem(id)}
+      />
       {pinMenu &&
         createPortal(
           <div

@@ -33,6 +33,7 @@ export async function seedBookmarkContentItems(page: Page) {
       ),
     ],
   });
+  await page.locator(".group-select-command").click();
   await openBookmarksPanel(page);
   return { detailLines };
 }

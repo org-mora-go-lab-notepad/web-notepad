@@ -7,7 +7,8 @@ export const groupSelectCommand = (page: Page) =>
   page.locator(".group-select-command");
 export const systemGroupCommand = (page: Page) =>
   page.locator(".group .system-group-command");
-export const moreCommand = (page: Page) => page.locator(".group .more-command");
+export const moreCommand = (page: Page) =>
+  page.locator(".footer .more-command");
 export async function openBookmarksPanel(page: Page) {
   const menu = await openMoreMenu(page);
   await menu.getByRole("button", { name: /Bookmark|북마크/i }).click();
@@ -22,8 +23,6 @@ export const shortcutsCommand = (page: Page) =>
   page.locator('button[aria-controls="shortcuts-panel"]');
 
 export async function openMoreMenu(page: Page) {
-  if ((await groupsCommand(page).getAttribute("aria-expanded")) !== "true")
-    await groupsCommand(page).click();
   const menu = page.locator("#group-more-menu");
   if (!(await menu.isVisible())) await moreCommand(page).click();
   return menu;
