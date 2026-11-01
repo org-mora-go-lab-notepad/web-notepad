@@ -56,6 +56,7 @@ export async function POST(request: Request) {
     snapshot,
     baseEventId,
     deletedTabIds = [],
+    emptyClosedTabIds = [],
     movedTabs = [],
     userId: ownerId,
   } = input as Record<string, unknown>;
@@ -70,6 +71,11 @@ export async function POST(request: Request) {
     !Array.isArray(deletedTabIds) ||
     deletedTabIds.length > 1_000 ||
     !deletedTabIds.every((id) => typeof id === "string" && id.length <= 200) ||
+    !Array.isArray(emptyClosedTabIds) ||
+    emptyClosedTabIds.length > 1_000 ||
+    !emptyClosedTabIds.every(
+      (id) => typeof id === "string" && id.length <= 200,
+    ) ||
     !Array.isArray(movedTabs) ||
     JSON.stringify(movedTabs).length > 5_000_000 ||
     !movedTabs.every(
@@ -107,6 +113,7 @@ export async function POST(request: Request) {
       baseEventId as string | null | undefined,
       deletedTabIds,
       movedTabs,
+      emptyClosedTabIds,
     );
     if (!result.saved)
       return NextResponse.json(

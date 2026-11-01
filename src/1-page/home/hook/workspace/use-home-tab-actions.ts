@@ -38,7 +38,7 @@ export function useHomeTabActions({ editorRefs }: Options) {
 
       const content = editorOfTab(group, tabId)?.value ?? tab.content;
       if (content !== tab.content) state.updateTab(tabId, content);
-      state.closeTab(tabId);
+      state.closeTab(tabId, true);
       return true;
     },
     [editorOfTab],

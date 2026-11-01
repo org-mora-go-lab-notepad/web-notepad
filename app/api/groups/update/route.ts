@@ -22,6 +22,7 @@ export async function POST(request: Request) {
       : {};
   const data = input.data as SharedGroupData | undefined;
   const deletedTabIds = input.deletedTabIds ?? [];
+  const emptyClosedTabIds = input.emptyClosedTabIds ?? [];
   const movedTabIds = input.movedTabIds ?? [];
   const movedTabs = input.movedTabs ?? [];
   const confirmedDeletion = input.confirmedDeletion ?? false;
@@ -40,6 +41,11 @@ export async function POST(request: Request) {
     deletedTabIds.length > 1_000 ||
     !deletedTabIds.every(
       (tabId) => typeof tabId === "string" && tabId.length <= 200,
+    ) ||
+    !Array.isArray(emptyClosedTabIds) ||
+    emptyClosedTabIds.length > 1_000 ||
+    !emptyClosedTabIds.every(
+      (id) => typeof id === "string" && deletedTabIds.includes(id),
     ) ||
     !Array.isArray(movedTabIds) ||
     typeof confirmedDeletion !== "boolean" ||
@@ -73,6 +79,7 @@ export async function POST(request: Request) {
       movedTabIds,
       confirmedDeletion,
       movedTabs,
+      emptyClosedTabIds,
     );
     if (result.kind === "forbidden")
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });

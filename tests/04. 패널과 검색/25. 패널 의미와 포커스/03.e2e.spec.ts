@@ -17,7 +17,7 @@ test("3. 대시보드 패널은 Dashboard 이름의 complementary 랜드마크�
       await test.step(
         "실행 1: 3. 대시보드 패널은 Dashboard 이름의 complementary 랜드마크다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
-          await page.getByRole("button", { name: "DASHBOARD" }).click();
+          await page.getByRole("button", { name: "CARD" }).click();
         },
         { box: true },
       );

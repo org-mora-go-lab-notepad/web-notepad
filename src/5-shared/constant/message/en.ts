@@ -90,7 +90,7 @@ export const en = {
   cloudError: "Could not save changes; retrying",
   bookmark: "BOOKMARK",
   more: "MORE",
-  dashboard: "DASHBOARD",
+  dashboard: "CARD",
   shareInviteLogin: "Log in with Kakao to edit this shared group.",
   shareInviteJoining: "Joining shared group...",
   shareInviteJoined: "Shared group added. You can edit it now.",

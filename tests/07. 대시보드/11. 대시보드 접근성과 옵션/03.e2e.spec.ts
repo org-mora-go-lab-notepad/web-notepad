@@ -17,7 +17,7 @@ test("3. 열린 대시보드 옵션은 Dashboard options 이름의 dialog다", a
       await test.step(
         "실행 1: 3. 열린 대시보드 옵션은 Dashboard options 이름의 dialog다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
-          await page.getByRole("button", { name: "DASHBOARD" }).click();
+          await page.getByRole("button", { name: "CARD" }).click();
         },
         { box: true },
       );

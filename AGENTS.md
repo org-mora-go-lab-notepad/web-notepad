@@ -10,7 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Production Data Protection
 
-Never delete production tabs or other user data without the user's explicit approval for the specific deletion. Explain the targets and reason before requesting approval. Do not run automatic cleanup based on content length, empty content, or closing an editor tab. Recovery must preserve existing records and unrelated groups; back up and verify before any production write.
+Never delete production tabs or other user data without the user's explicit approval for the specific deletion. Explain the targets and reason before requesting approval. Do not run automatic cleanup based on content length, empty content, or closing an editor tab. The user-authorized exception is an individual close action while that tab content is exactly an empty string; preserve all other tabs, require an explicit empty-close intent and matching server revision, and back up before removal. Bulk close and group moves do not authorize deletion. Recovery must preserve existing records and unrelated groups; back up and verify before any production write.
 
 ## Commit Messages
 
