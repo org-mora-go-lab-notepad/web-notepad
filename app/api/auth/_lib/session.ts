@@ -26,11 +26,6 @@ function sign(value: string) {
     .digest("base64url");
 }
 
-export function createGroupShareToken(groupId: string, version = 0) {
-  const payload = version ? groupId + "." + version : groupId;
-  return payload + "." + sign("group-share:" + payload);
-}
-
 export function readGroupShareToken(token: string) {
   const parts = token.split(".");
   if (parts.length !== 2 && parts.length !== 3) return null;
@@ -49,10 +44,6 @@ export function readGroupShareToken(token: string) {
     timingSafeEqual(expected, received)
     ? groupId
     : null;
-}
-
-export function groupShareVersion(token: string) {
-  return token.split(".").length === 3 ? Number(token.split(".")[1]) : 0;
 }
 
 export function createOAuthState() {

@@ -1,45 +1,65 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
 
-import { authenticate, getApi, historyPost, snapshot } from "../../__util__";
+import { sharingTest as test } from "../../__fixture__";
+import { getApi } from "../../__util__";
 
-test("4. 빈 탭 직접 닫기에도 오래된 개인 저장 기준으로는 삭제할 수 없다", async ({
-  page,
-  context,
+test("4. 공유 빈 탭 닫기 충돌 후 재시도도 다른 사용자의 본문을 보존한다", async ({
+  sharing: { owner, id, group },
 }) => {
-  await authenticate(context);
-  const initialId = crypto.randomUUID();
-  expect(
-    (
-      await historyPost(page, {
-        eventId: initialId,
-        snapshot: snapshot(["원문"]),
-      })
-    ).ok(),
-  ).toBe(true);
-  const latestId = crypto.randomUUID();
-  expect(
-    (
-      await historyPost(page, {
-        eventId: latestId,
-        baseEventId: initialId,
-        snapshot: snapshot(["다른 기기 최신 본문"]),
-      })
-    ).ok(),
-  ).toBe(true);
-  const removed = JSON.parse(snapshot([]));
-  const response = await historyPost(page, {
-    eventId: crypto.randomUUID(),
-    baseEventId: initialId,
-    snapshot: JSON.stringify(removed),
-    emptyClosedTabIds: ["tab-1"],
+  let intercepted = false;
+  await owner.route("**/api/groups/update", async (route) => {
+    if (intercepted) return route.continue();
+    intercepted = true;
+    const request = route.request().postDataJSON();
+    const current = (
+      await (await getApi(owner.request, "/api/groups")).json()
+    ).groups.find((record: { id: string }) => record.id === id);
+    const tabs = current.data.tabs.map(
+      (tab: { id: string; content: string }) =>
+        tab.id === group.tabs[0].id
+          ? {
+              ...tab,
+              title: "다른 사용자 최신 원문",
+              content: "다른 사용자 최신 원문",
+            }
+          : tab,
+    );
+    expect(
+      (
+        await owner.request.post("/api/groups/update", {
+          data: {
+            id,
+            baseRevision: current.revision,
+            data: { ...current.data, tabs },
+          },
+        })
+      ).ok(),
+    ).toBe(true);
+    expect(request.emptyClosedTabIds).toContain(group.tabs[0].id);
+    await route.continue();
   });
-  expect(response.status()).toBe(409);
-  const { latest } = await (
-    await getApi(page.request, "/api/notepad/history")
-  ).json();
-  expect(latest.eventId).toBe(latestId);
-  expect(JSON.parse(latest.snapshot).groups[0].tabs[0].content).toBe(
-    "다른 기기 최신 본문",
+  const retried = owner.waitForResponse(
+    (response) =>
+      response.url().endsWith("/api/groups/update") &&
+      response.status() === 200,
   );
-  expect(JSON.parse(latest.snapshot).groups[0].tabs[0].id).toBe("tab-1");
+  await owner.locator("textarea").first().fill("");
+  await owner.locator(".tab-item").first().locator(".tab-close").click();
+  await expect.poll(() => intercepted).toBe(true);
+  await expect
+    .poll(async () => {
+      const { groups } = await (
+        await getApi(owner.request, "/api/groups")
+      ).json();
+      return groups
+        .find((record: { id: string }) => record.id === id)
+        .data.tabs.find((tab: { id: string }) => tab.id === group.tabs[0].id)
+        ?.content;
+    })
+    .toBe("다른 사용자 최신 원문");
+  await retried;
+  await owner.reload();
+  await expect(
+    owner.locator(".tab-item").filter({ hasText: "다른 사용자 최신 원문" }),
+  ).toBeVisible();
 });

@@ -1,44 +1,66 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
 
-import { createGroupFixture, createTabFixture } from "../../__fixture__";
-import { authenticate, getApi, historyPost, snapshot } from "../../__util__";
+import { sharingTest as test } from "../../__fixture__";
+import { createGroups, getApi, openTabMenu, switchGroup } from "../../__util__";
 
-test("3. 저장된 공유 그룹으로 전환할 때만 개인 원본 제외를 허용한다", async ({
-  page,
-  context,
+test("3. 공유 이동 중 대상 저장이 실패해도 재시도 후 탭을 안전하게 이동한다", async ({
+  sharing: { owner, id },
 }) => {
-  await authenticate(context);
-  const original = JSON.parse(snapshot());
-  const group = createGroupFixture("convert", "전환 그룹", [
-    createTabFixture("original", "공유할 원본"),
-  ]);
-  original.groups.push(group);
-  const eventId = crypto.randomUUID();
-  expect(
-    (
-      await historyPost(page, { eventId, snapshot: JSON.stringify(original) })
-    ).ok(),
-  ).toBe(true);
-  group.tabs[0].content = "공유 직전 수정한 본문";
-  const sharing = await page.request.post("/api/groups/share", {
-    data: { group },
-  });
-  expect(sharing.ok()).toBe(true);
-  const { group: shared } = await sharing.json();
-  expect(shared.tabs[0].content).toBe("공유 직전 수정한 본문");
-  const response = await historyPost(page, {
-    eventId: crypto.randomUUID(),
-    baseEventId: eventId,
-    snapshot: snapshot(),
-    movedTabs: [{ id: "original", content: "공유 직전 수정한 본문" }],
-  });
-  expect(response.ok()).toBe(true);
-  const groups = (await (await getApi(page.request, "/api/groups")).json())
-    .groups;
-  expect(
-    groups.find((item: { id: string }) => item.id === shared.id).data.tabs[0],
-  ).toMatchObject({
-    id: `${shared.id}-original`,
-    content: "공유 직전 수정한 본문",
-  });
+  const readSource = async () =>
+    (await (await getApi(owner.request, "/api/groups")).json()).groups.find(
+      (group: { id: string }) => group.id === id,
+    );
+  const original = (await readSource()).data.tabs[0];
+  await createGroups(owner, "Target");
+  await expect(owner.locator(".home")).toHaveAttribute(
+    "data-cloud-save",
+    "saved",
+  );
+  await switchGroup(owner, "Shared team");
+  await owner.route("**/api/notepad/history", (route) =>
+    route.request().method() === "POST"
+      ? route.fulfill({
+          status: 503,
+          json: { error: "Simulated offline save" },
+        })
+      : route.continue(),
+  );
+  const blocked = owner.waitForResponse(
+    (response) =>
+      response.url().endsWith("/api/groups/update") &&
+      response.status() === 503,
+  );
+  await owner.locator("textarea").first().fill("이동 직전 수정한 최신 본문");
+  await openTabMenu(
+    owner.getByRole("tab", { name: "이동 직전 수정한 최신 본문", exact: true }),
+  );
+  await owner
+    .getByRole("menuitem", { name: "Move Group", exact: true })
+    .click();
+  await owner.getByRole("menuitem", { name: "Target", exact: true }).click();
+  await blocked;
+  expect((await readSource()).data.tabs).toContainEqual(original);
+  await owner.unroute("**/api/notepad/history");
+  await expect
+    .poll(
+      async () => {
+        const history = await (
+          await getApi(owner.request, "/api/notepad/history")
+        ).json();
+        return history.latest
+          ? JSON.parse(history.latest.snapshot)
+              .groups.flatMap((group: { tabs: { id: string }[] }) => group.tabs)
+              .find((tab: { id: string }) => tab.id === original.id)
+          : null;
+      },
+      { timeout: 20_000 },
+    )
+    .toMatchObject({ id: original.id, content: "이동 직전 수정한 최신 본문" });
+  await expect
+    .poll(
+      async () =>
+        (await readSource()).data.tabs.map((tab: { id: string }) => tab.id),
+      { timeout: 20_000 },
+    )
+    .not.toContain(original.id);
 });

@@ -1,21 +1,35 @@
 name: CI
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
 jobs:
   verify:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web-notepad
+    env:
+      NOTEPAD_BFF_DIR: ../web-notepad-bff
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: web-notepad
+      - uses: actions/checkout@v4
+        with:
+          repository: org-mora-go-lab-notepad/web-notepad-bff
+          ref: ba31e9f90de27f88e5924f7eb3e77ca5659c24b7
+          path: web-notepad-bff
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: |
+            web-notepad/package-lock.json
+            web-notepad-bff/package-lock.json
       - run: npm ci
+      - run: npm ci --prefix ../web-notepad-bff
       - run: npm run format:check
       - run: npm run lint
       - run: npm run test:e2e:structure

@@ -20,14 +20,11 @@ test("1. 개인 탭을 비운 직후 직접 닫으면 DB에서도 삭제하고 �
       },
     ],
   });
-  expect(
-    (
-      await historyPost(page, {
-        eventId: crypto.randomUUID(),
-        snapshot: JSON.stringify(original),
-      })
-    ).ok(),
-  ).toBe(true);
+  const prepared = await historyPost(page, {
+    eventId: crypto.randomUUID(),
+    snapshot: JSON.stringify(original),
+  });
+  expect(prepared.status(), await prepared.text()).toBe(200);
   await page.goto("/");
   await expect(page.locator("textarea").first()).toHaveValue("삭제할 원문");
   await page.locator("textarea").first().fill("");
