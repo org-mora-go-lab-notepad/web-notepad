@@ -26,12 +26,25 @@ test("7. 삭제 의도가 없는 오래된 요청은 공유 탭을 지우지 못
     rejected.group.data.tabs.map((item: { id: string }) => item.id),
   ).toEqual([tab.id]);
 
+  const legacyDeleteIntent = await owner.request.post("/api/groups/update", {
+    data: {
+      id,
+      baseRevision: record.revision,
+      data: emptyData,
+      deletedTabIds: [tab.id],
+    },
+  });
+  expect(legacyDeleteIntent.status()).toBe(409);
+  expect((await legacyDeleteIntent.json()).group.data.tabs).toEqual(
+    record.data.tabs,
+  );
   const explicitDelete = await owner.request.post("/api/groups/update", {
     data: {
       id,
       baseRevision: record.revision,
       data: emptyData,
       deletedTabIds: [tab.id],
+      confirmedDeletion: true,
     },
   });
   expect(explicitDelete.ok()).toBe(true);

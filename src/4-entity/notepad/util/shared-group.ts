@@ -5,6 +5,10 @@ import { normalizeLayout } from "./pane";
 
 export const SHARED_TAB_DELETE_INTENT_EVENT =
   "notepad-shared-tab-delete-intent";
+export const PERSONAL_TAB_DELETE_INTENT_EVENT =
+  "notepad-personal-tab-delete-intent";
+export const PERSONAL_TAB_TRANSFER_INTENT_EVENT =
+  "notepad-personal-tab-transfer-intent";
 
 export const sharedGroupId = (shareId: string) => `shared-${shareId}`;
 export const isSharedGroupId = (id: string) =>

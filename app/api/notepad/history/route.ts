@@ -55,6 +55,8 @@ export async function POST(request: Request) {
     eventId,
     snapshot,
     baseEventId,
+    deletedTabIds = [],
+    movedTabs = [],
     userId: ownerId,
   } = input as Record<string, unknown>;
   if (ownerId !== undefined && ownerId !== userId) {
@@ -65,6 +67,18 @@ export async function POST(request: Request) {
     !/^[0-9a-f-]{36}$/i.test(eventId) ||
     typeof snapshot !== "string" ||
     snapshot.length > 5_000_000 ||
+    !Array.isArray(deletedTabIds) ||
+    deletedTabIds.length > 1_000 ||
+    !deletedTabIds.every((id) => typeof id === "string" && id.length <= 200) ||
+    !Array.isArray(movedTabs) ||
+    JSON.stringify(movedTabs).length > 5_000_000 ||
+    !movedTabs.every(
+      (tab) =>
+        tab &&
+        typeof tab.id === "string" &&
+        tab.id.length <= 200 &&
+        typeof tab.content === "string",
+    ) ||
     (baseEventId !== undefined &&
       baseEventId !== null &&
       typeof baseEventId !== "string")
@@ -91,10 +105,16 @@ export async function POST(request: Request) {
       eventId,
       sanitizedSnapshot,
       baseEventId as string | null | undefined,
+      deletedTabIds,
+      movedTabs,
     );
     if (!result.saved)
       return NextResponse.json(
-        { error: "Conflict", latest: result.latest },
+        {
+          error: "Conflict",
+          latest: result.latest,
+          protectedTabIds: result.protectedTabIds,
+        },
         {
           status: 409,
           headers: { "Cache-Control": "private, no-store" },

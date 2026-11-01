@@ -2,8 +2,12 @@ import type { StateCreator } from "zustand";
 
 import { UNGROUPED_GROUP_ID } from "../../constant";
 import type { NotepadState } from "../../type";
-import { getStatusColor, getTitleFromContent } from "../../util";
-import { allocateTab, EMPTY_SPLIT_LAYOUT, updateGroup } from "../workspace";
+import {
+  getStatusColor,
+  getTitleFromContent,
+  PERSONAL_TAB_DELETE_INTENT_EVENT,
+} from "../../util";
+import { allocateTab, updateGroup } from "../workspace";
 
 type ClosedTabActions = Pick<
   NotepadState,
@@ -47,16 +51,10 @@ export const createClosedTabActions: StateCreator<
         (bookmark) => bookmark.sourceTabId === tabId,
       ),
     };
-    const replacesBlankTab =
-      target.tabs.length === 1 &&
-      target.tabs[0].content.trim() === "" &&
-      !target.tabs[0].bookmarked;
-
     set({
       ...updateGroup(state, target.id, (current) => ({
         ...current,
-        ...(replacesBlankTab ? EMPTY_SPLIT_LAYOUT : {}),
-        tabs: replacesBlankTab ? [tab] : [...current.tabs, tab],
+        tabs: [...current.tabs, tab],
         activeTabId: tabId,
         activePane: "left",
       })),
@@ -154,8 +152,17 @@ export const createClosedTabActions: StateCreator<
         ),
       };
     }),
-  removeClosedTab: (entryId) =>
+  removeClosedTab: (entryId) => {
+    const entry = get().closedTabs.find((item) => item.id === entryId);
+    if (!entry) return;
+    if (typeof window !== "undefined")
+      window.dispatchEvent(
+        new CustomEvent(PERSONAL_TAB_DELETE_INTENT_EVENT, {
+          detail: { tabId: entry.tab.id },
+        }),
+      );
     set((state) => ({
       closedTabs: state.closedTabs.filter((item) => item.id !== entryId),
-    })),
+    }));
+  },
 });

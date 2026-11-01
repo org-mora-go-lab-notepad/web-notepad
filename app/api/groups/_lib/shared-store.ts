@@ -1,6 +1,10 @@
 import "server-only";
 
 import type { KakaoUser } from "@/app/api/auth/_lib/kakao";
+import {
+  backupBeforeRemoval,
+  hasSavedDestination,
+} from "@/app/api/notepad/_lib/tab-protection";
 import type { GroupEntry, SharedGroupData } from "@/src/4-entity/notepad";
 import {
   applySharedGroupData,
@@ -162,6 +166,9 @@ export async function saveSharedGroup(
   baseRevision: number,
   data: SharedGroupData,
   deletedTabIds: string[],
+  movedTabIds: string[] = [],
+  confirmedDeletion = false,
+  movedTabs: { id: string; content: string }[] = [],
 ) {
   data = normalizeSharedGroupData(data);
   const database = await sharedDatabase();
@@ -182,17 +189,42 @@ export async function saveSharedGroup(
     if (current.revision !== baseRevision)
       return { kind: "conflict" as const, record: current };
     const nextTabIds = new Set(data.tabs.map((tab) => tab.id));
-    const approvedDeletes = new Set(deletedTabIds);
+    // Older clients emitted deletedTabIds for closing/moving tabs. That list
+    // alone must never authorize a destructive write after this deployment.
+    const approvedDeletes = new Set(
+      confirmedDeletion ? deletedTabIds : movedTabIds,
+    );
     if (
       current.data.tabs.some(
         (tab) => !nextTabIds.has(tab.id) && !approvedDeletes.has(tab.id),
       )
     )
       return { kind: "unsafe" as const, record: current };
+    const removed = current.data.tabs.filter((tab) => !nextTabIds.has(tab.id));
+    for (const tab of removed) {
+      if (
+        movedTabIds.includes(tab.id) &&
+        !(await hasSavedDestination(
+          transaction,
+          user.id,
+          movedTabs.find((moved) => moved.id === tab.id) ?? tab,
+          id,
+        ))
+      ) {
+        return { kind: "destination-pending" as const };
+      }
+    }
     if (JSON.stringify(current.data) === JSON.stringify(data))
       return { kind: "saved" as const, record: current };
     const revision = current.revision + 1;
     const now = Date.now();
+    if (removed.length)
+      await backupBeforeRemoval(
+        transaction,
+        `shared:${id}`,
+        String(current.revision),
+        String(row.snapshot),
+      );
     await transaction.execute({
       sql: "UPDATE shared_groups SET snapshot = ?, revision = ?, updated_at = ? WHERE id = ?",
       args: [JSON.stringify(data), revision, now, id],

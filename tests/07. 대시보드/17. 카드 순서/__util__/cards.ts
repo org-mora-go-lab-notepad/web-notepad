@@ -73,6 +73,7 @@ export async function seedSharedCards(page: Page, id: string) {
           baseRevision: record.revision,
           data,
           deletedTabIds: record.data.tabs.map((tab: { id: string }) => tab.id),
+          confirmedDeletion: true,
         },
       })
     ).ok(),

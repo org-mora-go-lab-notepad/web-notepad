@@ -37,6 +37,8 @@ export {
   isSharedGroupId,
   namespaceGroup,
   normalizeSharedGroupData,
+  PERSONAL_TAB_DELETE_INTENT_EVENT,
+  PERSONAL_TAB_TRANSFER_INTENT_EVENT,
   SHARED_TAB_DELETE_INTENT_EVENT,
   sharedGroupId,
   toSharedGroupData,
