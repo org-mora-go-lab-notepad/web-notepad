@@ -41,7 +41,7 @@ test("1. 그룹 버튼과 계정 사이에 CARD 명령을 표시하고 패널을
   await expect(dashboardPanel(page)).toHaveAttribute("aria-hidden", "false");
   await expect(
     dashboardPanel(page).getByRole("heading", {
-      name: "Dashboard",
+      name: "CARD",
       exact: true,
     }),
   ).toBeVisible();
