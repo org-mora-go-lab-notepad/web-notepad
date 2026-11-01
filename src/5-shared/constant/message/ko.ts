@@ -93,7 +93,7 @@ export const ko: Messages = {
   cloudError: "저장 실패 · 다시 시도 중",
   bookmark: "북마크",
   more: "더보기",
-  dashboard: "대시보드",
+  dashboard: "카드",
   shareInviteLogin: "공유받은 그룹을 수정하려면 카카오로 로그인하세요.",
   shareInviteJoining: "공유 그룹에 참여하는 중...",
   shareInviteJoined: "공유 그룹이 추가되었습니다. 이제 수정할 수 있습니다.",
