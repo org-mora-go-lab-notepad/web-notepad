@@ -48,6 +48,7 @@ export async function saveNotepadUpdate(
   baseEventId?: string | null,
   deletedTabIds: string[] = [],
   movedTabs: { id: string; content: string }[] = [],
+  emptyClosedTabIds: string[] = [],
 ) {
   const database = await ensureSchema();
   const transaction = await database.transaction("write");
@@ -95,6 +96,13 @@ export async function saveNotepadUpdate(
       const protectedTabIds: string[] = [];
       for (const tab of missing) {
         if (confirmedArchiveDeletes.has(tab.id)) continue;
+        // Only an explicit close of an emptied tab may bypass missing-tab protection.
+        // A matching revision prevents deletion across another device's edits.
+        if (
+          baseEventId === latest.eventId &&
+          emptyClosedTabIds.includes(tab.id)
+        )
+          continue;
         const moved = movedTabs.find((item) => item.id === tab.id);
         if (!moved || !(await hasSavedDestination(transaction, userId, moved)))
           protectedTabIds.push(tab.id);

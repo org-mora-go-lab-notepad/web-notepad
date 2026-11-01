@@ -24,6 +24,7 @@ type PendingUpdate = {
   snapshot: string;
   baseEventId?: string | null;
   deletedTabIds?: string[];
+  emptyClosedTabIds?: string[];
   movedTabs?: { id: string; content: string }[];
 };
 type Baseline = { eventId: string | null; snapshot: string | null };
@@ -97,6 +98,7 @@ export function useCloudSave(hydrated: boolean) {
     let lastSnapshot = createCloudSnapshot(useNotepadStore.getState());
     const editedContents = new Map<string, string>();
     const explicitDeletes = new Set<string>();
+    const emptyCloses = new Set<string>();
     const explicitTransfers = new Map<string, string>();
     const pendingKey = (id: string) => `web-notepad-cloud-pending:${id}`;
     const baseKey = (id: string) => `web-notepad-cloud-base:${id}`;
@@ -200,6 +202,7 @@ export function useCloudSave(hydrated: boolean) {
               baseEventId: baseline.eventId,
             };
       pending.deletedTabIds = [...explicitDeletes];
+      pending.emptyClosedTabIds = [...emptyCloses];
       pending.movedTabs = [...explicitTransfers].map(([id, content]) => ({
         id,
         content,
@@ -307,6 +310,7 @@ export function useCloudSave(hydrated: boolean) {
         });
         if (!valid(id, version)) return;
         if (response.status === 409) {
+          emptyCloses.clear();
           const { latest, protectedTabIds } = (await response.json()) as {
             latest: CloudRecord | null;
             protectedTabIds?: string[];
@@ -346,6 +350,8 @@ export function useCloudSave(hydrated: boolean) {
         }
         if (!response.ok) throw new Error("Cloud save failed");
         rememberBase({ eventId: update.eventId, snapshot: update.snapshot });
+        for (const tabId of update.emptyClosedTabIds ?? [])
+          emptyCloses.delete(tabId);
         for (const tabId of update.deletedTabIds ?? [])
           explicitDeletes.delete(tabId);
         for (const tab of update.movedTabs ?? [])
@@ -435,6 +441,7 @@ export function useCloudSave(hydrated: boolean) {
         setLastSavedAt(null);
         generation += 1;
         explicitDeletes.clear();
+        emptyCloses.clear();
         explicitTransfers.clear();
         clearTimer();
         pending = null;
@@ -472,6 +479,8 @@ export function useCloudSave(hydrated: boolean) {
           typeof restored.snapshot === "string"
         ) {
           pending = restored;
+          for (const id of restored.emptyClosedTabIds ?? [])
+            emptyCloses.add(id);
           for (const id of restored.deletedTabIds ?? [])
             explicitDeletes.add(id);
           for (const tab of restored.movedTabs ?? [])
@@ -497,8 +506,12 @@ export function useCloudSave(hydrated: boolean) {
       void flush(true);
     };
     const onDeleteIntent = (event: Event) => {
-      const id = (event as CustomEvent<{ tabId?: string }>).detail?.tabId;
-      if (typeof id === "string") explicitDeletes.add(id);
+      const detail = (
+        event as CustomEvent<{ tabId?: string; emptyClose?: boolean }>
+      ).detail;
+      if (typeof detail?.tabId !== "string") return;
+      if (detail.emptyClose) emptyCloses.add(detail.tabId);
+      else explicitDeletes.add(detail.tabId);
     };
     window.addEventListener(PERSONAL_TAB_DELETE_INTENT_EVENT, onDeleteIntent);
     const onTransferIntent = (event: Event) => {

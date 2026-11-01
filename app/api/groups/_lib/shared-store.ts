@@ -169,6 +169,7 @@ export async function saveSharedGroup(
   movedTabIds: string[] = [],
   confirmedDeletion = false,
   movedTabs: { id: string; content: string }[] = [],
+  emptyClosedTabIds: string[] = [],
 ) {
   data = normalizeSharedGroupData(data);
   const database = await sharedDatabase();
@@ -192,7 +193,9 @@ export async function saveSharedGroup(
     // Older clients emitted deletedTabIds for closing/moving tabs. That list
     // alone must never authorize a destructive write after this deployment.
     const approvedDeletes = new Set(
-      confirmedDeletion ? deletedTabIds : movedTabIds,
+      confirmedDeletion
+        ? deletedTabIds
+        : [...movedTabIds, ...emptyClosedTabIds],
     );
     if (
       current.data.tabs.some(

@@ -29,6 +29,7 @@ type PendingGroup = {
   base: SharedRecord;
   data: SharedGroupData;
   deletedTabIds?: string[];
+  emptyClosedTabIds?: string[];
   movedTabs?: { id: string; content: string }[];
 };
 const same = (left: unknown, right: unknown) =>
@@ -67,6 +68,7 @@ export function useSharedGroups(hydrated: boolean) {
     const changedBeforeLoad = new Set<string>();
     const explicitDeletes = new Map<string, Set<string>>();
     const movedContents = new Map<string, string>();
+    const emptyCloses = new Set<string>();
     const pendingKey = (id: string, groupId: string) =>
       `web-notepad-shared-pending:${id}:${groupId}`;
     const share = inviteToken;
@@ -187,16 +189,29 @@ export function useSharedGroups(hydrated: boolean) {
             baseRevision: base.revision,
             data,
             deletedTabIds,
-            movedTabIds: deletedTabIds,
-            movedTabs: deletedTabIds.map((tabId) => ({
-              id: tabId,
-              content:
-                movedContents.get(tabId) ??
-                base.data.tabs.find((tab) => tab.id === tabId)!.content,
-            })),
+            emptyClosedTabIds: deletedTabIds.filter((tabId) =>
+              emptyCloses.has(tabId),
+            ),
+            movedTabIds: deletedTabIds.filter(
+              (tabId) => !emptyCloses.has(tabId),
+            ),
+            movedTabs: deletedTabIds
+              .filter((tabId) => !emptyCloses.has(tabId))
+              .map((tabId) => ({
+                id: tabId,
+                content:
+                  movedContents.get(tabId) ??
+                  base.data.tabs.find((tab) => tab.id === tabId)!.content,
+              })),
           }),
         });
         if (response.status === 409) {
+          // Never carry an empty-close authorization over another user's revision.
+          for (const tabId of deletedTabIds) {
+            if (!emptyCloses.has(tabId)) continue;
+            explicitDeletes.get(id)?.delete(tabId);
+            emptyCloses.delete(tabId);
+          }
           const { group: remote, reset } = (await response.json()) as {
             group: SharedRecord;
             reset?: boolean;
@@ -249,6 +264,7 @@ export function useSharedGroups(hydrated: boolean) {
         for (const tabId of deletedTabIds) {
           remainingDeletes?.delete(tabId);
           movedContents.delete(tabId);
+          emptyCloses.delete(tabId);
         }
         const savedTabIds = new Set(saved.data.tabs.map((tab) => tab.id));
         for (const tabId of remainingDeletes ?? [])
@@ -290,12 +306,17 @@ export function useSharedGroups(hydrated: boolean) {
         base,
         data,
         deletedTabIds: approvedDeletedTabIds(id, base, data),
-        movedTabs: approvedDeletedTabIds(id, base, data).map((tabId) => ({
-          id: tabId,
-          content:
-            movedContents.get(tabId) ??
-            base.data.tabs.find((tab) => tab.id === tabId)!.content,
-        })),
+        emptyClosedTabIds: approvedDeletedTabIds(id, base, data).filter(
+          (tabId) => emptyCloses.has(tabId),
+        ),
+        movedTabs: approvedDeletedTabIds(id, base, data)
+          .filter((tabId) => !emptyCloses.has(tabId))
+          .map((tabId) => ({
+            id: tabId,
+            content:
+              movedContents.get(tabId) ??
+              base.data.tabs.find((tab) => tab.id === tabId)!.content,
+          })),
       });
       clearTimer(id);
       timers.set(
@@ -366,6 +387,8 @@ export function useSharedGroups(hydrated: boolean) {
             baselines.set(remote.id, pending?.base ?? remote);
             if (pending?.deletedTabIds?.length)
               explicitDeletes.set(remote.id, new Set(pending.deletedTabIds));
+            for (const tabId of pending?.emptyClosedTabIds ?? [])
+              emptyCloses.add(tabId);
             for (const tab of pending?.movedTabs ?? [])
               movedContents.set(tab.id, tab.content);
             if (!currentGroup(remote.id))
@@ -489,6 +512,7 @@ export function useSharedGroups(hydrated: boolean) {
         baselines.clear();
         editedContents.clear();
         explicitDeletes.clear();
+        emptyCloses.clear();
         movedContents.clear();
         setSavingTabIds([]);
         timers.forEach(clearTimeout);
@@ -535,6 +559,7 @@ export function useSharedGroups(hydrated: boolean) {
           groupId?: string;
           tabId?: string;
           content?: string;
+          emptyClose?: boolean;
         }>
       ).detail;
       if (
@@ -546,6 +571,7 @@ export function useSharedGroups(hydrated: boolean) {
         return;
       const ids = explicitDeletes.get(detail.groupId) ?? new Set<string>();
       ids.add(detail.tabId);
+      if (detail.emptyClose) emptyCloses.add(detail.tabId);
       explicitDeletes.set(detail.groupId, ids);
       if (typeof detail.content === "string")
         movedContents.set(detail.tabId, detail.content);

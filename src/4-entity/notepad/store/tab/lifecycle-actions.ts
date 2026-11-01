@@ -12,7 +12,9 @@ import {
   getTabStatus,
   isSharedGroupId,
   normalizeLayout,
+  PERSONAL_TAB_DELETE_INTENT_EVENT,
   setPaneActiveTabId,
+  SHARED_TAB_DELETE_INTENT_EVENT,
 } from "../../util";
 import {
   allocateTab,
@@ -116,8 +118,21 @@ export const createTabLifecycleActions: StateCreator<
       );
     });
   },
-  closeTab: (tabId) => {
-    hideTabFromEditor(set, get, tabId);
+  closeTab: (tabId, deleteIfEmpty = false) => {
+    const group = getTabGroup(get(), tabId);
+    const tab = group?.tabs.find((item) => item.id === tabId);
+    const remove = deleteIfEmpty && tab?.open && tab.content === "";
+    if (remove && group && typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent(
+          isSharedGroupId(group.id)
+            ? SHARED_TAB_DELETE_INTENT_EVENT
+            : PERSONAL_TAB_DELETE_INTENT_EVENT,
+          { detail: { groupId: group.id, tabId, emptyClose: true } },
+        ),
+      );
+    }
+    hideTabFromEditor(set, get, tabId, remove);
   },
   archiveTab: (tabId) => {
     preserveTabEntry(set, get, tabId);
@@ -143,6 +158,7 @@ const hideTabFromEditor = (
   set: (partial: Partial<NotepadState>) => void,
   get: () => NotepadState,
   tabId: string,
+  remove = false,
 ) => {
   const state = get();
   const group = getTabGroup(state, tabId);
@@ -196,9 +212,11 @@ const hideTabFromEditor = (
         ...EMPTY_SPLIT_LAYOUT,
         splitRatio: current.splitRatio,
         tabs: [
-          ...current.tabs.map((item) =>
-            item.id === tabId ? { ...item, open: false } : item,
-          ),
+          ...current.tabs
+            .filter((item) => !remove || item.id !== tabId)
+            .map((item) =>
+              item.id === tabId ? { ...item, open: false } : item,
+            ),
           replacement,
         ],
         activeTabId: replacement.id,
@@ -213,9 +231,11 @@ const hideTabFromEditor = (
       let next = assignTabToPane(
         {
           ...current,
-          tabs: current.tabs.map((item) =>
-            item.id === tabId ? { ...item, open: false } : item,
-          ),
+          tabs: current.tabs
+            .filter((item) => !remove || item.id !== tabId)
+            .map((item) =>
+              item.id === tabId ? { ...item, open: false } : item,
+            ),
         },
         tabId,
         null,
