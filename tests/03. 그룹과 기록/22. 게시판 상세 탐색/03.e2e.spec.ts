@@ -40,6 +40,22 @@ test("3. 모바일 보드 상세 푸터 제스처는 노트 탭을 순환하고 
   );
   // The next real touch is an independent user event and must not be consumed
   // by the preceding footer swipe.
+  await page.evaluate(() => {
+    document.addEventListener(
+      "click",
+      (event) => {
+        if (
+          event.isTrusted &&
+          event.target instanceof Element &&
+          event.target.closest(".footer")
+        ) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      },
+      true,
+    );
+  });
   await dashboard.tap();
 
   await expect(page).toHaveURL(/[?&]panel=dashboard(?:&|$)/);

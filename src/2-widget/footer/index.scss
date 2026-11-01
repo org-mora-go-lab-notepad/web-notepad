@@ -203,7 +203,11 @@
 
   @media (max-width: 512px) {
     position: relative;
-    touch-action: pan-y;
+    touch-action: none;
+    img,
+    a {
+      -webkit-user-drag: none;
+    }
 
     min-height: calc(81.8px + env(safe-area-inset-bottom));
     padding: 0;

@@ -8,6 +8,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
+## Production Data Protection
+
+Never delete production tabs or other user data without the user's explicit approval for the specific deletion. Explain the targets and reason before requesting approval. Do not run automatic cleanup based on content length, empty content, or closing an editor tab. Recovery must preserve existing records and unrelated groups; back up and verify before any production write.
+
 ## Commit Messages
 
 After completing code changes, suggest a Korean commit message that matches the change. Keep one of the prefixes `test:`, `feat:`, `refactor:`, `doc`, `style:`, or `fix:`.

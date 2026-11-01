@@ -22,6 +22,17 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+@media (max-width: 512px) {
+  *,
+  *::before,
+  *::after {
+    scrollbar-width: none;
+  }
+  *::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;

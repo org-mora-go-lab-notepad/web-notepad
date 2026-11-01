@@ -101,4 +101,34 @@ test("8. 푸터 스와이프 직후 메뉴·대시보드·사용자 아이콘이
   await expect(page.locator("#account-menu")).toBeVisible();
   await account.tap();
   await expect(page.locator("#account-menu")).toHaveCount(0);
+
+  // Simulate browsers dropping the compatibility click after a gesture.
+  // A deliberate touch must still activate exactly once at touchend.
+  await page.evaluate(() => {
+    document.addEventListener(
+      "click",
+      (event) => {
+        if (
+          event.isTrusted &&
+          event.target instanceof Element &&
+          event.target.closest(".footer")
+        ) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      },
+      true,
+    );
+  });
+  await swipeTouch(footer, "right");
+  await menu.tap();
+  await expect(page.locator("#groups-menu")).toBeVisible();
+  await menu.tap();
+  await expect(page.locator("#groups-menu")).toHaveCount(0);
+  await dashboard.tap();
+  await expect(dashboard).toHaveAttribute("aria-expanded", "true");
+  await dashboard.tap();
+  await expect(dashboard).toHaveAttribute("aria-expanded", "false");
+  await account.tap();
+  await expect(page.locator("#account-menu")).toBeVisible();
 });

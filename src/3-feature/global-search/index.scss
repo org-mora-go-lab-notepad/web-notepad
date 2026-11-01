@@ -5,6 +5,9 @@
 @use "./style/search-preview";
 
 .global-search {
+  @media (max-width: 512px) {
+    --list-popup-height: min(648.96px, calc(100dvh - 32px));
+  }
   position: fixed;
   z-index: 60;
   inset: 0;

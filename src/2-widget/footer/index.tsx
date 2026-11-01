@@ -64,6 +64,8 @@ export function Footer({
     x: number;
     y: number;
     identifier: number;
+    target: HTMLElement | null;
+    moved: boolean;
   } | null>(null);
   const suppressSwipeClickUntil = useRef(0);
 
@@ -146,6 +148,9 @@ export function Footer({
       className={`footer-dock-item ${CORE_ITEMS.has(id) ? "is-core" : "is-custom"} ${id.replace(":", "-")}`}
       data-footer-item={id}
       draggable
+      onPointerDown={(event) => {
+        event.currentTarget.draggable = event.pointerType === "mouse";
+      }}
       onDragStart={(event) => {
         if (window.matchMedia("(max-width: 512px)").matches) {
           event.preventDefault();
@@ -265,26 +270,56 @@ export function Footer({
         // A new touch is always an independent user action. Clearing the
         // previous swipe guard here keeps its first real tap responsive.
         suppressSwipeClickUntil.current = 0;
-        if (!onSwipeTabs || !window.matchMedia("(max-width: 512px)").matches)
-          return;
+        swipeStart.current = null;
+        if (!window.matchMedia("(max-width: 512px)").matches) return;
         if (event.touches.length !== 1) return;
         const touch = event.touches[0];
         swipeStart.current = {
           x: touch.clientX,
           y: touch.clientY,
           identifier: touch.identifier,
+          target:
+            event.target instanceof Element
+              ? event.target.closest<HTMLElement>("button, a[href]")
+              : null,
+          moved: false,
         };
+      }}
+      onTouchMove={(event) => {
+        const start = swipeStart.current;
+        if (!start) return;
+        if (event.touches.length !== 1) {
+          swipeStart.current = null;
+          return;
+        }
+        const touch = event.touches[0];
+        if (Math.hypot(touch.clientX - start.x, touch.clientY - start.y) > 10)
+          start.moved = true;
       }}
       onTouchEnd={(event) => {
         const start = swipeStart.current;
         swipeStart.current = null;
-        if (!start || !onSwipeTabs) return;
+        if (!start) return;
         const touch = Array.from(event.changedTouches).find(
           (changedTouch) => changedTouch.identifier === start.identifier,
         );
         if (!touch) return;
         const horizontal = touch.clientX - start.x;
         const vertical = touch.clientY - start.y;
+        if (!start.moved && Math.hypot(horizontal, vertical) <= 10) {
+          const target = start.target;
+          if (
+            target &&
+            event.currentTarget.contains(target) &&
+            !target.matches(':disabled, [aria-disabled="true"]')
+          ) {
+            // Execute the deliberate tap even when the browser omits its
+            // compatibility click after a swipe. Ignore only the duplicate.
+            target.click();
+            suppressSwipeClickUntil.current = performance.now() + 700;
+          }
+          return;
+        }
         if (
           Math.abs(horizontal) < 50 ||
           Math.abs(horizontal) <= Math.abs(vertical)
@@ -294,7 +329,7 @@ export function Footer({
         // swipe. Block only that click; the next real touchstart clears this
         // guard before its own click is generated.
         suppressSwipeClickUntil.current = performance.now() + 700;
-        onSwipeTabs(horizontal < 0 ? "left" : "right");
+        onSwipeTabs?.(horizontal < 0 ? "left" : "right");
       }}
       onTouchCancel={() => {
         swipeStart.current = null;

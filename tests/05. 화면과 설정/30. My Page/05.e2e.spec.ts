@@ -50,8 +50,11 @@ test("5. 좁은 모바일에서 긴 프로필 이름과 통계를 화면 안에 
     0,
   );
   expect(
-    (await page.locator(".my-page-content").boundingBox())!.y,
+    (await page.locator(".my-page-metrics").boundingBox())!.y,
   ).toBeGreaterThan(portrait.y + portrait.height);
+  const profile = (await page.locator(".my-page-profile").boundingBox())!;
+  expect(profile.y + profile.height).toBeLessThanOrEqual(portrait.y);
+  await expect(page.locator(".my-page")).toHaveCSS("scrollbar-width", "none");
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
