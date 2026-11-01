@@ -162,7 +162,7 @@ export const createGroupActions: StateCreator<
       // Keep the editor renderable by ensuring the source retains an open tab.
       if (!remainingTabs.some((item) => item.open)) {
         const allocated = allocateTab(state);
-        remainingTabs = [allocated.tab];
+        remainingTabs = [...remainingTabs, allocated.tab];
         nextTabNumber = allocated.nextTabNumber;
       }
 

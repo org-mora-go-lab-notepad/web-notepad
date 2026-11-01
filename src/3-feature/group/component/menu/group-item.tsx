@@ -5,6 +5,7 @@ import {
   EllipsisVertical,
   LogOut,
   Pencil,
+  Pin,
   Share2,
   Trash2,
   X,
@@ -19,8 +20,8 @@ import {
   useState,
 } from "react";
 
+import { useNotepadStore } from "@/src/4-entity/notepad";
 import { useI18n } from "@/src/5-shared/hook";
-import { requestFooterPin } from "@/src/5-shared/util";
 
 import type { GroupItemProps } from "../../type";
 
@@ -51,6 +52,9 @@ export function GroupItem({
   onShare,
 }: GroupItemProps) {
   const { t } = useI18n();
+  const footerItems = useNotepadStore((state) => state.settings.footerItems);
+  const setFooterItems = useNotepadStore((state) => state.setFooterItems);
+  const [contextActions, setContextActions] = useState(false);
   const [editingName, setEditingName] = useState<string | null>(null);
   const actionsRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -76,7 +80,7 @@ export function GroupItem({
   useLayoutEffect(() => {
     if (actionsOpen && menuAnchorRef.current)
       positionActions(menuAnchorRef.current);
-  }, [actionsOpen, positionActions]);
+  }, [actionsOpen, contextActions, positionActions]);
 
   const clearLongPress = useCallback(() => {
     cancelLongPressRef.current?.();
@@ -202,6 +206,7 @@ export function GroupItem({
           };
           const timer = setTimeout(() => {
             clearLongPress();
+            setContextActions(false);
             if (row) row.dataset.reorderDragged = "true";
             positionActions(anchor);
             if (!actionsOpen) onToggleActions();
@@ -226,13 +231,14 @@ export function GroupItem({
           onSelect();
         }}
         onContextMenu={(event) => {
-          if (requestFooterPin(event, `group:${groupId}`)) return;
           if (
             !hideActionsButton &&
             window.matchMedia("(max-width: 512px)").matches
           )
             return;
           event.preventDefault();
+          event.stopPropagation();
+          setContextActions(!window.matchMedia("(max-width: 512px)").matches);
           clearLongPress();
           const row =
             event.currentTarget.closest<HTMLElement>("[data-group-id]");
@@ -259,6 +265,7 @@ export function GroupItem({
               aria-controls={`group-actions-${groupId}`}
               title={t.groupActions}
               onClick={(event) => {
+                setContextActions(false);
                 positionActions(event.currentTarget);
                 onToggleActions();
               }}
@@ -270,6 +277,7 @@ export function GroupItem({
             <div
               ref={dropdownRef}
               className="group-action-dropdown"
+              role={contextActions ? "menu" : undefined}
               id={`group-actions-${groupId}`}
               style={{ left: menuPosition.left, top: menuPosition.top }}
             >
@@ -277,6 +285,7 @@ export function GroupItem({
                 <>
                   <button
                     type="button"
+                    role={contextActions ? "menuitem" : undefined}
                     onClick={() => {
                       onCloseTabs();
                       onToggleActions();
@@ -285,22 +294,39 @@ export function GroupItem({
                     <XSquare size={16} />
                     <span>{t.closeGroupTabs}</span>
                   </button>
-                  {(!shared || (sharingRole === "owner" && !sharingActive)) && (
+                  {contextActions && (
                     <button
                       type="button"
-                      aria-label={t.shareGroupFor(name)}
+                      role="menuitem"
+                      disabled={footerItems.includes(`group:${groupId}`)}
                       onClick={() => {
+                        setFooterItems([...footerItems, `group:${groupId}`]);
                         onToggleActions();
-                        onShare();
                       }}
                     >
-                      <Share2 size={16} />
-                      <span>{t.shareGroup}</span>
+                      <Pin size={16} />
+                      <span>{t.pinToFooter}</span>
                     </button>
                   )}
+                  {!contextActions &&
+                    (!shared ||
+                      (sharingRole === "owner" && !sharingActive)) && (
+                      <button
+                        type="button"
+                        aria-label={t.shareGroupFor(name)}
+                        onClick={() => {
+                          onToggleActions();
+                          onShare();
+                        }}
+                      >
+                        <Share2 size={16} />
+                        <span>{t.shareGroup}</span>
+                      </button>
+                    )}
                   <button
                     type="button"
                     aria-label={t.editGroupFor(name)}
+                    role={contextActions ? "menuitem" : undefined}
                     title={t.edit}
                     onClick={() => {
                       onToggleActions();
@@ -310,7 +336,7 @@ export function GroupItem({
                     <Pencil size={16} />
                     <span>{t.edit}</span>
                   </button>
-                  {!shared && (
+                  {!contextActions && !shared && (
                     <button
                       type="button"
                       aria-label={t.deleteGroupFor(name)}
@@ -326,7 +352,7 @@ export function GroupItem({
                       <span>{t.delete}</span>
                     </button>
                   )}
-                  {shared && sharingRole === "member" && (
+                  {!contextActions && shared && sharingRole === "member" && (
                     <button
                       type="button"
                       onClick={(event) => {

@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 
 import {
-  chooseGroupAction,
   groupsCommand,
   readStoredState,
   seedSortableGroups,
@@ -11,13 +10,21 @@ test("3. Close All은 선택한 그룹의 열린 에디터 탭을 모두 닫는�
   page,
 }) => {
   await seedSortableGroups(page);
+  const original = (await readStoredState(page)).groups
+    .find((group) => group.id === "zulu")!
+    .tabs.find((tab) => tab.id === "tab-2")!;
   await groupsCommand(page).click();
-  await chooseGroupAction(page, "Zulu", "탭 닫기");
+  const row = page.locator('[data-group-id="zulu"]');
+  await row.locator(".group-select").click({ button: "right" });
+  await row.locator('[role="menuitem"]').first().click();
 
   const zulu = (await readStoredState(page)).groups.find(
     (group) => group.id === "zulu",
   );
   expect(zulu?.tabs.find((tab) => tab.id === "tab-2")?.open).toBe(false);
+  expect(zulu?.tabs.find((tab) => tab.id === "tab-2")?.content).toBe(
+    original.content,
+  );
   expect(zulu?.tabs.filter((tab) => tab.open)).toHaveLength(1);
   expect(zulu?.tabs.find((tab) => tab.open)?.content).toBe("");
 });

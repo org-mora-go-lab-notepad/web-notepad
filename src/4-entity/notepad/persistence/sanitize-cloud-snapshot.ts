@@ -15,21 +15,18 @@ type SnapshotState = {
   [key: string]: unknown;
 };
 
-const persistable = (tab: SnapshotTab) => tab.open !== false;
-
-/** Removes transient/closed notes before a personal snapshot reaches Turso. */
+/** Validate tab records without treating editor visibility as deletion intent. */
 export function sanitizeCloudSnapshot(snapshot: string) {
   const state = JSON.parse(snapshot) as SnapshotState;
-  state.groups = state.groups.map((group) => {
-    const tabs = group.tabs.filter(persistable);
-    const tabIds = new Set(tabs.map((tab) => tab.id));
-    return {
-      ...group,
-      tabs,
-      bookmarks: group.bookmarks?.filter((bookmark) =>
-        tabIds.has(bookmark.sourceTabId),
-      ),
-    };
-  });
+  for (const group of state.groups) {
+    if (
+      !Array.isArray(group.tabs) ||
+      group.tabs.some(
+        (tab) =>
+          !tab || typeof tab.id !== "string" || typeof tab.content !== "string",
+      )
+    )
+      throw new Error("Invalid snapshot tabs");
+  }
   return JSON.stringify(state);
 }

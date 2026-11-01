@@ -117,7 +117,11 @@
         white-space: nowrap;
         cursor: default;
 
-        &:hover,
+        &:disabled {
+          opacity: 0.45;
+        }
+
+        &:hover:not(:disabled),
         &:focus-visible {
           background: v.$line;
         }
