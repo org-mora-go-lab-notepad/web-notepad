@@ -7,5 +7,4 @@ export type GlobalSearchProps = {
   open: boolean;
   onClose: () => void;
   onSelectTab: (groupId: string, tabId: string) => void;
-  onSelectGroup: (groupId: string) => void;
 };

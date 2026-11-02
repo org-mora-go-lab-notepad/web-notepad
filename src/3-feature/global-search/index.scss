@@ -1,8 +1,6 @@
 @use "../../5-shared/style/mixin";
 @use "../../5-shared/style/variable" as v;
 @use "./style/search-result";
-@use "./style/search-result-section";
-@use "./style/search-preview";
 
 .global-search {
   @media (max-width: 512px) {
@@ -104,11 +102,6 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  &.has-preview .global-search-body {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) minmax(0, 0.8fr);
-  }
-
   .global-search-results-pane {
     position: relative;
     min-width: 0;
@@ -150,22 +143,12 @@
     }
   }
 
-  .global-search-preview-pane {
-    min-width: 0;
-    min-height: 0;
-    display: none;
-    border-top: 1px solid v.$line;
-  }
-
-  &.has-preview .global-search-preview-pane {
-    display: grid;
-  }
-
-  .global-search-preview-empty {
-    align-self: center;
-  }
-
   @include mixin.side-panel-list("global-search");
+
+  .global-search-tabs {
+    display: grid;
+    gap: 4px;
+  }
 
   .global-search-list {
     padding: 12px;

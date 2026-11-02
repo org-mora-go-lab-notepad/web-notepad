@@ -20,11 +20,6 @@
     background: var(--color-field);
   }
 
-  &.is-selected {
-    border-color: color-mix(in srgb, v.$signal 35%, v.$line);
-    background: color-mix(in srgb, v.$signal 8%, var(--color-field));
-  }
-
   strong {
     min-width: 0;
     overflow-wrap: anywhere;
@@ -42,7 +37,11 @@
     line-height: 1.45;
     overflow-wrap: anywhere;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 6;
+    max-height: 8.7em;
+    white-space: pre-wrap;
+    -webkit-user-select: text;
+    user-select: text;
   }
 }
 

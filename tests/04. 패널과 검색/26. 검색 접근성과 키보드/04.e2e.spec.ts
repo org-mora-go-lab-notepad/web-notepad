@@ -10,7 +10,7 @@ test("4. 검색 팝업을 열어도 입력창에 자동 포커스하지 않는�
   for (const viewport of BOTH_VIEWPORTS) {
     await page.setViewportSize(viewport);
     await openGlobalSearchPanel(page);
-    const search = page.getByRole("searchbox", { name: "Search everything" });
+    const search = page.getByRole("searchbox", { name: "Search tabs" });
     const popup = page.locator("#global-search-popup");
     await expect(search).toBeVisible();
     await expect(search).not.toBeFocused();

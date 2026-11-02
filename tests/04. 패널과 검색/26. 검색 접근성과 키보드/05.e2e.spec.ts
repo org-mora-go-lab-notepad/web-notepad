@@ -1,13 +1,13 @@
 import { expect, test } from "@playwright/test";
 
-test("5. 검색 입력란은 Search everything 이름과 안내 문구를 제공한다", async ({
+test("5. 검색 입력란은 Search tabs 이름과 안내 문구를 제공한다", async ({
   page,
 }) => {
   await test.step(
-    "시나리오: 5. 검색 입력란은 Search everything 이름과 안내 문구를 제공한다 — 준비 조건부터 공개 UI 또는 API 실행과 사용자 결과 검증까지 독립적으로 추적한다",
+    "시나리오: 5. 검색 입력란은 Search tabs 이름과 안내 문구를 제공한다 — 준비 조건부터 공개 UI 또는 API 실행과 사용자 결과 검증까지 독립적으로 추적한다",
     async () => {
       await test.step(
-        "준비 1: 5. 검색 입력란은 Search everything 이름과 안내 문구를 제공한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
+        "준비 1: 5. 검색 입력란은 Search tabs 이름과 안내 문구를 제공한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
           await page.goto("/");
         },
@@ -15,7 +15,7 @@ test("5. 검색 입력란은 Search everything 이름과 안내 문구를 제공
       );
 
       await test.step(
-        "실행 1: 5. 검색 입력란은 Search everything 이름과 안내 문구를 제공한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
+        "실행 1: 5. 검색 입력란은 Search tabs 이름과 안내 문구를 제공한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
           await page.locator(".group-select-command").click();
         },
@@ -23,7 +23,7 @@ test("5. 검색 입력란은 Search everything 이름과 안내 문구를 제공
       );
 
       await test.step(
-        "실행 2: 5. 검색 입력란은 Search everything 이름과 안내 문구를 제공한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
+        "실행 2: 5. 검색 입력란은 Search tabs 이름과 안내 문구를 제공한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
           await page.locator(".more-command").click();
         },
@@ -31,7 +31,7 @@ test("5. 검색 입력란은 Search everything 이름과 안내 문구를 제공
       );
 
       await test.step(
-        "실행 3: 5. 검색 입력란은 Search everything 이름과 안내 문구를 제공한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
+        "실행 3: 5. 검색 입력란은 Search tabs 이름과 안내 문구를 제공한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
           await page
             .getByRole("button", { name: "Search", exact: true })
@@ -40,15 +40,12 @@ test("5. 검색 입력란은 Search everything 이름과 안내 문구를 제공
         { box: true },
       );
 
-      const search = page.getByRole("searchbox", { name: "Search everything" });
+      const search = page.getByRole("searchbox", { name: "Search tabs" });
 
       await test.step(
-        "검증 1: 5. 검색 입력란은 Search everything 이름과 안내 문구를 제공한다 — PRD에 기록된 사용자 결과를 이 파일의 assertion으로 직접 확인한다",
+        "검증 1: 5. 검색 입력란은 Search tabs 이름과 안내 문구를 제공한다 — PRD에 기록된 사용자 결과를 이 파일의 assertion으로 직접 확인한다",
         async () => {
-          await expect(search).toHaveAttribute(
-            "placeholder",
-            "Search everything",
-          );
+          await expect(search).toHaveAttribute("placeholder", "Search tabs");
         },
         { box: true },
       );

@@ -44,20 +44,22 @@ test("2. 게시글 상세는 소개와 참여 링크를 제공하고 클릭만�
     .evaluate((line) => {
       const preview = line.closest<HTMLElement>(".board-note-preview")!;
       const marker = document.createElement("span");
-      marker.style.color = "var(--color-tab-teal)";
+      marker.style.color = document
+        .querySelector<HTMLElement>('.board-note-tabs [aria-selected="true"]')!
+        .style.getPropertyValue("--board-note-accent");
       document.body.append(marker);
-      const doneColor = getComputedStyle(marker).color;
+      const statusColor = getComputedStyle(marker).color;
       marker.remove();
       return {
         borderColor: getComputedStyle(line).borderLeftColor,
-        doneColor,
+        statusColor,
         rightGap:
           preview.getBoundingClientRect().left +
           preview.clientWidth -
           line.getBoundingClientRect().right,
       };
     });
-  expect(selectedLineLayout.borderColor).toBe(selectedLineLayout.doneColor);
+  expect(selectedLineLayout.borderColor).toBe(selectedLineLayout.statusColor);
   expect(Math.abs(selectedLineLayout.rightGap)).toBeLessThanOrEqual(1);
   await page.getByRole("tab", { name: "Follow-up shared note body" }).click();
   await expect(page.locator(".board-note-text")).toHaveText(

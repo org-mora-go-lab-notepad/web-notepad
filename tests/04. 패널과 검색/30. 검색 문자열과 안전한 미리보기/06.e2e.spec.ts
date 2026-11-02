@@ -5,31 +5,39 @@ import {
   createGroupFixture,
   createTabFixture,
 } from "../../__fixture__";
-import { openGlobalSearchPanel, seedSearchWorkspace } from "../../__util__";
+import {
+  openGlobalSearchPanel,
+  readStoredState,
+  seedSearchTabs,
+} from "../../__util__";
 
-test("6. 그룹 이름 검색은 해당 그룹의 북마크도 함께 찾는다", async ({
+test("6. 그룹명과 북마크에만 일치하는 검색어는 탭 결과를 만들지 않는다", async ({
   page,
 }) => {
-  await seedSearchWorkspace(
+  await seedSearchTabs(
     page,
-    [],
+    [createTabFixture("editor", "Editor")],
     [
       createGroupFixture(
         "work",
         "Project Orion",
-        [createTabFixture("tab-2", "Work")],
-        { bookmarks: [createBookmarkFixture("b1", "gone", "Budget")] },
+        [createTabFixture("budget", "Budget")],
+        { bookmarks: [createBookmarkFixture("orphan", "gone", "Orion saved")] },
       ),
     ],
   );
   await openGlobalSearchPanel(page);
-  await page
-    .getByRole("searchbox", { name: "Search everything" })
-    .fill("Orion");
-  await expect(
-    page.locator(".global-search-groups .global-search-result"),
-  ).toHaveCount(1);
-  await expect(
-    page.getByRole("button", { name: "Preview bookmark Budget" }),
-  ).toBeVisible();
+  await page.getByRole("searchbox", { name: "Search tabs" }).fill("Orion");
+  await expect(page.locator(".global-search-empty-state")).toHaveText(
+    "No search results",
+  );
+  await expect(page.locator(".global-search-result")).toHaveCount(0);
+  await expect(page.locator("textarea")).toHaveValue("Editor");
+  const state = await readStoredState(page);
+  expect(state.groups.find((group) => group.id === "work")?.name).toBe(
+    "Project Orion",
+  );
+  expect(
+    state.groups.find((group) => group.id === "work")?.bookmarks[0].content,
+  ).toBe("Orion saved");
 });

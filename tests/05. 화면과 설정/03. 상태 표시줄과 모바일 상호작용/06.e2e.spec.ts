@@ -51,10 +51,9 @@ test("6. UI 문구의 선택을 막고 입력과 본문 복사를 위한 선택�
     const input = dialog.getByRole("searchbox");
     await expect(input).toHaveCSS("user-select", "text");
     await input.fill("Selectable");
-    await dialog
-      .getByRole("button", { name: "Preview bookmark Saved note", exact: true })
-      .click();
-    await expect(dialog.locator("pre")).toHaveCSS("user-select", "text");
+    const preview = dialog.locator(".global-search-result p");
+    await expect(preview).toHaveText("Selectable note");
+    await expect(preview).toHaveCSS("user-select", "text");
     await page.keyboard.press("Escape");
   }
 });

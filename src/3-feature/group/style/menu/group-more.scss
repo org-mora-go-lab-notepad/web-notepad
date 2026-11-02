@@ -55,7 +55,9 @@
     }
 
     > svg {
-      display: none;
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
     }
 
     &:focus-visible {

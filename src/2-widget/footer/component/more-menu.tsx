@@ -5,7 +5,7 @@ import {
   Search,
   Settings,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import { Theme } from "@/src/3-feature";
 import { useI18n } from "@/src/5-shared/hook";
@@ -13,8 +13,15 @@ import { requestFooterPin } from "@/src/5-shared/util";
 
 import type { MoreMenuProps } from "../type";
 
+const subscribeToClient = () => () => undefined;
+
 export function MoreMenu({ searchOpen, onActivate }: MoreMenuProps) {
   const { t } = useI18n();
+  const ready = useSyncExternalStore(
+    subscribeToClient,
+    () => true,
+    () => false,
+  );
   const [open, setOpen] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -51,6 +58,7 @@ export function MoreMenu({ searchOpen, onActivate }: MoreMenuProps) {
         ref={trigger}
         type="button"
         className="more-command"
+        disabled={!ready}
         aria-label={t.more}
         title={t.more}
         aria-expanded={open}
@@ -59,6 +67,7 @@ export function MoreMenu({ searchOpen, onActivate }: MoreMenuProps) {
         onClick={() => setOpen((value) => !value)}
       >
         <EllipsisVertical size={24} aria-hidden="true" />
+        <span className="more-command-label">{t.more}</span>
       </button>
       {open && (
         <div

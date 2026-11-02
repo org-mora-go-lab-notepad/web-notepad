@@ -44,7 +44,9 @@ test("4. 선택한 언어를 메뉴·패널·하단 메뉴·편집기 안내 문
 
   await page.getByRole("button", { name: "설정 닫기" }).click();
   const tools = await openHeaderMenu(page);
-  await expect(moreCommand(page)).toHaveText("");
+  await expect(moreCommand(page).locator(".more-command-label")).toHaveText(
+    "더보기",
+  );
   await expect(moreCommand(page)).toHaveAccessibleName("더보기");
   await expect(tools.getByRole("button", { name: "검색" })).toBeVisible();
   await expect(
@@ -58,6 +60,10 @@ test("4. 선택한 언어를 메뉴·패널·하단 메뉴·편집기 안내 문
     if (viewport.width <= 512)
       await expect(page.locator(".group-command-label")).toHaveText("메뉴");
     const groupMenu = await openSystemGroupMenu(page);
+    await expect(page.locator(".system-group-command")).toHaveText("그룹");
+    await expect(
+      page.locator(".system-group-command svg.lucide-layers"),
+    ).toBeVisible();
     await expect(
       groupMenu.getByRole("button", { name: "미지정 그룹", exact: true }),
     ).toBeVisible();
@@ -87,7 +93,9 @@ test("4. 선택한 언어를 메뉴·패널·하단 메뉴·편집기 안내 문
   await page.getByRole("button", { name: "Close Settings" }).click();
   await openMoreMenu(page);
   await expect(moreCommand(page)).toHaveAccessibleName("More");
-  await expect(moreCommand(page)).toHaveText("");
+  await expect(moreCommand(page).locator(".more-command-label")).toHaveText(
+    "More",
+  );
   const systemGroups = await openSystemGroupMenu(page);
   await expect(
     systemGroups.getByRole("button", { name: "All Group", exact: true }),

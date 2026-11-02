@@ -401,7 +401,12 @@ export function Board({ onReturnHome }: { onReturnHome?: () => void }) {
                     className={`board-note-preview ${noteSlide ? `is-slide-${noteSlide.direction}` : ""}`}
                     id="board-active-note"
                     role="tabpanel"
-                    style={{ height: notePreviewHeight }}
+                    style={
+                      {
+                        height: notePreviewHeight,
+                        "--board-note-accent": `var(--color-tab-${activeNote.tabColor ?? getStatusColor(noteStatus(activeNote), cycle)})`,
+                      } as CSSProperties
+                    }
                   >
                     <pre>
                       {activeNote.content.split("\n").map((line, index) => (

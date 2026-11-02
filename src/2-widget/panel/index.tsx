@@ -100,7 +100,6 @@ export function Panel({
         onSearchQueryChange={onGlobalSearchQueryChange}
         open={openPanel === "global-search"}
         onClose={onClose}
-        onSelectGroup={onSelectGroup}
         onSelectTab={onSelectSearchTab}
       />
       {guideOpen && (
