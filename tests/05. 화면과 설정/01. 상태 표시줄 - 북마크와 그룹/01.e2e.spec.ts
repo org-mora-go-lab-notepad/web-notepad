@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import { BOTH_VIEWPORTS } from "../../__constant__";
 import { groupsCommand, moreCommand, systemGroupCommand } from "../../__util__";
 
-test("1. 메뉴 하단에는 Default Group만 두고 더보기 아이콘은 푸터 우측 끝에 표시한다", async ({
+test("1. 메뉴 하단에는 그룹 아이콘과 Group을 두고 더보기 아이콘은 푸터 우측 끝에 표시한다", async ({
   page,
 }) => {
   await page.goto("/");
@@ -13,13 +13,25 @@ test("1. 메뉴 하단에는 Default Group만 두고 더보기 아이콘은 푸�
     const row = page.locator(".group-more");
     const group = systemGroupCommand(page);
     const more = moreCommand(page);
-    await expect(row.locator(":scope > button")).toHaveText(["Default Group"]);
+    await expect(row.locator(":scope > button")).toHaveText(["Group"]);
     await expect(row.locator(".more-command, .group-more-divider")).toHaveCount(
       0,
     );
-    await expect(group.locator("svg")).toBeHidden();
+    const icon = group.locator("svg.lucide-layers");
+    await expect(icon).toBeVisible();
+    const iconBox = (await icon.boundingBox())!;
+    const labelBox = (await group.locator("span").boundingBox())!;
+    expect(iconBox.width).toBe(18);
+    expect(iconBox.x + iconBox.width).toBeLessThan(labelBox.x);
+    expect(iconBox.y + iconBox.height / 2).toBeCloseTo(
+      labelBox.y + labelBox.height / 2,
+      0,
+    );
     await expect(more).toHaveAccessibleName("More");
-    await expect(more).toHaveText("");
+    if (viewport.width > 512)
+      await expect(more.locator(".more-command-label")).toBeHidden();
+    else await expect(more.locator(".more-command-label")).toBeVisible();
+    await expect(more.locator(".more-command-label")).toHaveText("More");
     await expect(more.locator("svg.lucide-ellipsis-vertical")).toBeVisible();
     const rowBox = (await row.boundingBox())!;
     const groupBox = (await group.boundingBox())!;

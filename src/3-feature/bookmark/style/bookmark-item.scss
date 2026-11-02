@@ -5,7 +5,6 @@
   @include mixin.note-card("bookmark");
 
   .bookmark-item {
-    max-height: var(--mobile-dashboard-tab-max-height);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -70,7 +69,8 @@
     overflow-wrap: anywhere;
     white-space: pre-wrap;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 6;
+    max-height: 8.4em;
 
     // Title-only bookmarks keep one blank line, like pressing Enter in the editor.
     &.is-empty {

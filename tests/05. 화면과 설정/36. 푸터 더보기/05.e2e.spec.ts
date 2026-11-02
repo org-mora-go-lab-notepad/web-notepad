@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { openMoreMenu } from "../../__util__";
+import { moreCommand, openMoreMenu } from "../../__util__";
 
 test.use({ hasTouch: true });
 
@@ -26,7 +26,9 @@ test("5. 더보기의 테마 토글은 즉시 적용되고 페이지 이동과 �
   await page.setViewportSize({ width: 390, height: 844 });
   for (const route of ["/board", "/my-page"]) {
     await page.goto(route);
+    await expect(moreCommand(page)).toBeEnabled();
     await openMoreMenu(page);
+    await expect(toggle).toBeVisible();
     const before = await toggle.isChecked();
     await toggle.tap();
     await expect(toggle).toBeChecked({ checked: !before });

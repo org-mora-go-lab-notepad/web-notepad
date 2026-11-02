@@ -49,7 +49,11 @@ test("6. More의 Bookmark는 모든 그룹의 북마크 내용을 표시한다",
       preview: read(preview),
     };
   });
-  expect(bookmarkStyles.maxHeight).toBe("216px");
+  expect(bookmarkStyles.maxHeight).toBe("none");
+  await expect(bookmarkCard.locator(".bookmark-item-content")).toHaveCSS(
+    "-webkit-line-clamp",
+    "6",
+  );
   await page.locator("#bookmarks-panel .corner-popover-close").click();
   await switchGroup(page, "All Group");
   await page.locator(".dashboard-command").click();

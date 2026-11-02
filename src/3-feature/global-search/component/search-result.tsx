@@ -1,4 +1,4 @@
-import { Bookmark, FileText, Folder } from "lucide-react";
+import { FileText } from "lucide-react";
 
 import { SearchHighlight } from "@/src/5-shared/ui/search-field/component";
 
@@ -6,31 +6,22 @@ import type { SearchResultProps } from "../type";
 
 export function SearchResult({
   category,
-  kind,
   groupName,
   title,
   description,
   query,
   ariaLabel,
   onSelect,
-  selected = false,
 }: SearchResultProps) {
   return (
     <button
-      className={`global-search-result ${selected ? "is-selected" : ""}`}
+      className="global-search-result"
       type="button"
       aria-label={ariaLabel}
-      aria-current={selected ? "true" : undefined}
       onClick={onSelect}
     >
       <span className="global-search-result-category">
-        {kind === "tab" ? (
-          <FileText size={14} aria-hidden="true" />
-        ) : groupName !== undefined ? (
-          <Bookmark size={14} aria-hidden="true" />
-        ) : (
-          <Folder size={14} aria-hidden="true" />
-        )}
+        <FileText size={14} aria-hidden="true" />
         {category}
         {groupName && (
           <>

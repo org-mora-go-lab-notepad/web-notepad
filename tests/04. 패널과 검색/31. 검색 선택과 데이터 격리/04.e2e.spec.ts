@@ -1,25 +1,27 @@
 import { expect, test } from "@playwright/test";
 
-import { createBookmarkFixture } from "../../__fixture__";
-import { openGlobalSearchPanel, seedSearchWorkspace } from "../../__util__";
+import { createTabFixture } from "../../__fixture__";
+import { openGlobalSearchPanel, seedSearchTabs } from "../../__util__";
 
-test("4. 새 검색어에 선택한 북마크가 없으면 오래된 미리보기를 숨긴다", async ({
-  page,
-}) => {
-  await seedSearchWorkspace(page, [
-    createBookmarkFixture("b1", "gone", "Alpha preview"),
-    createBookmarkFixture("b2", "other", "Beta preview"),
+test("4. 새 검색어는 이전 탭 결과를 교체한다", async ({ page }) => {
+  await seedSearchTabs(page, [
+    createTabFixture("current", "Editor"),
+    createTabFixture("alpha", "Alpha note"),
+    createTabFixture("beta", "Beta note"),
   ]);
   await openGlobalSearchPanel(page);
-  const search = page.getByRole("searchbox", { name: "Search everything" });
+  const search = page.getByRole("searchbox", { name: "Search tabs" });
   await search.fill("Alpha");
-  await page
-    .getByRole("button", { name: "Preview bookmark Alpha preview" })
-    .click();
-  await expect(page.locator(".global-search-preview")).toBeVisible();
+  await expect(page.locator(".global-search-result strong")).toHaveText(
+    "Alpha note",
+  );
   await search.fill("Beta");
+  await expect(page.locator(".global-search-result strong")).toHaveText(
+    "Beta note",
+  );
   await expect(
-    page.getByRole("button", { name: "Preview bookmark Beta preview" }),
-  ).toBeVisible();
+    page.getByRole("button", { name: "Open tab Alpha note" }),
+  ).toHaveCount(0);
   await expect(page.locator(".global-search-preview")).toHaveCount(0);
+  await expect(page.locator("textarea")).toHaveValue("Editor");
 });

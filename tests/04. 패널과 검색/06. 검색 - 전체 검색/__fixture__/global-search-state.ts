@@ -5,13 +5,18 @@ import {
   createTabFixture,
 } from "../../../__fixture__";
 
-export function createGlobalSearchState(bookmarkCount = 1) {
+export function createGlobalSearchState(tabCount = 1) {
   const workGroup = createGroupFixture(
     "work",
     "Work",
-    [createTabFixture("work-tab", "Quarterly goals")],
+    Array.from({ length: tabCount }, (_, index) =>
+      createTabFixture(
+        index === 0 ? "work-tab" : `work-tab-${index}`,
+        index === 0 ? "Quarterly goals" : `Quarterly goals ${index}`,
+      ),
+    ),
     {
-      bookmarks: Array.from({ length: bookmarkCount }, (_, index) =>
+      bookmarks: Array.from({ length: tabCount }, (_, index) =>
         createBookmarkFixture(
           index === 0 ? "work-bookmark" : `work-bookmark-${index}`,
           "work-tab",

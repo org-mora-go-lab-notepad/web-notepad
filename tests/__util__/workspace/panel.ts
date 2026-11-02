@@ -25,6 +25,7 @@ export const shortcutsCommand = (page: Page) =>
 export async function openMoreMenu(page: Page) {
   const menu = page.locator("#group-more-menu");
   if (!(await menu.isVisible())) await moreCommand(page).click();
+  await expect(menu).toBeVisible();
   return menu;
 }
 

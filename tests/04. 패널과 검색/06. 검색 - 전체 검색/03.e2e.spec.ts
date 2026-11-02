@@ -27,7 +27,7 @@ test("3. 검색 결과가 없으면 No search results를 표시한다", async ({
         "실행 3: 3. 검색 결과가 없으면 No search results를 표시한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
           await page
-            .getByRole("searchbox", { name: "Search everything" })
+            .getByRole("searchbox", { name: "Search tabs" })
             .fill("No matching term");
         },
         { box: true },

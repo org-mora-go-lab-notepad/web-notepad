@@ -48,6 +48,35 @@ test("6. 모바일 네 푸터 진입점은 로그인 전후 같은 간격이며 
         .boundingBox())!;
       expect(moreIcon.width).toBeCloseTo(24 * 1.2, 1);
       expect(moreIcon.height).toBeCloseTo(24 * 1.2, 1);
+      const more = page.locator(".footer .more-command");
+      const label = more.locator(".more-command-label");
+      await expect(label).toBeVisible();
+      await expect(label).toHaveText("More");
+      await expect(more.locator("svg")).toHaveCSS(
+        "transform",
+        "matrix(0, 1, -1, 0, 0, -3)",
+      );
+      const labelBox = (await label.boundingBox())!;
+      expect(labelBox.y).toBeGreaterThan(moreIcon.y + moreIcon.height);
+      expect(labelBox.x + labelBox.width / 2).toBeCloseTo(boxes[3].center, 0);
+      const cardLabel = page.locator(
+        ".footer .dashboard-command .status-label",
+      );
+      for (const property of ["font-size", "line-height"]) {
+        expect(
+          await label.evaluate(
+            (element, property) =>
+              getComputedStyle(element).getPropertyValue(property),
+            property,
+          ),
+        ).toBe(
+          await cardLabel.evaluate(
+            (element, property) =>
+              getComputedStyle(element).getPropertyValue(property),
+            property,
+          ),
+        );
+      }
       expect(width - boxes[3].center).toBeGreaterThan(interval / 2);
       await page.locator(".footer .more-command").click();
       await expect(page.locator("#group-more-menu")).toBeVisible();

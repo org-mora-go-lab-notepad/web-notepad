@@ -505,12 +505,16 @@
       padding-right: 32px;
       border-left: 2px solid transparent;
       &.is-selected {
-        border-left-color: var(--color-tab-teal);
-        background: color-mix(in srgb, var(--color-tab-teal) 20%, transparent);
+        border-left-color: var(--board-note-accent);
+        background: color-mix(
+          in srgb,
+          var(--board-note-accent) 20%,
+          transparent
+        );
         color: v.$ink;
       }
       &.is-selected .board-note-line-number {
-        color: var(--color-tab-teal);
+        color: var(--board-note-accent);
         font-weight: 600;
       }
     }

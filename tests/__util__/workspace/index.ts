@@ -32,4 +32,4 @@ export {
   systemGroupCommand,
   toggleDashboardStatus,
 } from "./panel";
-export { seedSearchWorkspace } from "./search";
+export { seedSearchTabs, seedSearchWorkspace } from "./search";
