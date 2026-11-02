@@ -239,7 +239,9 @@
     }
 
     min-height: calc(81.8px + env(safe-area-inset-bottom));
-    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
     font-size: v.font(12px);
 
     &::before {
@@ -257,17 +259,11 @@
     }
 
     .status-meta {
-      padding: 0 48px 0 0;
-      display: block;
+      display: contents;
     }
 
     .footer-dock {
-      height: 100%;
-      padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0;
-      overflow: hidden;
+      display: contents;
     }
 
     .footer-dock-item {

@@ -30,7 +30,13 @@ test("1. 메뉴 하단에는 Default Group만 두고 더보기 아이콘은 푸�
       rowBox.x + rowBox.width / 2,
       0,
     );
-    expect(viewport.width - moreBox.x - moreBox.width).toBeLessThanOrEqual(8);
+    if (viewport.width > 512)
+      expect(viewport.width - moreBox.x - moreBox.width).toBeLessThanOrEqual(8);
+    else
+      expect(moreBox.x + moreBox.width / 2).toBeCloseTo(
+        8 + ((viewport.width - 16) * 7) / 8,
+        0,
+      );
     expect(moreBox.y).toBeGreaterThanOrEqual(footerBox.y);
     expect(moreBox.y + moreBox.height).toBeLessThanOrEqual(
       footerBox.y + footerBox.height,
