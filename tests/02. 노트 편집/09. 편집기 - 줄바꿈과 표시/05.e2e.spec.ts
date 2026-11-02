@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { DESKTOP_VIEWPORT, MOBILE_VIEWPORT } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import {
   expectSelectedLines,
   lineButtons,
@@ -13,7 +14,7 @@ test("5. 반응형 재줄바꿈 후에도 개행 기준 선택과 원본 줄 강
   page,
 }) => {
   await page.setViewportSize(MOBILE_VIEWPORT);
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator("textarea").first();
   const lines = lineButtons(page);
   await editor.fill(content);

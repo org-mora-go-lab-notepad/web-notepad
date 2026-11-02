@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import {
   addTabButton,
-  createGroups,
+  createGroupsWithTabs,
   dragDividerBy,
   readStoredState,
   switchGroup,
@@ -12,7 +13,7 @@ import { dragTabToZone, paneSlot } from "../../02. 노트 편집/__util__";
 test("4. 각 그룹은 분할 비율을 독립적으로 저장하고 다시 전환할 때 복원한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   await addTabButton(page).click();
   await dragTabToZone(
     page,
@@ -26,7 +27,7 @@ test("4. 각 그룹은 분할 비율을 독립적으로 저장하고 다시 전�
     .first()
     .boundingBox())!.width;
 
-  await createGroups(page, "Work");
+  await createGroupsWithTabs(page, "Work");
   await addTabButton(page).click();
   await dragTabToZone(
     page,

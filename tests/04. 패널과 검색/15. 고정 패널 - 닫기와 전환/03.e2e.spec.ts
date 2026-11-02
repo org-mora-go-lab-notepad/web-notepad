@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { DESKTOP_VIEWPORT } from "../../__constant__";
-import { createGroups, openPanel, switchGroup } from "../../__util__";
+import { createGroupsWithTabs, openPanel, switchGroup } from "../../__util__";
 
 test("3. 그룹을 전환해도 고정 패널을 열린 상태로 유지한다", async ({
   page,
@@ -28,7 +28,7 @@ test("3. 그룹을 전환해도 고정 패널을 열린 상태로 유지한다",
       await test.step(
         "실행 1: 3. 그룹을 전환해도 고정 패널을 열린 상태로 유지한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
-          await createGroups(page, "Alpha");
+          await createGroupsWithTabs(page, "Alpha");
         },
         { box: true },
       );

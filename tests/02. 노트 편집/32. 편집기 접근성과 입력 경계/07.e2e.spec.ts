@@ -1,12 +1,14 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test.use({ hasTouch: true });
 
 test("7. 모바일에서 라인 번호를 눌러도 편집기와 키보드 포커스를 열지 않는다", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 800 });
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator("textarea").first();
   await editor.fill("첫 줄\n둘째 줄");
   await editor.evaluate((element) => element.blur());

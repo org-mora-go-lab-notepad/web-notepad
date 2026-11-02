@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { lineButtons } from "../../__util__";
 import { WRAPPED_NOTE as content } from "./__constant__";
 import { countWrappedLines } from "./__util__";
@@ -7,7 +8,7 @@ import { countWrappedLines } from "./__util__";
 test("1. 자동 줄바꿈된 표시 줄 수에 맞춰 연속된 LINE 번호를 표시한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator("textarea").first();
   const lines = lineButtons(page);
   const numbers = (count: number) =>

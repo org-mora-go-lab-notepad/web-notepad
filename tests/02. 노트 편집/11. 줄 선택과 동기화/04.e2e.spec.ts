@@ -1,11 +1,12 @@
 import { test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { addTabButton, expectSelectedLines, lineButtons } from "../../__util__";
 
 test("4. 줄 선택을 노트별로 저장하고 탭 전환 후 각각 복원한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator("textarea");
   const lines = lineButtons(page);
   await editor.fill("one\ntwo\nthree");

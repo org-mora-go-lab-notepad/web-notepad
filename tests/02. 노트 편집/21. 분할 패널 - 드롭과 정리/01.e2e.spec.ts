@@ -1,12 +1,13 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { addTabButton } from "../../__util__";
 import { hoverTabOverPane, paneSlot } from "../__util__";
 
 test("1. 우측 편집기가 비어 있으면 Split right를 패널 오른쪽 절반에 표시한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   await page.locator("textarea").fill("a");
   for (const content of ["b", "c"]) {
     await addTabButton(page).click();

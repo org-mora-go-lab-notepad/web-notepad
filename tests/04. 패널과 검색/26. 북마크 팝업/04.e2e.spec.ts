@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { openBookmarksPanel } from "../../__util__";
 
 test("4. 북마크 모달 배경 클릭은 팝업을 닫고 편집기를 계속 사용할 수 있다", async ({
@@ -11,7 +12,7 @@ test("4. 북마크 모달 배경 클릭은 팝업을 닫고 편집기를 계속 
       await test.step(
         "준비 1: 4. 북마크 모달 배경 클릭은 팝업을 닫고 편집기를 계속 사용할 수 있다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

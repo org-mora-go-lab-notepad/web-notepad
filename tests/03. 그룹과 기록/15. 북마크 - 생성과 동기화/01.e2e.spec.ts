@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { chooseTabMenuItem, readStoredState } from "../../__util__";
 
 test("1. 탭 메뉴에서 북마크를 추가하면 제목과 내용을 보관한다", async ({
@@ -11,7 +12,7 @@ test("1. 탭 메뉴에서 북마크를 추가하면 제목과 내용을 보관�
       await test.step(
         "준비 1: 1. 탭 메뉴에서 북마크를 추가하면 제목과 내용을 보관한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

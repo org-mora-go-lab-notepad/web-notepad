@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { activeTabItem } from "../../__util__";
 
 test("4. 저장 기준과 다른 내용에 변경 표시를 보여준다", async ({ page }) => {
@@ -9,7 +10,7 @@ test("4. 저장 기준과 다른 내용에 변경 표시를 보여준다", async
       await test.step(
         "준비 1: 4. 저장 기준과 다른 내용에 변경 표시를 보여준다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

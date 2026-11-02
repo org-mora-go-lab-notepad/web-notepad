@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import {
-  createGroups,
+  createGroupsWithTabs,
   groupMenu,
   groupsCommand,
   groupStatusName,
@@ -11,7 +11,7 @@ test("2. PC에서 그룹을 선택하면 드롭다운을 열린 채 유지한다
   page,
 }) => {
   await page.goto("/");
-  await createGroups(page, "Work");
+  await createGroupsWithTabs(page, "Work");
   await groupsCommand(page).click();
 
   await groupMenu(page)

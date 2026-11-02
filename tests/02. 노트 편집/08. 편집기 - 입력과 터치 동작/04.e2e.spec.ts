@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("4. 한글 IME 조합 중에도 입력을 처리한다", async ({ page }) => {
   await test.step(
     "시나리오: 4. 한글 IME 조합 중에도 입력을 처리한다 — 준비 조건부터 공개 UI 또는 API 실행과 사용자 결과 검증까지 독립적으로 추적한다",
@@ -7,7 +9,7 @@ test("4. 한글 IME 조합 중에도 입력을 처리한다", async ({ page }) =
       await test.step(
         "준비 1: 4. 한글 IME 조합 중에도 입력을 처리한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

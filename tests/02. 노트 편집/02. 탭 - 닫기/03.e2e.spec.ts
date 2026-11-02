@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { addTabButton, readStoredState } from "../../__util__";
 
 test("3. 내용이 있는 탭을 닫으면 상태를 유지한 채 에디터에서만 숨긴다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   const tabs = page.locator(".tab-item");
   await page.locator("textarea").fill("12345678901");
   await addTabButton(page).click();

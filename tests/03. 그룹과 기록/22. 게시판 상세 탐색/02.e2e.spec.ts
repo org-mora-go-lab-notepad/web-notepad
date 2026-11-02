@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 
 import { boardTest as test } from "../../__fixture__";
+import { openEditor } from "../../__util__";
 import { openBoard, selectBoardPost, swipeTouch } from "../../__util__";
 
 test.use({ hasTouch: true });
@@ -9,7 +10,7 @@ test("2. 공유 그룹 보드 상세의 글자를 2px 키운다", async ({
   page,
   boardPost,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   await openBoard(page);
   await selectBoardPost(page, boardPost.title);
   const fontScale = await page.evaluate(() =>

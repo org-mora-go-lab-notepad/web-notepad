@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { openGuide } from "../../__util__";
 
 test("4. 가이드 바깥 배경을 클릭하면 닫고 노트 편집을 계속한다", async ({
@@ -11,7 +12,7 @@ test("4. 가이드 바깥 배경을 클릭하면 닫고 노트 편집을 계속�
       await test.step(
         "준비 1: 4. 가이드 바깥 배경을 클릭하면 닫고 노트 편집을 계속한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

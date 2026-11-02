@@ -6,12 +6,15 @@ export {
   dragDividerBy,
   dragDividerTo,
 } from "./divider";
+export { ensureEditorTab, openEditor } from "./editor";
 export { chooseGroupAction, groupActionsButton, groupMenu } from "./group-menu";
 export { openGuide } from "./guide";
 export { swipeTouch } from "./mobile-swipe";
 export {
   createGroup,
   createGroups,
+  createGroupsWithTabs,
+  createGroupWithTab,
   groupsCommand,
   groupSelectCommand,
   groupStatusName,

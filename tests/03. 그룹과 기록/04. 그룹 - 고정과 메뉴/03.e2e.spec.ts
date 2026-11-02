@@ -25,6 +25,6 @@ test("3. Close All은 선택한 그룹의 열린 에디터 탭을 모두 닫는�
   expect(zulu?.tabs.find((tab) => tab.id === "tab-2")?.content).toBe(
     original.content,
   );
-  expect(zulu?.tabs.filter((tab) => tab.open)).toHaveLength(1);
-  expect(zulu?.tabs.find((tab) => tab.open)?.content).toBe("");
+  expect(zulu?.tabs.filter((tab) => tab.open)).toHaveLength(0);
+  expect(zulu?.tabs).toHaveLength(1);
 });

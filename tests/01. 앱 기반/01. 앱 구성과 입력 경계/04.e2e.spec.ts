@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { STORAGE_KEY } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import { addTabButton } from "../../__util__";
 
 test("4. 노트 저장소 접근이 차단돼도 현재 세션에서 노트를 계속 편집한다", async ({
@@ -31,7 +32,7 @@ test("4. 노트 저장소 접근이 차단돼도 현재 세션에서 노트를 �
     },
     { key: STORAGE_KEY },
   );
-  await page.goto("/");
+  await openEditor(page);
 
   const editor = page.locator("textarea");
   await expect(editor).toBeVisible();

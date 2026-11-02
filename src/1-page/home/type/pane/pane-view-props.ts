@@ -9,7 +9,7 @@ export type PaneViewProps = {
   tabs: NoteTab[];
   groups: GroupEntry[];
   activeGroupId: string;
-  activeTab: NoteTab;
+  activeTab: NoteTab | undefined;
   editorRef: RefObject<HTMLTextAreaElement | null>;
   composingRef: RefObject<boolean>;
   isFocused: boolean;

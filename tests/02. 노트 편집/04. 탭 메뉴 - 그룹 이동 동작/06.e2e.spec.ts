@@ -70,7 +70,7 @@ test("6. 마지막 열린 2자 탭을 이동해도 모든 그룹의 닫힌 본�
   await openTabMenu(page.getByRole("tab", { name: "ㅎㅎ", exact: true }));
   await page.getByRole("menuitem", { name: "Move Group", exact: true }).click();
   await page.getByRole("menuitem", { name: "mora", exact: true }).click();
-  await expect(page.locator("textarea")).toHaveValue("");
+  await expect(page.locator("textarea")).toHaveCount(0);
   const readCloud = async () => {
     const data = await (
       await getApi(page.request, "/api/notepad/history")
@@ -92,7 +92,7 @@ test("6. 마지막 열린 2자 탭을 이동해도 모든 그룹의 닫힌 본�
   expect(remaining.tabs).toContainEqual(expect.objectContaining(closed));
   expect(
     remaining.tabs.filter((tab: { open: boolean }) => tab.open),
-  ).toHaveLength(1);
+  ).toHaveLength(0);
   expect(remaining.bookmarks).toEqual(source.bookmarks);
   expect(
     saved.groups.find((g: { id: string }) => g.id === other.id),

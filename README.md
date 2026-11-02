@@ -2,7 +2,7 @@
 
 탭과 그룹으로 메모를 정리하고, 대시보드와 공유 보드로 협업하는 브라우저 노트 앱입니다.
 
-**현재 버전:** `1.9.38` · **개발 서버:** `http://localhost:3000` · **E2E:** 721개
+**현재 버전:** `1.9.38` · **개발 서버:** `http://localhost:3000` · **E2E:** 723개
 
 [PRD](PRD.md) · [상세 요구사항](tests-prd/) · [E2E 가이드](tests/README.md) · [버전 이력](versions/)
 
@@ -28,13 +28,13 @@ npm run dev:local
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 엽니다.
 
-공유·저장 API는 [web-notepad-bff](https://github.com/org-mora-go-lab-notepad/web-notepad-bff)에서 제공합니다. BFF 저장소에서 한 번 `npm ci`를 실행한 뒤 프런트에서 `npm run dev:local`을 실행하면 BFF(3001)가 준비된 후 프런트(3000)를 함께 실행합니다. `Ctrl+C`로 두 서버를 함께 종료합니다. `npm run dev`는 기존처럼 프런트만 실행합니다. 카카오 인증은 이 저장소에 유지하며 로컬 개발 로그인은 Test 계정을 제공합니다. 기존 로컬 DB는 BFF의 TURSO_DATABASE_URL에 원래 파일의 절대 경로를 지정해 이어 사용합니다.
+운영 공유·저장 API는 [web-notepad-bff](https://github.com/org-mora-go-lab-notepad/web-notepad-bff)에서 제공합니다. 로컬에서는 이 저장소만 설치한 뒤 `npm run dev`를 실행하면 프런트(3000)와 독립 Mock API(3001)가 함께 실행됩니다. BFF 저장소·Turso 자격증명 없이 개인 저장과 공유 그룹 CRUD를 개발하고 테스트할 수 있습니다. 상태는 `.local/mock-api.json`에 유지하며 자동 초기화하지 않습니다. 실제 BFF를 연결할 때는 `npm run dev:bff`를 사용합니다. 카카오 인증은 프런트에 유지하고 로컬 로그인은 Test 1·Test 2 계정을 제공합니다. `Ctrl+C`로 두 서버를 함께 종료합니다.
 
 ### 자주 사용하는 명령어
 
 | 명령어                       | 설명                             |
 | ---------------------------- | -------------------------------- |
-| `npm run dev`                | 3000 포트에서 개발 서버 실행     |
+| `npm run dev`                | 프런트 3000 + 독립 Mock API 3001 |
 | `npm run build`              | 프로덕션 빌드 생성               |
 | `npm run start`              | 3000 포트에서 프로덕션 서버 실행 |
 | `npm run lint`               | ESLint 검사                      |
@@ -137,7 +137,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-현재 프런트 721개의 E2E가 등록되어 있습니다. BE 전용 48개와 대응 문서는 BFF로 이관했습니다. 프런트 통합 테스트 실행 시 `NOTEPAD_BFF_DIR`에 BFF 체크아웃 경로를 지정합니다. 기본값은 `../../org-mora-go-lab-notepad/web-notepad-bff`이며 BFF의 `npm ci`를 먼저 실행해야 합니다. 테스트는 별도 BFF 프로세스와 로컬 파일 DB를 사용합니다. `tests-prd/`의 각 번호 요구사항은 `tests/`의 같은 번호 `e2e.spec.ts`와 1:1로 대응합니다. 구조 검사는 번호 대응, 파일당 단일 테스트, 최소 코드 분량과 공통 리소스 배럴을 확인합니다.
+현재 프런트 723개의 E2E가 등록되어 있습니다. `npm run test:e2e`는 BFF 체크아웃 없이 격리된 메모리 Mock 서버에서 전체 테스트를 실행합니다. `npm run test:e2e:bff`는 같은 전체 테스트를 실제 로컬 BFF에 연결해 검증하며 `NOTEPAD_BFF_DIR`로 경로를 지정할 수 있습니다. 이 모드에서만 BFF 저장소의 `npm ci`가 필요하며 별도 로컬 파일 DB를 사용합니다. CI도 Mock·BFF 전체 검증을 각각 실행합니다. `tests-prd/` 번호 요구사항과 `tests/` 파일은 1:1로 대응합니다. [Mock 개발 안내](tests/__mock__/README.md)를 참고하세요.
 
 ## 버전과 배포
 
@@ -154,11 +154,14 @@ https://<배포-도메인>/api/auth/oauth/kakao/callback
 
 Turso 환경 변수는 BFF에만 설정합니다. BFF를 먼저 배포한 뒤 프런트에 `NOTEPAD_BFF_URL`, `NOTEPAD_BFF_SECRET`을 설정합니다. 기존 `AUTH_SECRET`은 프런트에서 변경 없이 유지합니다. 프런트는 카카오 세션에서 60초짜리 BFF 토큰을 발급하고 기존 공유 링크를 검증합니다. 브라우저가 BFF를 직접 호출하며 새 공유 링크는 BFF가 서명하므로 BFF에 AUTH_SECRET을 복사하거나 SHARE_TOKEN_SECRET을 설정할 필요가 없습니다. BFF는 토큰의 서명·만료·Origin과 기존 링크 검증 결과를 확인하고 DB의 공유 활성 상태·버전을 다시 검사합니다. [전환·롤백 절차](https://github.com/org-mora-go-lab-notepad/web-notepad-bff/blob/main/docs/migration.md)를 참고하세요. 이번 코드 이관으로 운영 DB를 정리하거나 탭을 삭제하지 않습니다.
 
-## 로컬 FE–BFF 연결과 Swagger
+## 로컬 Mock·BFF와 Swagger
 
 - `npm run dev:local`: 3000 → 3001로 고정 연결하고 두 프로세스의 요청 서명 키와 공유 링크 키를 일치시킵니다. 환경 파일을 덮어쓰지 않습니다.
-- BFF 위치는 `NOTEPAD_BFF_DIR`, 같은 상위 폴더의 `web-notepad-bff`, 기존 조직 폴더의 체크아웃 순서로 찾습니다. `npm run dev:local -- --check`로 경로를 확인합니다.
+- 기본 `npm run dev`와 `npm run dev:mock`은 BFF를 탐색하지 않는 독립 Mock 모드입니다.
+- 실제 BFF 모드의 BFF 위치는 `NOTEPAD_BFF_DIR`, 같은 상위 폴더의 `web-notepad-bff`, 기존 조직 폴더의 체크아웃 순서로 찾습니다. `npm run dev:bff -- --check`로 경로를 확인합니다.
 - BFF의 `.env.local` DB 설정을 유지합니다. 기존 로컬 DB 파일을 초기화하거나 복사하지 않습니다.
 - [http://localhost:3000/docs](http://localhost:3000/docs): 로컬 프런트의 카카오/Test 로그인 세션으로 Swagger Try it out을 실행합니다. 브라우저에 서버 비밀키를 넣을 필요가 없습니다. 저장 요청은 실제 로컬 데이터를 변경하므로 테스트용 작업공간을 사용합니다.
 - [http://localhost:3001/docs](http://localhost:3001/docs): BFF 직접 호출용 명세입니다. 업무 API는 브라우저 Bearer 토큰 또는 서버 게이트웨이 서명이 필요합니다.
 - 프런트 `/docs`는 개발 모드에만 제공하며 실제 API의 인증·Origin 검증은 그대로 적용합니다.
+
+탭이 없는 작업공간은 상단 새 탭 `+`만 표시합니다. 마지막 탭 닫기·그룹 이동·새로고침·그룹 생성으로 빈 탭을 자동 생성하지 않습니다. 기존 그룹·닫힌 탭 데이터는 보존하고 사용자의 명시적 빈 탭 닫기만 기존 삭제 규칙을 따릅니다.

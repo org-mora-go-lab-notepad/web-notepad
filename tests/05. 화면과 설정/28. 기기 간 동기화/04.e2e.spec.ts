@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 
-import { createGroups, readStoredState } from "../../__util__";
+import { createGroupsWithTabs, readStoredState } from "../../__util__";
 import { syncTest as test } from "./__fixture__";
 import { openDevice, readHistory, waitForSaved } from "./__util__";
 
@@ -17,7 +17,7 @@ test("4. 저장 실패 후 새로고침하면 로컬 그룹과 다른 기기의 
   await mobile.route("**/api/notepad/history", (route) =>
     route.request().method() === "POST" ? route.abort() : route.continue(),
   );
-  await createGroups(mobile, "Offline draft group");
+  await createGroupsWithTabs(mobile, "Offline draft group");
   await mobile.locator("textarea").first().fill("모바일 미전송 글");
   await expect(mobile.locator(".home")).toHaveAttribute(
     "data-cloud-save",

@@ -35,3 +35,6 @@ pnpm-debug.log*
 
 #etc
 next-env.d.ts
+
+# Independent development mock state
+/.local/

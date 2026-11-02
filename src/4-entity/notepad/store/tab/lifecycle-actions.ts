@@ -17,7 +17,6 @@ import {
   SHARED_TAB_DELETE_INTENT_EVENT,
 } from "../../util";
 import {
-  allocateTab,
   EMPTY_SPLIT_LAYOUT,
   getActiveGroup,
   getTabGroup,
@@ -205,7 +204,6 @@ const hideTabFromEditor = (
   );
 
   if (remainingOpenTabs.length === 0) {
-    const { tab: replacement, nextTabNumber } = allocateTab(state);
     commit({
       ...updateGroup(state, group.id, (current) => ({
         ...current,
@@ -217,11 +215,9 @@ const hideTabFromEditor = (
             .map((item) =>
               item.id === tabId ? { ...item, open: false } : item,
             ),
-          replacement,
         ],
-        activeTabId: replacement.id,
+        activeTabId: "",
       })),
-      nextTabNumber,
     });
     return;
   }
@@ -273,16 +269,14 @@ const archiveTabEntry = (
 
   const remainingTabs = group.tabs.filter((item) => item.id !== tabId);
   if (!remainingTabs.some((item) => item.open)) {
-    const { tab: replacement, nextTabNumber } = allocateTab(state);
     set({
       ...updateGroup(state, group.id, (current) => ({
         ...current,
         ...EMPTY_SPLIT_LAYOUT,
         splitRatio: current.splitRatio,
-        tabs: [...remainingTabs, replacement],
-        activeTabId: replacement.id,
+        tabs: remainingTabs,
+        activeTabId: "",
       })),
-      nextTabNumber,
     });
     return;
   }

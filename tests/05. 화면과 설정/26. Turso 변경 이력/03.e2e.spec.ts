@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { signedSession } from "../../__fixture__";
+import { openEditor } from "../../__util__";
 import { authenticateBrowser } from "../../__util__";
 import { readCloudHistory } from "./__util__";
 
@@ -24,7 +25,7 @@ test("3. 저장 실패 뒤 대기 중인 변경을 자동 재시도한다", asyn
       return route.fulfill({ status: 503, body: "unavailable" });
     return route.continue();
   });
-  await page.goto("/");
+  await openEditor(page);
   await expect(page.locator("button.auth-command")).toContainText("Cloud User");
   await page.locator("textarea").first().fill("재시도할 글");
   await expect(page.locator(".home")).toHaveAttribute(

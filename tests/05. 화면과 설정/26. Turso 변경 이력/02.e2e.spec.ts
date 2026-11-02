@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { signedSession } from "../../__fixture__";
+import { openEditor } from "../../__util__";
 import {
   authenticateBrowser,
   dashboardColumn,
@@ -20,7 +21,7 @@ test("2. 노트 상태 변경을 Turso 스냅샷에 저장한다", async ({
       expiresAt: Date.now() + 60_000,
     }),
   );
-  await page.goto("/");
+  await openEditor(page);
   await expect(page.locator("button.auth-command")).toContainText("Cloud User");
   await page.locator("textarea").first().fill("상태 변경 글");
   await openPanel(page, "dashboard-panel");

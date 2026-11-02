@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { openPanel } from "../../__util__";
 
 test("4. 고정 패널은 배경 덮개·그림자·경계 음영 없이 편집기를 계속 사용할 수 있다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   await openPanel(page, "dashboard-panel");
   const panel = page.locator("#dashboard-panel");
   await expect(panel).toHaveCSS("box-shadow", "none");

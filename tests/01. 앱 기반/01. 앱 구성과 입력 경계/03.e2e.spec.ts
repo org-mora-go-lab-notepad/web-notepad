@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { STORAGE_KEY } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import { readStoredState } from "../../__util__";
 
 test("3. 손상된 노트 저장값을 기본 작업공간으로 복구하고 정상 상태를 다시 저장한다", async ({
@@ -10,7 +11,7 @@ test("3. 손상된 노트 저장값을 기본 작업공간으로 복구하고 �
     ({ key }) => localStorage.setItem(key, "{broken-json"),
     { key: STORAGE_KEY },
   );
-  await page.goto("/");
+  await openEditor(page);
 
   const editor = page.locator("textarea");
   await expect(editor).toBeVisible();

@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { MOBILE_VIEWPORT } from "../../__constant__";
+import { openEditor } from "../../__util__";
 
 test("5. 모바일 탭 타이틀과 편집기는 기존 축소 크기를 유지하고 에디터만 1px 늘려 줄 번호 크기를 유지한다", async ({
   page,
@@ -19,7 +20,7 @@ test("5. 모바일 탭 타이틀과 편집기는 기존 축소 크기를 유지�
       await test.step(
         "준비 2: 5. 모바일 탭 타이틀과 편집기는 기존 축소 크기를 유지하고 에디터만 1px 늘려 줄 번호 크기를 유지한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

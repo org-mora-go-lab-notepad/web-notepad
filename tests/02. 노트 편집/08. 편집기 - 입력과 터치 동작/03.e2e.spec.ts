@@ -1,10 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("3. 커서가 편집기 높이를 넘어가면 편집기와 줄 번호 영역을 함께 스크롤한다", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 360 });
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator("textarea");
   const longNote = Array.from(
     { length: 40 },

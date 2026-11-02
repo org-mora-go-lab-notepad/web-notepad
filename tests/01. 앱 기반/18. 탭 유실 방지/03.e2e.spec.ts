@@ -1,7 +1,12 @@
 import { expect } from "@playwright/test";
 
 import { sharingTest as test } from "../../__fixture__";
-import { createGroups, getApi, openTabMenu, switchGroup } from "../../__util__";
+import {
+  createGroupsWithTabs,
+  getApi,
+  openTabMenu,
+  switchGroup,
+} from "../../__util__";
 
 test("3. 공유 이동 중 대상 저장이 실패해도 재시도 후 탭을 안전하게 이동한다", async ({
   sharing: { owner, id },
@@ -11,7 +16,7 @@ test("3. 공유 이동 중 대상 저장이 실패해도 재시도 후 탭을 �
       (group: { id: string }) => group.id === id,
     );
   const original = (await readSource()).data.tabs[0];
-  await createGroups(owner, "Target");
+  await createGroupsWithTabs(owner, "Target");
   await expect(owner.locator(".home")).toHaveAttribute(
     "data-cloud-save",
     "saved",

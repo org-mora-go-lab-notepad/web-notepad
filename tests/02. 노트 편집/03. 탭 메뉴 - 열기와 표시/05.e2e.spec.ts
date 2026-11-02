@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { MOBILE_VIEWPORT } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import { authenticateBrowser } from "../../__util__";
 
 test.use({ hasTouch: true, isMobile: true, viewport: MOBILE_VIEWPORT });
@@ -10,7 +11,7 @@ test("5. 모바일 탭 헤더 메뉴 글자를 계정 드롭다운과 같은 크
   context,
 }) => {
   await authenticateBrowser(context);
-  await page.goto("/");
+  await openEditor(page);
   const account = page.locator("button.auth-command:not(.is-loading)");
   await expect(account).toBeVisible();
   await account.tap();

@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import {
   authenticate,
   getApi,
@@ -22,7 +23,7 @@ test("1. 누락된 로컬 재전송 대기열과 서버 원문을 함께 복구�
       })
     ).ok(),
   ).toBe(true);
-  await page.goto("/");
+  await openEditor(page);
   await expect(page.locator("textarea").first()).toHaveValue("수정할 원문");
   await expect(page.locator(".home")).toHaveAttribute(
     "data-cloud-save",

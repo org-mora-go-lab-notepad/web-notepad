@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { STORAGE_KEY } from "../../__constant__";
+import { openEditor } from "../../__util__";
 
 test("1. 노트 상태는 web-notepad-storage 키로 저장되고 새로고침 후 복원된다", async ({
   page,
@@ -11,7 +12,7 @@ test("1. 노트 상태는 web-notepad-storage 키로 저장되고 새로고침 �
       await test.step(
         "준비 1: 1. 노트 상태는 web-notepad-storage 키로 저장되고 새로고침 후 복원된다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

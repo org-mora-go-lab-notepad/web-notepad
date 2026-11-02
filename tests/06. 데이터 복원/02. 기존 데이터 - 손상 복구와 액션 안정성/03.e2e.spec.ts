@@ -7,6 +7,11 @@ test("3. 빈 그룹 복구 탭 ID는 다른 그룹 탭과 북마크 원본 ID를
   page,
 }) => {
   await seedRecoveryCollision(page);
+  await expect(page.locator("textarea")).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "New tab", exact: true })
+    .first()
+    .click();
   await page.locator("textarea").fill("Recovered workspace");
   await expect
     .poll(async () => {

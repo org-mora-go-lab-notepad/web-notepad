@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("2. 여러 줄 내어쓰기는 공백 들여쓰기를 탭으로 오인해 제거하지 않는다", async ({
   page,
 }) => {
@@ -9,7 +11,7 @@ test("2. 여러 줄 내어쓰기는 공백 들여쓰기를 탭으로 오인해 �
       await test.step(
         "준비 1: 2. 여러 줄 내어쓰기는 공백 들여쓰기를 탭으로 오인해 제거하지 않는다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { authenticate, getApi, historyPost, snapshot } from "../../__util__";
 
 test("1. 개인 탭을 비운 직후 직접 닫으면 DB에서도 삭제하고 다른 그룹은 보존한다", async ({
@@ -25,7 +26,7 @@ test("1. 개인 탭을 비운 직후 직접 닫으면 DB에서도 삭제하고 �
     snapshot: JSON.stringify(original),
   });
   expect(prepared.status(), await prepared.text()).toBe(200);
-  await page.goto("/");
+  await openEditor(page);
   await expect(page.locator("textarea").first()).toHaveValue("삭제할 원문");
   await page.locator("textarea").first().fill("");
   await page.locator(".tab-item").first().locator(".tab-close").click();

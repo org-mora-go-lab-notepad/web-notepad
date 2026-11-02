@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { signedSession } from "../../__fixture__";
+import { openEditor } from "../../__util__";
 import { authenticateBrowser } from "../../__util__";
 import { readCloudHistory } from "./__util__";
 
@@ -16,7 +17,7 @@ test("7. 탭을 닫아도 저장 대기 중인 본문을 DB에 보존하고 새�
       expiresAt: Date.now() + 60_000,
     }),
   );
-  await page.goto("/");
+  await openEditor(page);
   await page.locator("textarea").first().fill("닫기 전에 저장할 본문");
   await page.locator(".tab-item.is-active .tab-close").click();
   await expect(page.locator(".home")).toHaveAttribute(
@@ -34,7 +35,7 @@ test("7. 탭을 닫아도 저장 대기 중인 본문을 DB에 보존하고 새�
     .poll(readSavedTab)
     .toMatchObject({ content: "닫기 전에 저장할 본문", open: false });
   await page.reload();
-  await expect(page.locator("textarea").first()).toHaveValue("");
+  await expect(page.locator("textarea")).toHaveCount(0);
   expect(await readSavedTab()).toMatchObject({
     content: "닫기 전에 저장할 본문",
     open: false,

@@ -1,9 +1,11 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("5. Shift+Tab은 탭 들여쓰기를 제거하고 없으면 역방향으로 포커스를 이동한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator(".note-area");
   await editor.fill("\tfirst\n\tsecond");
   await editor.focus();

@@ -157,18 +157,18 @@ export const createGroupEntry = (
   id: string,
   name: string,
   createdAt: number,
-  tab: NoteTab,
+  tab?: NoteTab,
 ): GroupEntry => ({
   id,
   name,
   pinned: false,
   createdAt,
   updatedAt: createdAt,
-  tabs: [tab],
+  tabs: tab ? [tab] : [],
   bookmarks: [],
   dashboardVisibility: { ...DEFAULT_DASHBOARD_VISIBILITY },
   ...EMPTY_SPLIT_LAYOUT,
-  activeTabId: tab.id,
+  activeTabId: tab?.id ?? "",
 });
 
 export const activateTab = (group: GroupEntry, tabId: string): GroupEntry => {

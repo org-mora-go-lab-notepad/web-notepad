@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 
 import { boardTest as test } from "../../__fixture__";
+import { openEditor } from "../../__util__";
 import { openBoard, selectBoardPost } from "../../__util__";
 import { getApi } from "../../__util__/request";
 
@@ -9,7 +10,7 @@ test("2. 게시글 상세는 소개와 참여 링크를 제공하고 클릭만�
   request,
   boardPost,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   await openBoard(page);
   await selectBoardPost(page, boardPost.title);
   await expect(page.locator(".board-detail .board-owner")).toHaveText(

@@ -5,7 +5,7 @@ import { expect, test } from "@playwright/test";
 test("2. BFF 경로가 잘못되면 서버 시작 전에 명확한 오류로 중단한다", async () => {
   const result = spawnSync(
     process.execPath,
-    ["scripts/dev-local.mjs", "--check"],
+    ["scripts/dev-local.mjs", "--bff", "--check"],
     {
       cwd: process.cwd(),
       env: {

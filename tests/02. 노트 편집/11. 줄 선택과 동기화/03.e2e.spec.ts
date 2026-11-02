@@ -1,12 +1,13 @@
 import { expect, test } from "@playwright/test";
 
 import { tabColors } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import { activeTabItem, lineButtons } from "../../__util__";
 
 test("3. 클릭과 키보드로 선택한 줄 번호를 활성 탭 색상으로 강조한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator("textarea");
   await editor.fill("first\nsecond\nthird");
   const tab = activeTabItem(page);

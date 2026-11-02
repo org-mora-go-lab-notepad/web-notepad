@@ -142,12 +142,6 @@ export function Home() {
   }, [language, fontScale]);
 
   useEffect(() => {
-    if (!hydrated || activeTab) return;
-    if (isSharedGroupId(activeGroupId) && !shared.groupsLoaded) return;
-    useNotepadStore.getState().addTab();
-  }, [activeGroupId, activeTab, hydrated, shared.groupsLoaded]);
-
-  useEffect(() => {
     if (
       !sharedTabLink ||
       sharedTabLinkOpened.current ||
@@ -250,7 +244,7 @@ export function Home() {
     };
   }, [inviteStatus, dismissInvite]);
 
-  if (!hydrated || !activeTab) {
+  if (!hydrated) {
     return (
       <main className="home is-loading" aria-busy="true">
         <Loading />

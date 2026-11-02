@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-import { createGroups, switchGroup } from "../../__util__";
+import { openEditor } from "../../__util__";
+import { createGroupsWithTabs, switchGroup } from "../../__util__";
 
 test("1. 각 그룹은 서로 다른 탭과 노트 내용을 유지한다", async ({ page }) => {
   await test.step(
@@ -9,7 +10,7 @@ test("1. 각 그룹은 서로 다른 탭과 노트 내용을 유지한다", asyn
       await test.step(
         "준비 1: 1. 각 그룹은 서로 다른 탭과 노트 내용을 유지한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );
@@ -25,7 +26,7 @@ test("1. 각 그룹은 서로 다른 탭과 노트 내용을 유지한다", asyn
       await test.step(
         "실행 2: 1. 각 그룹은 서로 다른 탭과 노트 내용을 유지한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
-          await createGroups(page, "Work");
+          await createGroupsWithTabs(page, "Work");
         },
         { box: true },
       );

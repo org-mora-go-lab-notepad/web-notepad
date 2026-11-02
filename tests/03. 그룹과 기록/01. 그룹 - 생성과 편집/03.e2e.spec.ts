@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { MOBILE_VIEWPORT } from "../../__constant__";
 import {
-  createGroups,
+  createGroupsWithTabs,
   groupMenu,
   groupsCommand,
   groupStatusName,
@@ -13,7 +13,7 @@ test("3. 모바일에서 그룹을 선택하면 드롭다운을 바로 닫는다
 }) => {
   await page.setViewportSize(MOBILE_VIEWPORT);
   await page.goto("/");
-  await createGroups(page, "Work");
+  await createGroupsWithTabs(page, "Work");
   await groupsCommand(page).click();
 
   await groupMenu(page)

@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("3. 1440x900 light 1.1 핵심 반응형 계약을 유지한다", async ({ page }) => {
   const viewport = { width: 1440, height: 900 };
   const theme = "light";
@@ -21,7 +23,7 @@ test("3. 1440x900 light 1.1 핵심 반응형 계약을 유지한다", async ({ p
     },
     { selectedTheme: theme, selectedScale: fontScale },
   );
-  await page.goto("/");
+  await openEditor(page);
 
   const main = page.locator("main.home");
   const footer = page.locator(".footer");

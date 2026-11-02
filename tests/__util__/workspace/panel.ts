@@ -126,6 +126,29 @@ export async function createGroup(page: Page, name: string) {
   await page.getByRole("button", { name: "Create group" }).click();
 }
 
+// Explicit user-driven note preparation for scenarios that edit newly created groups.
+export async function createGroupWithTab(page: Page, name: string) {
+  await createGroup(page, name);
+  if (await page.locator("#group-system-menu").isVisible())
+    await page.keyboard.press("Escape");
+  if (
+    (page.viewportSize()?.width ?? 1280) <= 512 &&
+    (await groupsCommand(page).getAttribute("aria-expanded")) === "true"
+  )
+    await groupsCommand(page).click();
+  await page
+    .getByRole("button", { name: "New tab", exact: true })
+    .first()
+    .click();
+}
+export async function createGroupsWithTabs(page: Page, ...names: string[]) {
+  for (const name of names) await createGroupWithTab(page, name);
+  if (await page.locator("#group-system-menu").isVisible())
+    await page.keyboard.press("Escape");
+  if ((await groupsCommand(page).getAttribute("aria-expanded")) === "true")
+    await page.keyboard.press("Escape");
+}
+
 // Opens the group dropdown, creates the groups, and closes it again.
 export async function createGroups(page: Page, ...names: string[]) {
   await groupsCommand(page).click();

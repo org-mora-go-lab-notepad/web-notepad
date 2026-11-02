@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { addTabButton } from "../../__util__";
 
 test("3. 드래그로 탭 순서를 바꿀 수 있다", async ({ page }) => {
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator("textarea");
   await editor.fill("first");
   await addTabButton(page).click();

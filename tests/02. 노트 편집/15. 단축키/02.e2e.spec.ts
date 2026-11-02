@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { addTabButton } from "../../__util__";
 
 test("2. Alt+위아래 화살표는 같은 패널의 탭 사이를 이동한다", async ({
@@ -11,7 +12,7 @@ test("2. Alt+위아래 화살표는 같은 패널의 탭 사이를 이동한다"
       await test.step(
         "준비 1: 2. Alt+위아래 화살표는 같은 패널의 탭 사이를 이동한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

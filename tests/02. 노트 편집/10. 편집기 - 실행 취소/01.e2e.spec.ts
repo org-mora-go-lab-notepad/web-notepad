@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("1. Undo와 Redo 단축키가 탭별 편집 기록을 되돌리고 복원한다", async ({
   page,
 }) => {
@@ -9,7 +11,7 @@ test("1. Undo와 Redo 단축키가 탭별 편집 기록을 되돌리고 복원�
       await test.step(
         "준비 1: 1. Undo와 Redo 단축키가 탭별 편집 기록을 되돌리고 복원한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );
