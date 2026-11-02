@@ -6,6 +6,7 @@ export {
   signedSessionText,
 } from "./auth";
 export { boardTest } from "./board";
+export { mockStatusBoard, statusBoardPost } from "./board-status";
 export {
   createBookmarkFixture,
   createClosedTabFixture,

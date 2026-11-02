@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { signedSession } from "../../__fixture__";
+import { openEditor } from "../../__util__";
 import { authenticateBrowser } from "../../__util__";
 import { readCloudHistory } from "./__util__";
 
@@ -16,7 +17,7 @@ test("6. 빈 내용과 1~2자 본문도 길이를 이유로 DB에서 자동 삭�
       expiresAt: Date.now() + 60_000,
     }),
   );
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator("textarea").first();
   const savedContent = async () => {
     const history = await readCloudHistory(page);

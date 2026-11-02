@@ -1,11 +1,15 @@
 import { expect, test } from "@playwright/test";
 
-import { createGroup, groupActionsButton, groupsCommand } from "../../__util__";
+import {
+  createGroupWithTab,
+  groupActionsButton,
+  groupsCommand,
+} from "../../__util__";
 
 test("4. 기본 Ungrouped 그룹은 삭제할 수 없다", async ({ page }) => {
   await page.goto("/");
   await groupsCommand(page).click();
-  await createGroup(page, "Work");
+  await createGroupWithTab(page, "Work");
 
   await groupActionsButton(page, "Work").click();
   await expect(

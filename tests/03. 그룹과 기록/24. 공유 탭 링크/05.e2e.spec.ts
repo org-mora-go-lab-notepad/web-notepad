@@ -18,7 +18,10 @@ test("5. 로그인 뒤에도 공유 탭 링크의 그룹과 탭을 연다", asyn
   url.searchParams.set("leftTab", group.tabs[0].id);
   url.searchParams.set("pane", "left");
   await guest.goto(url.toString());
-  await expect(guest.locator("textarea")).not.toHaveValue("Keep this note");
+  await expect(guest.locator("textarea")).toHaveCount(0);
+  await expect(
+    guest.getByRole("button", { name: "New tab", exact: true }),
+  ).toBeVisible();
 
   await context.addCookies([session]);
   await guest.goto("/");

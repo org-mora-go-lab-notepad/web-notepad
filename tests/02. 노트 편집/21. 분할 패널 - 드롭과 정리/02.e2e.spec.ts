@@ -1,12 +1,13 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { addTabButton } from "../../__util__";
 import { hoverTabOverPane, moveOverPane, paneSlot } from "../__util__";
 
 test("2. Split right와 Split down을 동시에 표시할 때 우상단과 하단 영역을 나눠 쓴다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   await page.locator("textarea").fill("a");
   for (const content of ["b", "c"]) {
     await addTabButton(page).click();

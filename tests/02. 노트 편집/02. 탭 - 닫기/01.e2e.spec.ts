@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { addTabButton } from "../../__util__";
 
 test("1. 닫기 버튼으로 일반 탭을 닫을 수 있다", async ({ page }) => {
@@ -9,7 +10,7 @@ test("1. 닫기 버튼으로 일반 탭을 닫을 수 있다", async ({ page }) 
       await test.step(
         "준비 1: 1. 닫기 버튼으로 일반 탭을 닫을 수 있다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

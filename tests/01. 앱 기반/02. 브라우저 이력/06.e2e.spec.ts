@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { MOBILE_VIEWPORT } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import { groupsCommand } from "../../__util__";
 
 test.use({ viewport: MOBILE_VIEWPORT });
@@ -8,7 +9,7 @@ test.use({ viewport: MOBILE_VIEWPORT });
 test("6. 모바일 뒤로가기는 그룹 사이드바를 먼저 닫고 이후 기존 탭 이력을 탐색한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator("textarea");
   await editor.fill("First note");
   await page.getByRole("button", { name: "New tab", exact: true }).click();

@@ -2,6 +2,8 @@ import path from "node:path";
 
 import { defineConfig, devices } from "@playwright/test";
 
+const realBff = process.env.NOTEPAD_API_MODE === "bff";
+
 export default defineConfig({
   testDir: "./tests",
   fullyParallel: true,
@@ -25,10 +27,13 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: "npx next dev -p 3101",
-      cwd:
-        process.env.NOTEPAD_BFF_DIR ??
-        path.resolve("../../org-mora-go-lab-notepad/web-notepad-bff"),
+      command: realBff
+        ? "npx next dev -p 3101"
+        : "npx tsx scripts/mock-api.ts --port 3101 --ephemeral",
+      cwd: realBff
+        ? (process.env.NOTEPAD_BFF_DIR ??
+          path.resolve("../../org-mora-go-lab-notepad/web-notepad-bff"))
+        : process.cwd(),
       url: "http://127.0.0.1:3101/api/health",
       env: {
         NOTEPAD_BFF_SECRET: "test-bff-secret",
@@ -40,7 +45,7 @@ export default defineConfig({
       timeout: 120_000,
     },
     {
-      command: "npm run dev",
+      command: "npx next dev -p 3000",
       env: {
         KAKAO_REST_API_KEY: "test-rest-key",
         KAKAO_REDIRECT_URI:

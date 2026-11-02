@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { DESKTOP_VIEWPORT } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import { expectCssPx, openSettingsPanel } from "../../__util__";
 import { fontScaleRadio, settingsPanel } from "../__util__";
 
@@ -8,7 +9,7 @@ test("6. 선택한 폰트 비율을 탭·편집기·하단 메뉴·우측 패널
   page,
 }) => {
   await page.setViewportSize(DESKTOP_VIEWPORT);
-  await page.goto("/");
+  await openEditor(page);
   await openSettingsPanel(page);
 
   const editor = page.locator("textarea").first();

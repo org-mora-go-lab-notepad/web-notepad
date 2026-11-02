@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("3. 굵게 텍스트 내부의 Cmd+B는 표식을 제거한다", async ({ page }) => {
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator("textarea");
   await editor.fill("before **bold text** after");
   await editor.evaluate((element) =>

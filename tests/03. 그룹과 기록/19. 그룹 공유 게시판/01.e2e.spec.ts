@@ -102,13 +102,9 @@ test("1. 더보기의 게시판은 공유 그룹을 표시하고 방문자에게
   const groupName = entry.locator("strong");
   await expect(groupName).toHaveAttribute("title", boardPost.title);
   await expect(groupName).toHaveCSS("overflow", "hidden");
-  await expect(groupName).toHaveCSS("white-space", "nowrap");
+  await expect(groupName).toHaveCSS("white-space", "normal");
   await expect(groupName).toHaveCSS("text-overflow", "ellipsis");
-  expect(
-    await groupName.evaluate(
-      (element) => element.scrollWidth > element.clientWidth,
-    ),
-  ).toBe(true);
+  await expect(groupName).toHaveCSS("-webkit-line-clamp", "2");
   expect(
     await entry.evaluate(
       (button) =>

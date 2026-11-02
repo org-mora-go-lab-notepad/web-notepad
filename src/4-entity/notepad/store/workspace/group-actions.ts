@@ -12,7 +12,7 @@ import {
   PERSONAL_TAB_TRANSFER_INTENT_EVENT,
   SHARED_TAB_DELETE_INTENT_EVENT,
 } from "../../util";
-import { allocateTab, createGroupEntry } from "./workspace";
+import { createGroupEntry } from "./workspace";
 
 type GroupActions = Pick<
   NotepadState,
@@ -187,15 +187,7 @@ export const createGroupActions: StateCreator<
       const tab = source?.tabs.find((item) => item.id === tabId);
       if (!source || !target || !tab || source.id === target.id) return state;
 
-      let remainingTabs = source.tabs.filter((item) => item.id !== tabId);
-      let nextTabNumber = state.nextTabNumber;
-      // A group may still contain closed records after its last open tab moves.
-      // Keep the editor renderable by ensuring the source retains an open tab.
-      if (!remainingTabs.some((item) => item.open)) {
-        const allocated = allocateTab(state);
-        remainingTabs = [...remainingTabs, allocated.tab];
-        nextTabNumber = allocated.nextTabNumber;
-      }
+      const remainingTabs = source.tabs.filter((item) => item.id !== tabId);
 
       const linkedBookmarks = source.bookmarks.filter(
         (bookmark) => bookmark.sourceTabId === tabId,
@@ -203,7 +195,6 @@ export const createGroupActions: StateCreator<
       const updatedAt = Date.now();
 
       return {
-        nextTabNumber,
         groups: state.groups.map((group) => {
           if (group.id === source.id) {
             return normalizeLayout(
@@ -241,15 +232,10 @@ export const createGroupActions: StateCreator<
     if (!trimmedName) return;
 
     const state = get();
-    const { tab, nextTabNumber } = allocateTab(state);
     const id = `group-${crypto.randomUUID()}`;
     set({
-      groups: [
-        ...state.groups,
-        createGroupEntry(id, trimmedName, Date.now(), tab),
-      ],
+      groups: [...state.groups, createGroupEntry(id, trimmedName, Date.now())],
       activeGroupId: id,
-      nextTabNumber,
     });
   },
   renameGroup: (groupId, name) =>

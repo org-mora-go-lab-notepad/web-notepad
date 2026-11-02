@@ -1,13 +1,14 @@
 import { expect, test } from "@playwright/test";
 
 import { STORAGE_KEY } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import { expectCssPx, openSettingsPanel } from "../../__util__";
 import { closeSettingsPanel, fontScaleRadio, tabColorRadio } from "../__util__";
 
 test("5. 설정한 폰트 크기와 탭 색상 순서는 새로고침 후에도 유지한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   await openSettingsPanel(page);
   await fontScaleRadio(page, "110%").check();
   await tabColorRadio(page, 2, "Yellow").check();

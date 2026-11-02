@@ -1,5 +1,6 @@
 import { test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { expectSelectedLines, lineButtons } from "../../__util__";
 
 test("6. 줄을 삽입하면 기존 선택 위치를 새 줄 번호에 맞춰 이동한다", async ({
@@ -11,7 +12,7 @@ test("6. 줄을 삽입하면 기존 선택 위치를 새 줄 번호에 맞춰 �
       await test.step(
         "준비 1: 6. 줄을 삽입하면 기존 선택 위치를 새 줄 번호에 맞춰 이동한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

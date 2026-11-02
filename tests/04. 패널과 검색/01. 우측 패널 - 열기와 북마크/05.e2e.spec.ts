@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
 
 import { BOTH_VIEWPORTS, DESKTOP_VIEWPORT } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import {
   bookmarkActiveTab,
-  createGroups,
+  createGroupsWithTabs,
   openBookmarksPanel,
   openShortcutsPanel,
   readStoredState,
@@ -12,9 +13,9 @@ import {
 test("5. Escape로 북마크 팝업을 닫고 메모·그룹·북마크 데이터를 유지한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   const note = "Preserve this note";
-  await createGroups(page, "Work");
+  await createGroupsWithTabs(page, "Work");
   await bookmarkActiveTab(page, note);
   const editor = page.locator("textarea");
   const bookmarksPanel = page.locator("#bookmarks-panel");

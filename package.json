@@ -1,9 +1,9 @@
 {
   "name": "web-notepad",
-  "version": "1.9.37",
+  "version": "1.9.38",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "node scripts/dev-local.mjs",
     "build": "next build",
     "start": "next start -p 3000",
     "lint": "eslint",
@@ -11,7 +11,11 @@
     "test:e2e:structure": "node scripts/check-e2e-structure.mjs",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "dev:local": "node scripts/dev-local.mjs"
+    "dev:local": "node scripts/dev-local.mjs",
+    "dev:mock": "node scripts/dev-local.mjs",
+    "dev:bff": "node scripts/dev-local.mjs --bff",
+    "dev:mock-api": "tsx scripts/mock-api.ts",
+    "test:e2e:bff": "node scripts/e2e-bff.mjs"
   },
   "dependencies": {
     "@next/env": "16.3.6",
@@ -31,6 +35,8 @@
     "eslint-plugin-simple-import-sort": "^14.0.0",
     "prettier": "3.9.10",
     "sass": "^1.105.0",
+    "swagger-ui-dist": "^5.34.1",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

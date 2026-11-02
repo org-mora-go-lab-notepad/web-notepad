@@ -3,7 +3,7 @@ import type { Page } from "@playwright/test";
 import {
   bookmarkActiveTab,
   chooseGroupAction,
-  createGroups,
+  createGroupsWithTabs,
   groupActionsButton,
   groupsCommand,
 } from "../../../__util__";
@@ -12,7 +12,7 @@ import {
 // `openDelete` chooses Delete from the group's action dropdown; focus returns to its trigger.
 export async function seedDeletableGroup(page: Page) {
   await page.goto("/");
-  await createGroups(page, "Archive");
+  await createGroupsWithTabs(page, "Archive");
   await bookmarkActiveTab(page, "archived note");
   return {
     toggle: groupsCommand(page),

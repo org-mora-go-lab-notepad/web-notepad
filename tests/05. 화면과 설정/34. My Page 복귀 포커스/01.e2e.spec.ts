@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { BOTH_VIEWPORTS } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import { authenticateBrowser } from "../../__util__";
 
 test("1. My Page에서 브라우저 뒤로가기로 돌아오면 에디터에 자동 포커스하지 않는다", async ({
@@ -10,7 +11,7 @@ test("1. My Page에서 브라우저 뒤로가기로 돌아오면 에디터에 �
   await authenticateBrowser(context);
   for (const viewport of BOTH_VIEWPORTS) {
     await page.setViewportSize(viewport);
-    await page.goto("/");
+    await openEditor(page);
     await page.goto("/my-page");
     await expect(page.locator(".my-page")).toBeVisible();
     await page.goBack();

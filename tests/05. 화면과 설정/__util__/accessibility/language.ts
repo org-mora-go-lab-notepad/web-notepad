@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test";
 
+import { openEditor } from "../../../__util__";
 import { chooseTabMenuItem, openSettingsPanel } from "../../../__util__";
 import { languageRadio, settingsPanel } from "../settings";
 
@@ -11,7 +12,7 @@ export async function prepareMarkedWorkspace(
   page: Page,
   { bookmark = false }: MarkedWorkspaceOptions = {},
 ) {
-  await page.goto("/");
+  await openEditor(page);
   await page.locator(".note-area").fill("Alpha task\nBody");
   const tab = page.getByRole("tab", { name: "Alpha task", exact: true });
   if (bookmark) await chooseTabMenuItem(page, "Bookmark", tab);

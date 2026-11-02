@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("5. 첫 번째 비어 있지 않은 줄을 공백 제거 후 최대 28자로 표시한다", async ({
   page,
 }) => {
@@ -9,7 +11,7 @@ test("5. 첫 번째 비어 있지 않은 줄을 공백 제거 후 최대 28자�
       await test.step(
         "준비 1: 5. 첫 번째 비어 있지 않은 줄을 공백 제거 후 최대 28자로 표시한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

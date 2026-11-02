@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { authenticateBrowser } from "../../__util__";
 
 test("4. 계정 메뉴는 방향키로 탐색하고 Escape와 바깥 클릭으로 닫는다", async ({
@@ -7,7 +8,7 @@ test("4. 계정 메뉴는 방향키로 탐색하고 Escape와 바깥 클릭으�
   context,
 }) => {
   await authenticateBrowser(context);
-  await page.goto("/");
+  await openEditor(page);
   const account = page.locator("button.auth-command");
   await account.focus();
   await page.keyboard.press("ArrowUp");

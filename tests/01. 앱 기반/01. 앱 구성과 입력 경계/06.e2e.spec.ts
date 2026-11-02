@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { MOBILE_VIEWPORT, STORAGE_KEY } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import {
   chooseGroupAction,
   createGroup,
@@ -22,7 +23,7 @@ test("6. 터치 에디터도 기존 축소 크기에서 1px 늘리고 다른 입
     );
     sessionStorage.setItem("touch-font-seed", "true");
   }, STORAGE_KEY);
-  await page.goto("/");
+  await openEditor(page);
   expect(
     await page.evaluate(() => matchMedia("(pointer: coarse)").matches),
   ).toBe(true);

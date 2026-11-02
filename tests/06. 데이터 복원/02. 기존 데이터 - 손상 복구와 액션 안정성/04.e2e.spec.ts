@@ -16,7 +16,7 @@ test("4. 저장된 임의 필드와 스토어 액션 이름 필드를 복원 상
     nextTabNumber: 2,
     updateTab: "corrupted update action",
     addTab: null,
-    createGroup: { corrupted: true },
+    createGroupWithTab: { corrupted: true },
     arbitraryField: "must not enter the store",
   });
 
@@ -26,9 +26,12 @@ test("4. 저장된 임의 필드와 스토어 액션 이름 필드를 복원 상
         string,
         unknown
       >;
-      return ["updateTab", "addTab", "createGroup", "arbitraryField"].filter(
-        (key) => Object.hasOwn(stored, key),
-      );
+      return [
+        "updateTab",
+        "addTab",
+        "createGroupWithTab",
+        "arbitraryField",
+      ].filter((key) => Object.hasOwn(stored, key));
     })
     .toEqual([]);
 });

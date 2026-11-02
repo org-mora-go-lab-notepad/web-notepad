@@ -47,7 +47,7 @@ export function PaneView({
           tabs={tabs}
           groups={groups}
           activeGroupId={activeGroupId}
-          activeTabId={activeTab.id}
+          activeTabId={activeTab?.id ?? ""}
           draggingTabId={draggingTabId}
           draggingTabIds={draggingTabIds}
           selectedTabIds={selectedTabIds}
@@ -62,15 +62,17 @@ export function PaneView({
           onToggleBookmark={onToggleBookmark}
           onAdd={onAdd}
         />
-        <Body
-          activeTab={activeTab}
-          editorRef={editorRef}
-          composingRef={composingRef}
-          draggingTabId={draggingTabId}
-          dropZones={dropZones}
-          tabSlide={tabSlide}
-          onChange={onChange}
-        />
+        {activeTab && (
+          <Body
+            activeTab={activeTab}
+            editorRef={editorRef}
+            composingRef={composingRef}
+            draggingTabId={draggingTabId}
+            dropZones={dropZones}
+            tabSlide={tabSlide}
+            onChange={onChange}
+          />
+        )}
       </div>
     </div>
   );

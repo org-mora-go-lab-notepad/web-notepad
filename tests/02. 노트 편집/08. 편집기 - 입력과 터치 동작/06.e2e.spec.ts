@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { MOBILE_VIEWPORT } from "../../__constant__";
+import { openEditor } from "../../__util__";
 
 test("6. 편집기를 한 번 터치하면 브라우저가 정한 접힌 커서 위치를 유지한다", async ({
   browser,
@@ -12,7 +13,7 @@ test("6. 편집기를 한 번 터치하면 브라우저가 정한 접힌 커서 
   });
   try {
     const content = "First line\nSecond line\nThird line";
-    await page.goto("/");
+    await openEditor(page);
     const editor = page.locator("textarea");
     await editor.fill(content);
     await editor.tap({ position: { x: 25, y: 20 } });

@@ -1,7 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-import { signedSession } from "../../__fixture__";
-import { authenticateBrowser } from "../../__util__";
+import {
+  createGroupFixture,
+  createTabFixture,
+  signedSession,
+} from "../../__fixture__";
+import { authenticateBrowser, seedStoredStateOnLoad } from "../../__util__";
 
 test("8. 로그인 사용자의 첫 진입은 상단 진행 바를 표시하고 최신 DB 동기화가 끝날 때까지 입력을 차단한다", async ({
   page,
@@ -23,7 +27,13 @@ test("8. 로그인 사용자의 첫 진입은 상단 진행 바를 표시하고 
     if (route.request().method() === "GET") await gate;
     await route.continue();
   });
-  await page.goto("/");
+  await seedStoredStateOnLoad(page, {
+    groups: [
+      createGroupFixture("ungrouped", "Ungrouped", [
+        createTabFixture("tab-local", "Local draft"),
+      ]),
+    ],
+  });
   const loader = page.getByRole("status", { name: "Syncing notes" });
   await expect(loader).toBeVisible();
   await expect(loader).toHaveAttribute("aria-busy", "true");

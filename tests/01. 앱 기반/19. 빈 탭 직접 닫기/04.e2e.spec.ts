@@ -42,7 +42,7 @@ test("4. 공유 빈 탭 닫기 충돌 후 재시도도 다른 사용자의 본�
   const retried = owner.waitForResponse(
     (response) =>
       response.url().endsWith("/api/groups/update") &&
-      response.status() === 200,
+      response.status() === 409,
   );
   await owner.locator("textarea").first().fill("");
   await owner.locator(".tab-item").first().locator(".tab-close").click();

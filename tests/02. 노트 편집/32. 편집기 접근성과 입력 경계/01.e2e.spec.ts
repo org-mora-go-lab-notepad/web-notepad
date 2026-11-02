@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("1. 편집기는 현재 탭 제목을 포함한 접근성 이름을 제공한다", async ({
   page,
 }) => {
@@ -9,7 +11,7 @@ test("1. 편집기는 현재 탭 제목을 포함한 접근성 이름을 제공�
       await test.step(
         "준비 1: 1. 편집기는 현재 탭 제목을 포함한 접근성 이름을 제공한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

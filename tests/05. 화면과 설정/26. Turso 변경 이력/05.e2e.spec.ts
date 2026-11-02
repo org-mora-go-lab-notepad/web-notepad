@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { signedSession } from "../../__fixture__";
+import { openEditor } from "../../__util__";
 import { authenticateBrowser } from "../../__util__";
 test("5. 움직임 줄이기 환경에서는 저장 중 상단 선의 애니메이션을 정지한다", async ({
   page,
@@ -15,7 +16,7 @@ test("5. 움직임 줄이기 환경에서는 저장 중 상단 선의 애니메�
     }),
   );
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
+  await openEditor(page);
   await expect(page.locator("button.auth-command")).toBeVisible();
   let release!: () => void;
   const gate = new Promise<void>((r) => {

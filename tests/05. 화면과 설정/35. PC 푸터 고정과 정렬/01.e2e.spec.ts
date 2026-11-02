@@ -1,13 +1,13 @@
 import { expect, test } from "@playwright/test";
 
-import { createGroups } from "../../__util__";
+import { createGroupsWithTabs } from "../../__util__";
 
 test("1. PC 진입점을 푸터에 고정하고 중복 고정 없이 다시 해제한다", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 844 });
   await page.goto("/");
-  await createGroups(page, "Pinned Group");
+  await createGroupsWithTabs(page, "Pinned Group");
   await page.locator(".group-select-command").click();
   const groupEntry = page
     .locator(".group-item")

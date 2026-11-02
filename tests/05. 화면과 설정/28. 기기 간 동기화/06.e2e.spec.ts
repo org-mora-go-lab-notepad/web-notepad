@@ -20,7 +20,11 @@ test("6. 같은 브라우저에서 다른 계정으로 바꾸면 이전 계정�
     }),
   );
   await desktop.reload();
-  await expect(desktop.locator("textarea").first()).toHaveValue("");
+  await expect(desktop.locator("textarea")).toHaveCount(0);
+  await desktop
+    .getByRole("button", { name: "New tab", exact: true })
+    .first()
+    .click();
   await desktop.locator("textarea").first().fill("새 계정의 글");
   await waitForSaved(desktop);
   const history = await readHistory(desktop);

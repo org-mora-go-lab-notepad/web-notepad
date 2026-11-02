@@ -44,3 +44,7 @@ npx tsc --noEmit
 ## 분리 서버 통합 실행
 
 BFF 체크아웃에서 npm ci를 실행하고 `NOTEPAD_BFF_DIR`로 경로를 지정합니다. Playwright가 3000 프런트와 3101 BFF를 실행합니다. 서버 단독 요구사항 48개는 BFF로 이동했고 카카오 인증과 UI 통합 검증은 유지합니다. BFF의 고정 리비전은 CI checkout ref로 관리합니다. 운영 서버·DB는 사용하지 않습니다.
+
+## API 실행 모드
+
+기본 `npm run test:e2e`는 BFF 저장소 없이 독립 메모리 Mock 서버를 사용합니다. 실제 연동 회귀는 `npm run test:e2e:bff`로 같은 전체 테스트를 실행하고 별도 SQLite 테스트 DB만 사용합니다. 운영 DB로 E2E를 실행하지 않습니다. 새 편집 시나리오는 `openEditor` 또는 `createGroupsWithTabs`처럼 공개 UI의 `+` 동작을 수행하는 준비 함수를 사용합니다. 빈 작업공간 자체의 계약은 `page.goto` 후 자동 생성이 없음을 직접 검증합니다.

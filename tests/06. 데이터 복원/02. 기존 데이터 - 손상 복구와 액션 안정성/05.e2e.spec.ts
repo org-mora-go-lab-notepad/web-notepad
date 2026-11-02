@@ -16,7 +16,7 @@ test("5. 손상된 액션 이름 필드를 제거한 뒤 노트 편집이 동작
     nextTabNumber: 2,
     updateTab: "corrupted update action",
     addTab: null,
-    createGroup: { corrupted: true },
+    createGroupWithTab: { corrupted: true },
   });
 
   const editor = page.locator("textarea");

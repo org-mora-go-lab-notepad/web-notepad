@@ -7,6 +7,7 @@ import {
   createTabFixture,
   signedSession,
 } from "../../__fixture__";
+import { openEditor } from "../../__util__";
 import {
   authenticateBrowser,
   switchGroup,
@@ -62,7 +63,7 @@ test("5. 재접속 시 이전 서버 선택보다 마지막에 접근한 로컬 
   await expect(page.locator("button.auth-command")).toBeVisible();
   await expect(page.locator(".group-current-value")).toHaveText("Work");
   await switchGroup(page, "Later");
-  await page.goto("/");
+  await openEditor(page);
   await expect(page.locator("button.auth-command")).toBeVisible();
   await expect(page.locator(".group-current-value")).toHaveText("Later");
   await expect(page.locator("textarea").first()).toHaveValue("Later note");

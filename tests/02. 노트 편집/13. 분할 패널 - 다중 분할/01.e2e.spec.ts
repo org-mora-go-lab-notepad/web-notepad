@@ -1,12 +1,13 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { addTabButton } from "../../__util__";
 import { dragTabToZone, paneSlot } from "../__util__";
 
 test("1. 좌우 열의 상단 패널을 Split down으로 상하 분할해 최대 4분할까지 확장한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   await page.locator("textarea").fill("a");
   for (const content of ["b", "c", "d"]) {
     await addTabButton(page).click();

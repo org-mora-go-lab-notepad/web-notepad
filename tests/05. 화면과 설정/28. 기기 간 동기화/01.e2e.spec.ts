@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 
-import { createGroups, readStoredState } from "../../__util__";
+import { createGroupsWithTabs, readStoredState } from "../../__util__";
 import { syncTest as test } from "./__fixture__";
 import { openDevice, waitForSaved } from "./__util__";
 
@@ -8,7 +8,7 @@ test("1. PC에서 만든 그룹과 새 탭의 글을 같은 계정 모바일에�
   devices: { desktop, mobile },
 }) => {
   await openDevice(desktop);
-  await createGroups(desktop, "Cross device group");
+  await createGroupsWithTabs(desktop, "Cross device group");
   await desktop.getByRole("button", { name: "New tab", exact: true }).click();
   await desktop.locator("textarea").first().fill("PC에서 작성한 글");
   await waitForSaved(desktop);

@@ -1,7 +1,6 @@
 import { isAggregateGroupId, UNGROUPED_GROUP_ID } from "../constant";
 import type { NotepadState, NoteTab } from "../type";
 import {
-  createNoteTab,
   isSharedGroupId,
   normalizeDashboardStatusNames,
   normalizeDashboardVisibility,
@@ -92,11 +91,11 @@ export function normalizePersistedState(
   ]);
   while (reservedTabIds.has(`tab-${nextTabNumber}`)) nextTabNumber += 1;
 
-  const groups = normalizeGroups(
-    sourceGroups,
-    { fields: persisted, tabs: legacyTabs, bookmarks: legacyBookmarks },
-    createLegacyGroupTab,
-  );
+  const groups = normalizeGroups(sourceGroups, {
+    fields: persisted,
+    tabs: legacyTabs,
+    bookmarks: legacyBookmarks,
+  });
 
   for (const group of groups)
     group.tabs = isSharedGroupId(group.id)
@@ -106,10 +105,7 @@ export function normalizePersistedState(
   if (!ungrouped) {
     groups.unshift({
       ...currentState.groups[0],
-      tabs:
-        hasLegacyTabs && legacyTabs.length > 0
-          ? legacyTabs
-          : [createLegacyGroupTab()],
+      tabs: hasLegacyTabs && legacyTabs.length > 0 ? legacyTabs : [],
       bookmarks: legacyBookmarks,
     });
   }
@@ -158,12 +154,4 @@ export function normalizePersistedState(
     })),
     settings,
   };
-
-  function createLegacyGroupTab(): NoteTab {
-    while (reservedTabIds.has(`tab-${nextTabNumber}`)) nextTabNumber += 1;
-    const tab = createNoteTab(nextTabNumber, settings.tabColorCycle[0]);
-    reservedTabIds.add(tab.id);
-    nextTabNumber += 1;
-    return tab;
-  }
 }

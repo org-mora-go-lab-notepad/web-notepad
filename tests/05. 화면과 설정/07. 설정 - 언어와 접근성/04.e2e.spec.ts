@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { BOTH_VIEWPORTS } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import {
   groupStatusName,
   moreCommand,
@@ -15,7 +16,7 @@ import { languageRadio, settingsPanel } from "../__util__";
 test("4. 선택한 언어를 메뉴·패널·하단 메뉴·편집기 안내 문구에 즉시 적용한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   await openSettingsPanel(page);
   const panel = settingsPanel(page);
   const headings = panel.locator(".setting-section h3");

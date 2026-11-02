@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { signedSession } from "../../__fixture__";
+import { openEditor } from "../../__util__";
 import { authenticateBrowser } from "../../__util__";
 import { getApi } from "../../__util__/request";
 test("3. 저장 대기 중 My Page로 이동해도 편집 내용을 서버에 저장한다", async ({
@@ -15,7 +16,7 @@ test("3. 저장 대기 중 My Page로 이동해도 편집 내용을 서버에 �
       expiresAt: Date.now() + 300000,
     }),
   );
-  await page.goto("/");
+  await openEditor(page);
   await expect(page.locator("button.auth-command")).toBeVisible();
   await page.locator("textarea").first().fill("Saved across My Page");
   await expect(page.locator(".home")).toHaveAttribute(

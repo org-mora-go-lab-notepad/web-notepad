@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("5. 세션 조회 네트워크 실패 후에도 로그인 진입점을 다시 활성화한다", async ({
   page,
 }) => {
@@ -17,7 +19,7 @@ test("5. 세션 조회 네트워크 실패 후에도 로그인 진입점을 다�
       await test.step(
         "준비 2: 5. 세션 조회 네트워크 실패 후에도 로그인 진입점을 다시 활성화한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

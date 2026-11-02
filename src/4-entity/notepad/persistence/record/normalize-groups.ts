@@ -23,7 +23,6 @@ type LegacyWorkspace = {
 export function normalizeGroups(
   sourceGroups: GroupEntry[],
   legacy: LegacyWorkspace,
-  createLegacyGroupTab: () => NoteTab,
 ): GroupEntry[] {
   return sourceGroups
     .filter((group) => group && typeof group.id === "string")
@@ -40,15 +39,11 @@ export function normalizeGroups(
           : id === UNGROUPED_GROUP_ID
             ? legacy.fields[key]
             : fallback;
-      let tabs = hasWorkspace
+      const tabs = hasWorkspace
         ? normalizeTabs(group.tabs, [])
         : id === UNGROUPED_GROUP_ID
           ? legacy.tabs
-          : [createLegacyGroupTab()];
-      if (tabs.length === 0) tabs = [createLegacyGroupTab()];
-      if (!tabs.some((tab) => tab.open)) {
-        tabs = [...tabs, createLegacyGroupTab()];
-      }
+          : [];
       const bookmarks = hasWorkspace
         ? normalizeBookmarks(group.bookmarks, [])
         : id === UNGROUPED_GROUP_ID

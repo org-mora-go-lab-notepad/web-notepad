@@ -1,12 +1,13 @@
 import { expect, test } from "@playwright/test";
 
 import { BOTH_VIEWPORTS } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import { openSettingsPanel } from "../../__util__";
 
 test("2. Light는 작업 영역·편집기·하단 메뉴·그룹 메뉴를 일관된 밝은 색으로 표시한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   for (const viewport of BOTH_VIEWPORTS) {
     await page.setViewportSize(viewport);
     await openSettingsPanel(page);

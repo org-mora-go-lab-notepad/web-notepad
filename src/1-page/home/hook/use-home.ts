@@ -241,7 +241,7 @@ export function useHome() {
 
   const createPaneProps = (pane: PaneId): PaneViewProps | null => {
     const paneTab = paneActiveTab(pane);
-    if (!paneTab) return null;
+    if (!paneTab && pane !== "left") return null;
     return {
       pane,
       groups,
@@ -279,7 +279,9 @@ export function useHome() {
       onCycleTabColor: cycleTabColor,
       onToggleBookmark: toggleBookmark,
       onAdd: () => addTabAndRecord(pane),
-      onChange: (content: string) => updateTab(paneTab.id, content),
+      onChange: (content: string) => {
+        if (paneTab) updateTab(paneTab.id, content);
+      },
     };
   };
 

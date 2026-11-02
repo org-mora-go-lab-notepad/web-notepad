@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
 
 import { signedSession } from "../../__fixture__";
+import { openEditor } from "../../__util__";
 import {
   authenticateBrowser,
-  createGroups,
+  createGroupsWithTabs,
   groupsCommand,
 } from "../../__util__";
 import { shareGroup } from "./__util__";
@@ -21,7 +22,7 @@ test("1. 그룹 공유 팝업은 링크와 복사하기·닫기 버튼을 제공
       expiresAt: Date.now() + 60_000,
     }),
   );
-  await page.goto("/");
+  await openEditor(page);
   await expect(page.locator("button.auth-command")).toBeVisible();
   const { dialog, url } = await shareGroup(page, "Team group");
   expect(url).toMatch(
@@ -37,7 +38,7 @@ test("1. 그룹 공유 팝업은 링크와 복사하기·닫기 버튼을 제공
     .click();
   await expect(dialog).toHaveCount(0);
 
-  await createGroups(page, "Empty shared group");
+  await createGroupsWithTabs(page, "Empty shared group");
   await groupsCommand(page).click();
   const row = page.locator(".group-item", { hasText: "Empty shared group" });
   await row

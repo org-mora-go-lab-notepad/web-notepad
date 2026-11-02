@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { chooseTabMenuItem } from "../../__util__";
 
 test("2. PC 우클릭 메뉴에서 탭의 북마크 상태를 전환한다", async ({ page }) => {
@@ -9,7 +10,7 @@ test("2. PC 우클릭 메뉴에서 탭의 북마크 상태를 전환한다", asy
       await test.step(
         "준비 1: 2. PC 우클릭 메뉴에서 탭의 북마크 상태를 전환한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("5. 각 줄 번호는 키보드 포커스를 받을 수 있는 버튼 역할로 제공한다", async ({
   page,
 }) => {
@@ -9,7 +11,7 @@ test("5. 각 줄 번호는 키보드 포커스를 받을 수 있는 버튼 역�
       await test.step(
         "준비 1: 5. 각 줄 번호는 키보드 포커스를 받을 수 있는 버튼 역할로 제공한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

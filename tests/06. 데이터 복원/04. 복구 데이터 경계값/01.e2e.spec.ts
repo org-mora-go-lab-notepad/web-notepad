@@ -17,7 +17,7 @@ test("1. 저장 상태가 null이면 기본 작업공간으로 복구한다", as
       await test.step(
         "검증 1: 1. 저장 상태가 null이면 기본 작업공간으로 복구한다 — PRD에 기록된 사용자 결과를 이 파일의 assertion으로 직접 확인한다",
         async () => {
-          await expect(page.locator(".tab-item")).toHaveCount(1);
+          await expect(page.locator(".tab-item")).toHaveCount(0);
         },
         { box: true },
       );
@@ -25,7 +25,10 @@ test("1. 저장 상태가 null이면 기본 작업공간으로 복구한다", as
       await test.step(
         "검증 2: 1. 저장 상태가 null이면 기본 작업공간으로 복구한다 — PRD에 기록된 사용자 결과를 이 파일의 assertion으로 직접 확인한다",
         async () => {
-          await expect(page.locator("textarea")).toBeEditable();
+          await expect(page.locator("textarea")).toHaveCount(0);
+          await expect(
+            page.getByRole("button", { name: "New tab", exact: true }),
+          ).toBeVisible();
         },
         { box: true },
       );

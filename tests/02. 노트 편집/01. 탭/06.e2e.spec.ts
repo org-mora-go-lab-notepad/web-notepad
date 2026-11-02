@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("6. 탭 제목은 이모지와 결합 문자를 깨뜨리지 않고 28개의 표시 문자로 제한한다", async ({
   page,
 }) => {
@@ -9,7 +11,7 @@ test("6. 탭 제목은 이모지와 결합 문자를 깨뜨리지 않고 28개�
       await test.step(
         "준비 1: 6. 탭 제목은 이모지와 결합 문자를 깨뜨리지 않고 28개의 표시 문자로 제한한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 
 import { boardTest as test, signedSession } from "../../__fixture__";
+import { openEditor } from "../../__util__";
 import {
   authenticateBrowser,
   openBoard,
@@ -20,7 +21,7 @@ test("3. 로그인한 방문자는 게시글 초대를 수락해 실제 공유 �
       expiresAt: Date.now() + 300000,
     }),
   );
-  await page.goto("/");
+  await openEditor(page);
   await openBoard(page);
   await selectBoardPost(page, boardPost.title);
   await page.getByRole("link", { name: "Join this group" }).click();

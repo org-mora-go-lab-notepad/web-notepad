@@ -6,30 +6,36 @@ on:
     branches: [main]
 jobs:
   verify:
+    name: ${{ matrix.api == 'mock' && 'verify' || 'BFF integration' }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        api: [mock, bff]
     defaults:
       run:
         working-directory: web-notepad
     env:
-      NOTEPAD_BFF_DIR: ../web-notepad-bff
+      NOTEPAD_API_MODE: ${{ matrix.api }}
+      NOTEPAD_BFF_DIR: ${{ matrix.api == 'bff' && '../web-notepad-bff' || '/notepad-bff-must-not-be-required' }}
     steps:
       - uses: actions/checkout@v4
         with:
           path: web-notepad
       - uses: actions/checkout@v4
+        if: matrix.api == 'bff'
         with:
           repository: org-mora-go-lab-notepad/web-notepad-bff
-          ref: fb41a00e6cc825bb2687fc6ebd2970c57190dc43
+          ref: d52c6b76b392ee61f5de0121ce5fd4bcec21200d
           path: web-notepad-bff
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: |
-            web-notepad/package-lock.json
-            web-notepad-bff/package-lock.json
+          cache-dependency-path: web-notepad/package-lock.json
       - run: npm ci
       - run: npm ci --prefix ../web-notepad-bff
+        if: matrix.api == 'bff'
       - run: npm run format:check
       - run: npm run lint
       - run: npm run test:e2e:structure

@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { addTabButton, readStoredState } from "../../__util__";
 
 test("4. 북마크된 탭도 가운데 클릭하면 북마크를 유지한 채 숨긴다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   const tabs = page.locator(".tab-item");
   await page.locator("textarea").fill("bookmarked content");
   await tabs.first().getByRole("tab").click({ button: "right" });

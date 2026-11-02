@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { chooseTabMenuItem, readStoredState } from "../../__util__";
 
 test("2. 탭 메뉴에서 기존 북마크를 해제한다", async ({ page }) => {
@@ -9,7 +10,7 @@ test("2. 탭 메뉴에서 기존 북마크를 해제한다", async ({ page }) =>
       await test.step(
         "준비 1: 2. 탭 메뉴에서 기존 북마크를 해제한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { addTabButton } from "../../__util__";
 
 test("4. 탭 제목을 편집기 하단으로 직접 드래그해 상하 분할한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   await page.locator("textarea").fill("first");
   await addTabButton(page).click();
   await page.locator("textarea").fill("second");

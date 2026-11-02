@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import {
   authenticateBrowser,
-  createGroup,
+  createGroupWithTab,
   groupActionsButton,
   groupsCommand,
   moreCommand,
@@ -14,14 +15,14 @@ test("1. 아이콘으로 여는 드롭다운의 바깥 모서리는 모두 5px�
   context,
 }) => {
   await authenticateBrowser(context);
-  await page.goto("/");
+  await openEditor(page);
 
   await page.locator("button.auth-command").click();
   await expect(page.locator(".auth-menu")).toHaveCSS("border-radius", "5px");
   await page.keyboard.press("Escape");
 
   await groupsCommand(page).click();
-  await createGroup(page, "Radius group");
+  await createGroupWithTab(page, "Radius group");
   await groupActionsButton(page, "Radius group").click();
   await expect(page.locator(".group-action-dropdown")).toHaveCSS(
     "border-radius",

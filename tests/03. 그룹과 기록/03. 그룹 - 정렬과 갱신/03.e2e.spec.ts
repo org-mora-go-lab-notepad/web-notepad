@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { DESKTOP_VIEWPORT, MOBILE_VIEWPORT } from "../../__constant__";
-import { createGroup, groupsCommand } from "../../__util__";
+import { createGroupWithTab, groupsCommand } from "../../__util__";
 
 test("3. 하단 그룹 버튼은 PC와 모바일에서 현재 그룹명을 표시한다", async ({
   page,
@@ -9,7 +9,7 @@ test("3. 하단 그룹 버튼은 PC와 모바일에서 현재 그룹명을 표�
   await page.goto("/");
   await groupsCommand(page).click();
   const name = "Very long group name for desktop and mobile line clamp check";
-  await createGroup(page, name);
+  await createGroupWithTab(page, name);
   for (const viewport of [DESKTOP_VIEWPORT, MOBILE_VIEWPORT]) {
     await page.setViewportSize(viewport);
     await expect(groupsCommand(page).locator("svg.lucide-menu")).toBeVisible();

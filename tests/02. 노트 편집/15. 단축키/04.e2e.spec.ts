@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { addTabButton } from "../../__util__";
 
 test("4. Alt/Option+Backspace는 빈 활성 탭을 확인 없이 닫는다", async ({
@@ -11,7 +12,7 @@ test("4. Alt/Option+Backspace는 빈 활성 탭을 확인 없이 닫는다", asy
       await test.step(
         "준비 1: 4. Alt/Option+Backspace는 빈 활성 탭을 확인 없이 닫는다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

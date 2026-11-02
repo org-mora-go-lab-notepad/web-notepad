@@ -3,14 +3,14 @@ import type { Page } from "@playwright/test";
 import {
   bookmarkActiveTab,
   chooseGroupAction,
-  createGroups,
+  createGroupsWithTabs,
   groupsCommand,
   readStoredState,
 } from "../../../__util__";
 
 export async function renameWorkGroup(page: Page) {
   await page.goto("/");
-  await createGroups(page, "Work");
+  await createGroupsWithTabs(page, "Work");
   await bookmarkActiveTab(page, "private note");
   const originalId = (await readStoredState(page)).activeGroupId;
   await groupsCommand(page).click();

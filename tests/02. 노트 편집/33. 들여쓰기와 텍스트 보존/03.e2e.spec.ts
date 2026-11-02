@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
+
 test("3. 선택 끝이 다음 줄 시작이면 내어쓰기에서 다음 줄을 제외한다", async ({
   page,
 }) => {
@@ -9,7 +11,7 @@ test("3. 선택 끝이 다음 줄 시작이면 내어쓰기에서 다음 줄을 
       await test.step(
         "준비 1: 3. 선택 끝이 다음 줄 시작이면 내어쓰기에서 다음 줄을 제외한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

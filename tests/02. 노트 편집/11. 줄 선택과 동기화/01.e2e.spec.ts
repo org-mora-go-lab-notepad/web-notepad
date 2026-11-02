@@ -1,5 +1,6 @@
 import { test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { expectSelectedLines, lineButtons } from "../../__util__";
 
 test("1. Shift 클릭으로 기준 줄부터 지정 줄까지 범위를 선택하고 다시 해제한다", async ({
@@ -11,7 +12,7 @@ test("1. Shift 클릭으로 기준 줄부터 지정 줄까지 범위를 선택�
       await test.step(
         "준비 1: 1. Shift 클릭으로 기준 줄부터 지정 줄까지 범위를 선택하고 다시 해제한다 — 다른 사례와 독립적으로 실행하는 데 필요한 상태와 화면을 먼저 구성한다",
         async () => {
-          await page.goto("/");
+          await openEditor(page);
         },
         { box: true },
       );

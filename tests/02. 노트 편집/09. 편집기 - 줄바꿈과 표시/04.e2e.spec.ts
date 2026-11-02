@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { MOBILE_VIEWPORT } from "../../__constant__";
+import { openEditor } from "../../__util__";
 import { expectSelectedLines, lineButtons } from "../../__util__";
 import { WRAPPED_NOTE as content } from "./__constant__";
 import { countWrappedLines } from "./__util__";
@@ -9,7 +10,7 @@ test("4. 자동 줄바꿈된 번호를 선택하면 원본 줄의 모든 표시 
   page,
 }) => {
   await page.setViewportSize(MOBILE_VIEWPORT);
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator("textarea").first();
   const lines = lineButtons(page);
   await editor.fill(content);

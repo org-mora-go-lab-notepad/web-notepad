@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-import { createGroup, groupsCommand, readStoredState } from "../../__util__";
+import {
+  createGroupWithTab,
+  groupsCommand,
+  readStoredState,
+} from "../../__util__";
 
 test("4. 새 그룹 이름의 앞뒤 공백을 제거해 저장한다", async ({ page }) => {
   await test.step(
@@ -25,7 +29,7 @@ test("4. 새 그룹 이름의 앞뒤 공백을 제거해 저장한다", async ({
       await test.step(
         "실행 2: 4. 새 그룹 이름의 앞뒤 공백을 제거해 저장한다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
-          await createGroup(page, "  Work  ");
+          await createGroupWithTab(page, "  Work  ");
         },
         { box: true },
       );

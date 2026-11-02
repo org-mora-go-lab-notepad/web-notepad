@@ -1,6 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 
 import { getApi } from "../../../__util__/request";
+import { ensureEditorTab } from "../../../__util__/workspace";
 
 export async function openDevice(page: Page) {
   const loaded = page.waitForResponse(
@@ -11,6 +12,7 @@ export async function openDevice(page: Page) {
   await page.goto("/");
   expect((await loaded).ok()).toBe(true);
   await expect(page.locator("button.auth-command")).toContainText("Sync User");
+  await ensureEditorTab(page);
 }
 export async function waitForSaved(page: Page) {
   await expect(page.locator(".home")).toHaveAttribute(

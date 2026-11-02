@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { writeStoredState } from "../../__util__";
+import { ensureEditorTab, writeStoredState } from "../../__util__";
 
 test("6. 모바일 WebView의 긴 문서에서 편집기와 번호의 줄 간격과 스크롤을 맞춘다", async ({
   browser,
@@ -17,6 +17,7 @@ test("6. 모바일 WebView의 긴 문서에서 편집기와 번호의 줄 간격
   try {
     const page = await context.newPage();
     await writeStoredState(page, { settings: { fontScale: 1.1 } });
+    await ensureEditorTab(page);
     for (const width of [390, 320, 600]) {
       await page.setViewportSize({ width, height: 800 });
       const editor = page.locator("textarea").first();

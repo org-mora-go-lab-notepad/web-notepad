@@ -1,9 +1,14 @@
 import { expect, type Page } from "@playwright/test";
 
-import { createGroups, groupsCommand } from "../../../__util__";
+import {
+  createGroupsWithTabs,
+  ensureEditorTab,
+  groupsCommand,
+} from "../../../__util__";
 
 export async function shareGroup(page: Page, name: string) {
-  await createGroups(page, name);
+  await createGroupsWithTabs(page, name);
+  await ensureEditorTab(page);
   await page.locator("textarea").first().fill(`${name} shared note`);
   await groupsCommand(page).click();
   const row = page.locator(".group-item", { hasText: name });

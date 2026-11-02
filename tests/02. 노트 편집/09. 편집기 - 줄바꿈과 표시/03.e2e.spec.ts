@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { openEditor } from "../../__util__";
 import { addTabButton, dragDividerBy, lineButtons } from "../../__util__";
 import { dragTabToZone, paneSlot } from "../__util__";
 import { WRAPPED_NOTE as content } from "./__constant__";
@@ -8,7 +9,7 @@ import { countWrappedLines } from "./__util__";
 test("3. 분할 패널 너비를 조정하면 표시 줄과 LINE 번호를 다시 계산한다", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openEditor(page);
   const editor = page.locator("textarea");
   await editor.fill(content);
   const fullWidthCount = await lineButtons(page).count();
