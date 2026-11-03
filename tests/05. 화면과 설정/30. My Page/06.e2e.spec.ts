@@ -21,5 +21,6 @@ test("6. My Page 하단에는 설정·보드·로그아웃 영역을 표시하�
     page.locator('a[href*="panel="], button:has-text("Logout")'),
   ).toHaveCount(0);
   await page.getByRole("link", { name: "Back", exact: true }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL((url) => url.pathname === "/");
+  await expect(page.locator(".note-pane")).toBeVisible();
 });
