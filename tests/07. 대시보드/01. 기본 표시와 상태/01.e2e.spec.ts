@@ -12,7 +12,7 @@ test("1. 그룹 버튼과 계정 사이에 Card 명령을 표시하고 패널을
   const account = page.locator(".footer-auth");
 
   await page.setViewportSize(DESKTOP_VIEWPORT);
-  await expect(group.locator(".group-command-label")).toHaveText("Menu");
+  await expect(group.locator(".group-command-label")).toHaveText("Group");
   await expect(group.locator(".group-command-label")).toHaveCSS(
     "text-transform",
     "none",

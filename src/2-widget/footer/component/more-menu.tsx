@@ -1,10 +1,4 @@
-import {
-  Bookmark,
-  BookOpen,
-  EllipsisVertical,
-  Search,
-  Settings,
-} from "lucide-react";
+import { Bookmark, BookOpen, Menu, Search, Settings } from "lucide-react";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import { Theme } from "@/src/3-feature";
@@ -59,22 +53,22 @@ export function MoreMenu({ searchOpen, onActivate }: MoreMenuProps) {
         type="button"
         className="more-command"
         disabled={!ready}
-        aria-label={t.more}
-        title={t.more}
+        aria-label={t.menu}
+        title={t.menu}
         aria-expanded={open}
         aria-controls="group-more-menu"
         aria-haspopup="menu"
         onClick={() => setOpen((value) => !value)}
       >
-        <EllipsisVertical size={24} aria-hidden="true" />
-        <span className="more-command-label">{t.more}</span>
+        <Menu size={24} strokeWidth={1.8} aria-hidden="true" />
+        <span className="more-command-label">{t.menu}</span>
       </button>
       {open && (
         <div
           className="group-more-menu"
           id="group-more-menu"
           role="menu"
-          aria-label={t.more}
+          aria-label={t.menu}
           onTouchStart={(event) => event.stopPropagation()}
           onTouchMove={(event) => event.stopPropagation()}
           onTouchEnd={(event) => event.stopPropagation()}

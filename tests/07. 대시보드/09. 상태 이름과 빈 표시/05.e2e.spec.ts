@@ -66,6 +66,10 @@ test("5. 공유 그룹의 Edit Status 이름은 협업자에게 같은 상태 �
             columns.map((column) => column.getAttribute("data-status")),
           ),
       )
-      .toEqual(["icebox", "todo", "ready", "in-progress", "done"]);
+      .toEqual(
+        (page.viewportSize()?.width ?? 1280) <= 512
+          ? ["in-progress", "ready", "todo", "done", "icebox"]
+          : ["icebox", "todo", "ready", "in-progress", "done"],
+      );
   }
 });

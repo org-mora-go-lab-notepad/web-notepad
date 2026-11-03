@@ -39,7 +39,16 @@ test("1. Edit Status로 수정한 다섯 상태 이름은 해당 그룹에만 �
     );
     const original = ["Note", "To Do", "Ready", "Doing", "Done"];
     const renamed = ["Ideas", "Next", "Queued", "Working", "Shipped"];
-    await expect(titles).toHaveText(original);
+    const mobileOrder = [3, 2, 1, 4, 0];
+    const displayedOriginal =
+      viewport.width <= 512
+        ? mobileOrder.map((index) => original[index])
+        : original;
+    const displayedRenamed =
+      viewport.width <= 512
+        ? mobileOrder.map((index) => renamed[index])
+        : renamed;
+    await expect(titles).toHaveText(displayedOriginal);
     await panel.locator(".dashboard-options-trigger").click();
     await panel
       .getByRole("button", { name: "Edit Status", exact: true })
@@ -56,7 +65,7 @@ test("1. Edit Status로 수정한 다섯 상태 이름은 해당 그룹에만 �
     }
     await editor.getByRole("button", { name: "Save", exact: true }).click();
     await expect(editor).toHaveCount(0);
-    await expect(titles).toHaveText(renamed);
+    await expect(titles).toHaveText(displayedRenamed);
     const saved = await readStoredState(page);
     expect(
       saved.groups.find((group) => group.id === "work")!.dashboardStatusNames,
@@ -75,15 +84,15 @@ test("1. Edit Status로 수정한 다섯 상태 이름은 해당 그룹에만 �
       saved.groups.find((group) => group.id === "work")!.tabs[0].tabColor,
     ).toBe("gray");
     await page.reload();
-    await expect(titles).toHaveText(renamed);
+    await expect(titles).toHaveText(displayedRenamed);
     await panel.locator(".side-panel-close").click();
     await switchGroup(page, "Ungrouped");
     await openPanel(page, "dashboard-panel");
     await toggleDashboardStatus(page, "icebox");
-    await expect(titles).toHaveText(original);
+    await expect(titles).toHaveText(displayedOriginal);
     await panel.locator(".side-panel-close").click();
     await switchGroup(page, "Work");
     await openPanel(page, "dashboard-panel");
-    await expect(titles).toHaveText(renamed);
+    await expect(titles).toHaveText(displayedRenamed);
   }
 });

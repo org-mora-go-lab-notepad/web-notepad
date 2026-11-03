@@ -1,6 +1,7 @@
 "use client";
 
 import { Body, Header } from "@/src/2-widget";
+import { useI18n } from "@/src/5-shared/hook";
 
 import type { PaneViewProps } from "../../type";
 
@@ -10,6 +11,7 @@ export function PaneView({
   groups,
   activeGroupId,
   activeTab,
+  canCreateFromEmpty,
   editorRef,
   composingRef,
   isFocused,
@@ -32,6 +34,7 @@ export function PaneView({
   onAdd,
   onChange,
 }: PaneViewProps) {
+  const { t } = useI18n();
   return (
     <div
       className="pane-slot"
@@ -62,7 +65,7 @@ export function PaneView({
           onToggleBookmark={onToggleBookmark}
           onAdd={onAdd}
         />
-        {activeTab && (
+        {activeTab ? (
           <Body
             activeTab={activeTab}
             editorRef={editorRef}
@@ -72,7 +75,14 @@ export function PaneView({
             tabSlide={tabSlide}
             onChange={onChange}
           />
-        )}
+        ) : canCreateFromEmpty ? (
+          <button
+            className="empty-editor"
+            type="button"
+            aria-label={t.emptyEditorNewTab}
+            onClick={onAdd}
+          />
+        ) : null}
       </div>
     </div>
   );

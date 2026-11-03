@@ -6,7 +6,6 @@ import {
   Layers,
   LayoutDashboard,
   LogOut,
-  Menu,
   MessageSquare,
   Search,
   Settings,
@@ -236,7 +235,7 @@ export function Footer({
           title={t.sidebarTitle}
         >
           <span className="status-icon">
-            <Menu size={16} strokeWidth={1.8} />
+            <Layers size={16} strokeWidth={1.8} />
             {hasGroupUpdateToday && (
               <span
                 className="status-dot"
@@ -245,7 +244,9 @@ export function Footer({
               />
             )}
           </span>
-          <span className="status-label group-command-label">{t.menu}</span>
+          <span className="status-label group-command-label">
+            {t.groupCategory}
+          </span>
           <span className="group-current-value" aria-hidden="true">
             {activeGroupName}
           </span>

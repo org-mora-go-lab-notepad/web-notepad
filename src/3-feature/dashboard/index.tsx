@@ -8,6 +8,7 @@ import {
   getDashboardColumns,
   getTabStatus,
   isSharedGroupId,
+  type TabStatus,
   UNGROUPED_GROUP_ID,
   useNotepadStore,
 } from "@/src/4-entity/notepad";
@@ -20,8 +21,20 @@ import {
   DashboardOptions,
   DashboardStatuses,
 } from "./component";
-import { useDashboardDrag, useDashboardScroll } from "./hook";
+import {
+  useDashboardDrag,
+  useDashboardMobileLayout,
+  useDashboardScroll,
+} from "./hook";
 import type { DashboardProps } from "./type";
+
+const MOBILE_STATUS_ORDER: TabStatus[] = [
+  "in-progress",
+  "ready",
+  "todo",
+  "done",
+  "icebox",
+];
 
 export function Dashboard({
   groupId,
@@ -43,6 +56,7 @@ export function Dashboard({
   onDeleteTab,
 }: DashboardProps) {
   const [expanded, setExpanded] = useState(false);
+  const mobileLayout = useDashboardMobileLayout();
   const iceboxVisible = visibility.icebox;
   const doneVisible = visibility.done !== false;
   const [contextMenu, setContextMenu] = useState<{
@@ -61,6 +75,7 @@ export function Dashboard({
   const { contentRef, listRef, boardRef, scrollToCard } = useDashboardScroll(
     open,
     activeTabId,
+    mobileLayout,
   );
   const openCard = (tabId: string) => {
     if (drag.isRecentDrag()) return;
@@ -74,6 +89,17 @@ export function Dashboard({
     (tab) =>
       tab.content.trim() && getTabStatus(tab, tabColorCycle) === "icebox",
   );
+  const visibleColumns = [
+    ...(iceboxVisible ? [{ status: "icebox" as const, tabs: iceboxTabs }] : []),
+    ...columns,
+  ];
+  const displayColumns = mobileLayout
+    ? [...visibleColumns].sort(
+        (left, right) =>
+          MOBILE_STATUS_ORDER.indexOf(left.status) -
+          MOBILE_STATUS_ORDER.indexOf(right.status),
+      )
+    : visibleColumns;
   const visibleTabs = [
     ...columns.flatMap((column) => column.tabs),
     ...(iceboxVisible ? iceboxTabs : []),
@@ -168,23 +194,7 @@ export function Dashboard({
             className={`dashboard-board ${iceboxVisible ? "has-icebox" : ""} ${doneVisible ? "has-done" : ""}`}
             ref={boardRef}
           >
-            {iceboxVisible && (
-              <DashboardColumn
-                statusNames={displayStatusNames}
-                column={{ status: "icebox", tabs: iceboxTabs }}
-                drag={drag}
-                activeTabId={activeTabId}
-                groups={groups}
-                showGroupNames={showGroupNames}
-                tabColorCycle={tabColorCycle}
-                contextMenuTabId={contextMenu?.itemId}
-                onOpenTab={openCard}
-                onOpenContextMenu={(itemId, left, top) =>
-                  setContextMenu({ itemId, left, top })
-                }
-              />
-            )}
-            {columns.map((column) => (
+            {displayColumns.map((column) => (
               <DashboardColumn
                 key={column.status}
                 statusNames={displayStatusNames}

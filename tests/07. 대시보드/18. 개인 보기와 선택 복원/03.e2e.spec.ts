@@ -65,6 +65,19 @@ test("3. PC와 모바일에서 대시보드를 열 때 선택한 카드 위치�
         '.dashboard-card[data-tab-id="card-00"] .dashboard-card-open',
       ),
     ).toHaveAttribute("aria-current", "true");
-    await expect.poll(() => list.evaluate((el) => el.scrollTop)).toBe(0);
+    const firstSelected = dashboardColumn(page, "todo").locator(
+      '.dashboard-card[data-tab-id="card-00"]',
+    );
+    await expect
+      .poll(async () => {
+        const item = (await firstSelected.boundingBox())!;
+        const bounds = (await list.boundingBox())!;
+        return (
+          item.y >= bounds.y && item.y + item.height <= bounds.y + bounds.height
+        );
+      })
+      .toBe(true);
+    if (viewport.width > 512)
+      await expect.poll(() => list.evaluate((el) => el.scrollTop)).toBe(0);
   }
 });
