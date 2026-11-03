@@ -25,7 +25,7 @@ test("6. 사이드바의 열림과 닫힘 상태를 새로고침 후 복원한�
   await expect(page.locator("#groups-menu")).toBeVisible();
   await expect(menuButton).toHaveAttribute("aria-expanded", "true");
 
-  await page.getByRole("button", { name: "Close Menu" }).click();
+  await page.getByRole("button", { name: "Close Group" }).click();
   await expect(page.locator("#groups-menu")).toHaveCount(0);
   await page.reload();
   await expect(page.locator("#groups-menu")).toHaveCount(0);

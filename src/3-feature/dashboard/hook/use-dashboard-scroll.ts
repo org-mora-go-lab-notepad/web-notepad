@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
-export function useDashboardScroll(open: boolean, activeTabId?: string) {
+export function useDashboardScroll(
+  open: boolean,
+  activeTabId?: string,
+  mobileLayout = false,
+) {
   const contentRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const boardRef = useRef<HTMLDivElement>(null);
@@ -21,7 +25,7 @@ export function useDashboardScroll(open: boolean, activeTabId?: string) {
     if (!open) return;
     const frame = requestAnimationFrame(() => scrollToCard(activeTabId));
     return () => cancelAnimationFrame(frame);
-  }, [open, activeTabId, scrollToCard]);
+  }, [open, activeTabId, mobileLayout, scrollToCard]);
 
   useEffect(() => {
     const content = contentRef.current;

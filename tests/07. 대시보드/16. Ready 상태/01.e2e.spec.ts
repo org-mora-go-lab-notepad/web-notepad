@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
 
+import { BOTH_VIEWPORTS } from "../../__constant__";
 import { createGroupFixture, createTabFixture } from "../../__fixture__";
 import { dashboardColumn, openPanel, writeStoredState } from "../../__util__";
-test("1. 기존 색상 분류를 유지하고 Note To Do Ready Doing Done 순서로 표시한다", async ({
+test("1. 카드 상태는 PC 기존 순서와 모바일 Doing Ready To Do Done Note 순서로 표시한다", async ({
   page,
 }) => {
   await writeStoredState(page, {
@@ -29,6 +30,29 @@ test("1. 기존 색상 분류를 유지하고 Note To Do Ready Doing Done 순서
   await expect(
     page.locator(".dashboard-statuses .dashboard-status-label"),
   ).toHaveText(["Note", "To Do", "Ready", "Doing", "Done"]);
+  for (const viewport of [...BOTH_VIEWPORTS, BOTH_VIEWPORTS[0]]) {
+    await page.setViewportSize(viewport);
+    const mobile = viewport.width <= 512;
+    await expect(
+      page.locator(".dashboard-column-status .dashboard-status-label"),
+    ).toHaveText(
+      mobile
+        ? ["Doing", "Ready", "To Do", "Done", "Note"]
+        : ["Note", "To Do", "Ready", "Doing", "Done"],
+    );
+    const positions = await page
+      .locator(".dashboard-board > .dashboard-column")
+      .evaluateAll((elements) =>
+        elements.map((element) => {
+          const rect = element.getBoundingClientRect();
+          return { x: rect.x, y: rect.y };
+        }),
+      );
+    for (let index = 1; index < positions.length; index++)
+      expect(mobile ? positions[index].y : positions[index].x).toBeGreaterThan(
+        mobile ? positions[index - 1].y : positions[index - 1].x,
+      );
+  }
   for (const [status, color] of [
     ["icebox", "yellow"],
     ["todo", "gray"],

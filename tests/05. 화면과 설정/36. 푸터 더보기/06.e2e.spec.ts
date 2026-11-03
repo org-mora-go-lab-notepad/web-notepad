@@ -49,12 +49,16 @@ test("6. 모바일 네 푸터 진입점은 로그인 전후 같은 간격이며 
       expect(moreIcon.width).toBeCloseTo(24 * 1.2, 1);
       expect(moreIcon.height).toBeCloseTo(24 * 1.2, 1);
       const more = page.locator(".footer .more-command");
+      await expect(more.locator("svg.lucide-menu")).toBeVisible();
+      await expect(
+        page.locator(".footer .group-select-command svg.lucide-layers"),
+      ).toBeVisible();
       const label = more.locator(".more-command-label");
       await expect(label).toBeVisible();
-      await expect(label).toHaveText("More");
+      await expect(label).toHaveText("Menu");
       await expect(more.locator("svg")).toHaveCSS(
         "transform",
-        "matrix(0, 1, -1, 0, 0, -3)",
+        "matrix(1, 0, 0, 1, 0, -3)",
       );
       const labelBox = (await label.boundingBox())!;
       expect(labelBox.y).toBeGreaterThan(moreIcon.y + moreIcon.height);

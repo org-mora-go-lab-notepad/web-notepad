@@ -54,6 +54,13 @@
       z-index: 1;
     }
 
+    > span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     > svg {
       width: 18px;
       height: 18px;

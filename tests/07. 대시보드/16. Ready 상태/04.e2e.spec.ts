@@ -72,7 +72,11 @@ test("4. 공유 그룹은 개인 색상 설정이 달라도 같은 상태와 컬
             columns.map((column) => column.getAttribute("data-status")),
           ),
       )
-      .toEqual(["icebox", "todo", "ready", "in-progress", "done"]);
+      .toEqual(
+        (page.viewportSize()?.width ?? 1280) <= 512
+          ? ["in-progress", "ready", "todo", "done", "icebox"]
+          : ["icebox", "todo", "ready", "in-progress", "done"],
+      );
     for (const [status, title] of [
       ["icebox", "Note card"],
       ["todo", "Todo card"],

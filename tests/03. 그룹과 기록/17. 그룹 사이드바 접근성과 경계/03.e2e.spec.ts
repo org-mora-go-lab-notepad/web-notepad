@@ -24,7 +24,7 @@ test("3. 사이드바 닫기 버튼은 대상 이름을 제공한다", async ({ 
         "검증 1: 3. 사이드바 닫기 버튼은 대상 이름을 제공한다 — PRD에 기록된 사용자 결과를 이 파일의 assertion으로 직접 확인한다",
         async () => {
           await expect(
-            page.getByRole("button", { name: "Close Menu" }),
+            page.getByRole("button", { name: "Close Group" }),
           ).toBeVisible();
         },
         { box: true },

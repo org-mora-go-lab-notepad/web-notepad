@@ -251,6 +251,10 @@ export function useHome() {
       selectedTabIds,
       tabs: paneTabs[pane],
       activeTab: paneTab,
+      canCreateFromEmpty:
+        !!activeGroup &&
+        activeGroupId !== ALL_SHARED_GROUP_ID &&
+        !activeGroupTabs.some((tab) => tab.open),
       editorRef: editorRefs[pane],
       composingRef: composingRefs[pane],
       isFocused: !split || activePane === pane,

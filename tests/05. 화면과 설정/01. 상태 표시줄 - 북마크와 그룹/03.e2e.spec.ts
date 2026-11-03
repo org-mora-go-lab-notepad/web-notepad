@@ -10,7 +10,7 @@ test("3. 현재 그룹은 PC 푸터 왼쪽, 모바일 메뉴 버튼에 표시한
   const command = groupsCommand(page);
   for (const viewport of BOTH_VIEWPORTS) {
     await page.setViewportSize(viewport);
-    await expect(command.locator("svg.lucide-menu")).toBeVisible();
+    await expect(command.locator("svg.lucide-layers")).toBeVisible();
     await expect(command.locator(".status-count")).toHaveCount(0);
     await expect(page.locator(".group-status-command")).toHaveCount(0);
     await expect(command).toHaveAttribute("aria-label", "Toggle groups");
@@ -54,7 +54,7 @@ test("3. 현재 그룹은 PC 푸터 왼쪽, 모바일 메뉴 버튼에 표시한
       await expect(currentGroup).toHaveAttribute("aria-expanded", "false");
       await expect(command).toHaveCSS("gap", "7px");
       await expect(command.locator(".group-current-value")).toBeHidden();
-      await expect(command.locator(".group-command-label")).toHaveText("Menu");
+      await expect(command.locator(".group-command-label")).toHaveText("Group");
       await expect(command.locator(".group-command-label")).toBeVisible();
       await expect(page.locator(".current-group-panel")).toHaveCount(0);
     }

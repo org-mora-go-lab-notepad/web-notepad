@@ -423,6 +423,7 @@ function GroupSidebar({
         <div className="group-more" ref={moreRef}>
           <button
             className="system-group-command"
+            title={t.defaultGroup}
             type="button"
             aria-expanded={footerMenuOpen === "groups"}
             aria-controls="group-system-menu"
