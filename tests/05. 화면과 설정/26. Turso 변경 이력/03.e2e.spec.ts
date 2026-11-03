@@ -20,6 +20,8 @@ test("3. 저장 실패 뒤 대기 중인 변경을 자동 재시도한다", asyn
   let attempts = 0;
   await page.route("**/api/notepad/history", async (route) => {
     if (route.request().method() !== "POST") return route.continue();
+    const payload = route.request().postDataJSON() as { snapshot?: string };
+    if (!payload.snapshot?.includes("재시도할 글")) return route.continue();
     attempts += 1;
     if (attempts === 1)
       return route.fulfill({ status: 503, body: "unavailable" });
@@ -39,5 +41,15 @@ test("3. 저장 실패 뒤 대기 중인 변경을 자동 재시도한다", asyn
     { timeout: 15_000 },
   );
   expect(attempts).toBe(2);
-  expect((await readCloudHistory(page)).count).toBe(1);
+  const history = await readCloudHistory(page);
+  expect(history.count).toBeGreaterThanOrEqual(1);
+  expect(history.latest).not.toBeNull();
+  const snapshot = JSON.parse(history.latest!.snapshot) as {
+    groups: { tabs: { content: string }[] }[];
+  };
+  expect(
+    snapshot.groups
+      .flatMap((group) => group.tabs)
+      .some((tab) => tab.content === "재시도할 글"),
+  ).toBe(true);
 });

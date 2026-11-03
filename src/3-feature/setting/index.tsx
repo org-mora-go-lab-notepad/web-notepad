@@ -22,7 +22,7 @@ export function Setting({ open, onClose }: SettingProps) {
   const setFontScale = useNotepadStore((state) => state.setFontScale);
   const setLanguage = useNotepadStore((state) => state.setLanguage);
   const setPanelPosition = useNotepadStore((state) => state.setPanelPosition);
-  const setPanelSlide = useNotepadStore((state) => state.setPanelSlide);
+  const setGroupPosition = useNotepadStore((state) => state.setGroupPosition);
   const setFooterIconsOnly = useNotepadStore(
     (state) => state.setFooterIconsOnly,
   );
@@ -87,13 +87,13 @@ export function Setting({ open, onClose }: SettingProps) {
           }))}
         />
         <RadioSetting
-          title={t.panelSlide}
-          name="panel-slide"
-          value={settings.panelSlide}
-          onChange={setPanelSlide}
+          title={t.groupPosition}
+          name="group-position"
+          value={settings.groupPosition}
+          onChange={setGroupPosition}
           options={[
-            { value: true, label: t.on },
-            { value: false, label: t.off },
+            { value: "left", label: t.panelLeft },
+            { value: "right", label: t.panelRight },
           ]}
         />
         <RadioSetting

@@ -19,10 +19,9 @@ export type NotepadSettings = {
   tabColorCycleVersion?: 2;
   dashboardStatusDefaults: DashboardStatusNames;
   language: Language;
-  // Right panels slide in and out; off shows and hides them in place.
-  panelSlide: boolean;
+  groupPosition: "left" | "right";
   panelPosition: "left" | "right";
-  // Ordered PC footer entries. The three core commands are always retained.
+  // Ordered PC footer entries. An empty list intentionally hides every entry.
   footerItems: string[];
   footerIconsOnly: boolean;
 };
@@ -161,7 +160,7 @@ export type NotepadState = {
   setDashboardStatusDefaults: (names: DashboardStatusNames) => void;
   setTabColorCycleColor: (index: number, color: TabColor) => void;
   setLanguage: (language: Language) => void;
-  setPanelSlide: (panelSlide: boolean) => void;
+  setGroupPosition: (groupPosition: "left" | "right") => void;
   setPanelPosition: (panelPosition: "left" | "right") => void;
   setFooterItems: (footerItems: string[]) => void;
   setFooterIconsOnly: (footerIconsOnly: boolean) => void;

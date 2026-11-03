@@ -2,12 +2,7 @@ import type { StateCreator } from "zustand";
 
 import { LANGUAGES } from "@/src/5-shared/constant";
 
-import {
-  CORE_FOOTER_ITEM_IDS,
-  DEFAULT_SETTINGS,
-  FONT_SCALES,
-  TAB_COLORS,
-} from "../constant";
+import { DEFAULT_SETTINGS, FONT_SCALES, TAB_COLORS } from "../constant";
 import type { NotepadState } from "../type";
 import { normalizeDashboardStatusNames } from "../util";
 import { withTabColorCycle } from "./workspace";
@@ -19,7 +14,7 @@ type SettingActions = Pick<
   | "setTabColorCycleColor"
   | "setLanguage"
   | "setPanelPosition"
-  | "setPanelSlide"
+  | "setGroupPosition"
   | "setFooterItems"
   | "setFooterIconsOnly"
   | "resetSettings"
@@ -65,15 +60,11 @@ export const createSettingActions: StateCreator<
     ),
   setPanelPosition: (panelPosition) =>
     set((state) => ({ settings: { ...state.settings, panelPosition } })),
-  setPanelSlide: (panelSlide) =>
-    set((state) => ({
-      settings: { ...state.settings, panelSlide: Boolean(panelSlide) },
-    })),
+  setGroupPosition: (groupPosition) =>
+    set((state) => ({ settings: { ...state.settings, groupPosition } })),
   setFooterItems: (footerItems) =>
     set((state) => {
       const items = [...new Set(footerItems.filter(Boolean))].slice(0, 50);
-      for (const id of CORE_FOOTER_ITEM_IDS)
-        if (!items.includes(id)) items.push(id);
       return { settings: { ...state.settings, footerItems: items } };
     }),
   setFooterIconsOnly: (footerIconsOnly) =>

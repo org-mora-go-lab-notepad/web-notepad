@@ -25,7 +25,7 @@ export const seedArchivedColorCycle = (page: Page) => {
       fontScale: 1,
       tabColorCycle: [...ARCHIVE_COLOR_CYCLE],
       language: "en",
-      panelSlide: false,
+      groupPosition: "left",
       panelPosition: "right",
     },
     groups: [

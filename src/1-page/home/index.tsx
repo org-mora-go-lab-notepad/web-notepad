@@ -65,7 +65,7 @@ export function Home() {
     removeGroupAndRecord,
     fontScale,
     language,
-    panelSlide,
+    groupPosition,
     panelPosition,
   } = useHome();
   const {
@@ -276,7 +276,7 @@ export function Home() {
               className={`home ${syncLocked ? "is-loading" : ""} ${groupMenuOpen ? "is-group-sidebar-open" : ""} ${backgroundPanel || (openPanel && openPanel !== "global-search" && openPanel !== "closed" && openPanel !== "bookmarks") ? "is-panel-pinned" : ""}`}
               style={{ "--font-scale": fontScale } as CSSProperties}
               data-panel-position={panelPosition}
-              data-panel-slide={panelSlide ? "on" : "off"}
+              data-group-position={groupPosition}
               data-cloud-save={cloudSaveStatus ?? "idle"}
               aria-busy={syncLocked}
             >

@@ -27,7 +27,7 @@ const applyWidth = (width: number) =>
     `${width}px`,
   );
 
-// Drags the drawer's left edge; the width is shared by every panel and remembered.
+// Drags the drawer's exposed edge; the width is shared by every panel and remembered.
 export function useSidePanelResize() {
   useEffect(() => {
     try {
@@ -44,10 +44,15 @@ export function useSidePanelResize() {
       event.currentTarget
         .closest("[data-panel-position]")
         ?.getAttribute("data-panel-position") === "left";
+    const bounds = event.currentTarget
+      .closest(".side-panel-drawer")!
+      .getBoundingClientRect();
     let width: number | null = null;
     const handleMove = (moveEvent: PointerEvent) => {
       width = clampWidth(
-        left ? moveEvent.clientX : window.innerWidth - moveEvent.clientX,
+        left
+          ? moveEvent.clientX - bounds.left
+          : bounds.right - moveEvent.clientX,
       );
       applyWidth(width);
     };

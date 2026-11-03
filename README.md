@@ -2,7 +2,7 @@
 
 탭과 그룹으로 메모를 정리하고, 대시보드와 공유 보드로 협업하는 브라우저 노트 앱입니다.
 
-**현재 버전:** `1.9.40` · **개발 서버:** `http://localhost:3000` · **E2E:** 728개
+**현재 버전:** `1.10.0` · **개발 서버:** `http://localhost:3000` · **E2E:** 734개
 
 [PRD](PRD.md) · [상세 요구사항](tests-prd/) · [E2E 가이드](tests/README.md) · [버전 이력](versions/)
 
@@ -137,7 +137,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-현재 프런트 728개의 E2E가 등록되어 있습니다. `npm run test:e2e`는 BFF 체크아웃 없이 격리된 메모리 Mock 서버에서 전체 테스트를 실행합니다. `npm run test:e2e:bff`는 같은 전체 테스트를 실제 로컬 BFF에 연결해 검증하며 `NOTEPAD_BFF_DIR`로 경로를 지정할 수 있습니다. 이 모드에서만 BFF 저장소의 `npm ci`가 필요하며 별도 로컬 파일 DB를 사용합니다. CI도 Mock·BFF 전체 검증을 각각 실행합니다. `tests-prd/` 번호 요구사항과 `tests/` 파일은 1:1로 대응합니다. [Mock 개발 안내](tests/__mock__/README.md)를 참고하세요.
+현재 프런트 734개의 E2E가 등록되어 있습니다. `npm run test:e2e`는 BFF 체크아웃 없이 격리된 메모리 Mock 서버에서 전체 테스트를 실행합니다. `npm run test:e2e:bff`는 같은 전체 테스트를 실제 로컬 BFF에 연결해 검증하며 `NOTEPAD_BFF_DIR`로 경로를 지정할 수 있습니다. 이 모드에서만 BFF 저장소의 `npm ci`가 필요하며 별도 로컬 파일 DB를 사용합니다. CI도 Mock·BFF 전체 검증을 각각 실행합니다. `tests-prd/` 번호 요구사항과 `tests/` 파일은 1:1로 대응합니다. [Mock 개발 안내](tests/__mock__/README.md)를 참고하세요.
 
 ## 버전과 배포
 
@@ -169,3 +169,5 @@ Turso 환경 변수는 BFF에만 설정합니다. BFF를 먼저 배포한 뒤 �
 탭 검색은 탭 제목·본문만 대상으로 하며, 검색·북마크 본문 미리보기는 줄바꿈을 보존하고 최대 6줄로 표시합니다. 푸터 우측은 메뉴 아이콘을 사용하고 모바일에서는 아이콘 아래 Menu(한국어 메뉴)를 표시합니다.
 
 모든 탭이 닫혔을 때 빈 에디터를 클릭·터치해 + 버튼처럼 새 탭을 생성할 수 있습니다. 그룹 사이드바 상단은 Group, 하단 시스템 그룹 옵션은 Group Option입니다. 모바일 Card는 Doing·Ready·To Do·Done·Note 순서로 표시합니다.
+
+패널은 슬라이드 애니메이션 없이 즉시 열립니다. 설정의 Group Position으로 그룹 패널의 Left·Right 위치를 선택하고, Card·Settings 등의 Panel Position과 독립적으로 저장합니다. 푸터 Menu는 Theme를 맨 위에, Board를 기본 명령 맨 아래에 표시합니다. 계정 메뉴에는 Logout·My Page만 남깁니다. PC 기본 Group·Card·계정도 푸터에서 해제해 Menu 하단으로 옮기거나 다시 고정할 수 있으며, 모두 해제하면 중앙은 비어 있습니다. 모바일의 기본 네 진입점은 유지합니다.

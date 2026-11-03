@@ -235,7 +235,7 @@ export const ko: Messages = {
   tabColorGroup: (order: number) => `탭 색상 ${order}`,
   tabColorHint: "새 탭은 첫 번째 색상으로 시작합니다.",
   language: "언어",
-  panelSlide: "패널 슬라이드 효과",
+  groupPosition: "그룹 위치",
   panelPosition: "패널 위치",
   footerIconsOnly: "푸터에서 아이콘만 표시",
   pinToFooter: "푸터에 고정",

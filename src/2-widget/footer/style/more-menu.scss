@@ -55,10 +55,10 @@
 
     .theme {
       min-height: 44px;
-      margin-top: 5px;
+      margin-bottom: 5px;
       padding: 5px 10px;
       gap: 12px;
-      border-top: 1px solid v.$line;
+      border-bottom: 1px solid v.$line;
       .theme-label {
         font: inherit;
         font-size: calc(#{v.font(14px)} + 1px);
@@ -94,7 +94,22 @@
     }
   }
 
+  @media (min-width: 513px) {
+    .footer-dock-item.is-unpinned {
+      display: none;
+    }
+  }
+
+  .group-more-menu .footer-unpinned-account .auth-command {
+    width: 100%;
+    max-width: none;
+    justify-content: flex-start;
+  }
+
   @media (max-width: 512px) {
+    .group-more-menu .footer-unpinned-command {
+      display: none;
+    }
     .footer-more {
       position: relative;
       grid-column: 4;

@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { signedSession } from "../../__fixture__";
-import { authenticateBrowser } from "../../__util__";
+import { authenticateBrowser, openMoreMenu } from "../../__util__";
 
 test("5. 페이지 전환 중 사용자 프로필을 유지하고 스켈레톤을 다시 표시하지 않는다", async ({
   page,
@@ -35,8 +35,8 @@ test("5. 페이지 전환 중 사용자 프로필을 유지하고 스켈레톤�
   });
   await expect(account).toBeVisible();
   holdRefresh = true;
-  await account.click();
-  await page.getByRole("menuitem", { name: "Board", exact: true }).click();
+  const menu = await openMoreMenu(page);
+  await menu.getByRole("button", { name: "Board", exact: true }).click();
   await expect(page).toHaveURL(/\/board$/);
   await expect(account).toBeVisible();
   await expect(page.locator(".footer .auth-command.is-loading")).toHaveCount(0);

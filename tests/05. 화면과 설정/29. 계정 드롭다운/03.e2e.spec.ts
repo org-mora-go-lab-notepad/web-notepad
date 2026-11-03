@@ -15,7 +15,7 @@ test("3. 계정의 Alarm 기능과 클라이언트 알람 조회를 제거한다
   const account = page.locator("button.auth-command");
   await account.click();
   await expect(
-    page.getByRole("menuitem", { name: "Board", exact: true }),
+    page.getByRole("menuitem", { name: "My Page", exact: true }),
   ).toHaveCount(1);
   await expect(
     page.getByRole("menuitem", { name: "Alarm", exact: true }),

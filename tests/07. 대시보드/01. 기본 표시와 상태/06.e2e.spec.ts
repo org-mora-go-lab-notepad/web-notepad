@@ -13,7 +13,10 @@ test("6. PC 대시보드를 페이지 전체 영역으로 확장하고 기존 �
   await page.goto("/");
   await openSettingsPanel(page);
   const settings = page.locator("#settings-panel");
-  await settings.getByRole("radio", { name: "Left", exact: true }).check();
+  await settings
+    .getByRole("radiogroup", { name: "Panel Position", exact: true })
+    .getByRole("radio", { name: "Left", exact: true })
+    .check();
   await settings
     .getByRole("button", { name: "Close Settings", exact: true })
     .click();

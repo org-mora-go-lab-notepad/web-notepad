@@ -26,7 +26,7 @@ export const DEFAULT_SETTINGS: NotepadSettings = {
   tabColorCycleVersion: 2,
   dashboardStatusDefaults: {},
   language: "en",
-  panelSlide: false,
+  groupPosition: "left",
   panelPosition: "right",
   footerItems: [...CORE_FOOTER_ITEM_IDS],
   footerIconsOnly: false,

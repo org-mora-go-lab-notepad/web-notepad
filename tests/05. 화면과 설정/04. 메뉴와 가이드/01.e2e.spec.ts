@@ -42,6 +42,7 @@ test("1. 하단 계정은 로그인, 더보기는 가이드·검색·북마크�
       "Search",
       "Bookmark",
       "Settings",
+      "Board",
     ]);
     await expect(
       menu.getByRole("link", { name: "Continue with Kakao" }),
