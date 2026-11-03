@@ -92,8 +92,10 @@
     position: absolute;
     bottom: calc(100% + 7px);
     z-index: 90;
-    width: max-content;
-    min-width: 160px;
+    --group-option-base-width: calc(min(260px, calc(100vw - 38px)) + 12px);
+    width: calc(var(--group-option-base-width) * 0.9);
+    max-width: calc(100vw - 28px);
+    min-width: 0;
     padding: 5px;
     border: 1px solid v.$line;
     border-radius: 5px;
@@ -121,6 +123,11 @@
         background: v.$line;
       }
 
+      > span {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
       > svg {
         width: 18px;
         height: 18px;
@@ -160,8 +167,11 @@
       min-height: 39.6px;
     }
 
-    .group-system-menu button {
-      min-height: 44px;
+    .group-system-menu {
+      --group-option-base-width: calc((100vw - 38px) * 0.7 + 12px);
+      button {
+        min-height: 44px;
+      }
     }
   }
 }

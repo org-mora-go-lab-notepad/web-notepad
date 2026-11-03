@@ -50,7 +50,7 @@
   }
 
   .group-system-menu .group-create-form {
-    width: min(260px, calc(100vw - 38px));
+    width: 100%;
     margin: 5px 0 0;
     padding: 10px 5px 5px;
     border-top: 1px solid v.$line;
@@ -66,8 +66,6 @@
 
   @media (max-width: 512px) {
     .group-system-menu .group-create-form {
-      width: calc((100vw - 38px) * 0.7);
-
       button {
         width: 44px;
         min-height: 44px;

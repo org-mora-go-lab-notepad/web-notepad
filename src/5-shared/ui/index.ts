@@ -1,3 +1,4 @@
+export { BottomSheet } from "./bottom-sheet";
 export { ConfirmPopup } from "./confirm-popup";
 export { CornerPopover } from "./corner-popover";
 export { EmptyState } from "./empty-state";

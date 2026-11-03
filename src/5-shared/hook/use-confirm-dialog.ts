@@ -9,6 +9,8 @@ import {
   useRef,
 } from "react";
 
+import { trapFocus } from "../util";
+
 type Options = {
   onCancel: () => void;
   onKeyDown?: (
@@ -47,19 +49,7 @@ export function useConfirmDialog({ onCancel, onKeyDown }: Options) {
     onKeyDown: (event: KeyboardEvent<HTMLDialogElement>) => {
       event.stopPropagation();
       if (onKeyDown?.(event, close)) return;
-      if (event.key !== "Tab") return;
-      const buttons = event.currentTarget.querySelectorAll<HTMLButtonElement>(
-        "button:not(:disabled)",
-      );
-      const firstButton = buttons[0];
-      const lastButton = buttons[buttons.length - 1];
-      if (event.shiftKey && document.activeElement === firstButton) {
-        event.preventDefault();
-        lastButton.focus();
-      } else if (!event.shiftKey && document.activeElement === lastButton) {
-        event.preventDefault();
-        firstButton.focus();
-      }
+      trapFocus(event, "button:not(:disabled)");
     },
     onCancel: (event: SyntheticEvent<HTMLDialogElement>) => {
       event.preventDefault();

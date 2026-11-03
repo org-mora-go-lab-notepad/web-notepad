@@ -19,6 +19,7 @@ import { SidePanel, TabContextMenu } from "@/src/5-shared/ui";
 import {
   DashboardColumn,
   DashboardOptions,
+  DashboardPreview,
   DashboardStatuses,
 } from "./component";
 import {
@@ -57,6 +58,11 @@ export function Dashboard({
 }: DashboardProps) {
   const [expanded, setExpanded] = useState(false);
   const mobileLayout = useDashboardMobileLayout();
+  const [preview, setPreview] = useState<{
+    id: string;
+    trigger: HTMLElement | null;
+  } | null>(null);
+  const previewId = preview?.id;
   const iceboxVisible = visibility.icebox;
   const doneVisible = visibility.done !== false;
   const [contextMenu, setContextMenu] = useState<{
@@ -79,6 +85,16 @@ export function Dashboard({
   );
   const openCard = (tabId: string) => {
     if (drag.isRecentDrag()) return;
+    if (mobileLayout) {
+      setContextMenu(null);
+      setPreview({
+        id: tabId,
+        trigger: document.querySelector<HTMLElement>(
+          `.dashboard-card[data-tab-id="${CSS.escape(tabId)}"] .dashboard-card-open`,
+        ),
+      });
+      return;
+    }
     onOpenTab(tabId);
     requestAnimationFrame(() => scrollToCard(tabId));
   };
@@ -104,6 +120,11 @@ export function Dashboard({
     ...columns.flatMap((column) => column.tabs),
     ...(iceboxVisible ? iceboxTabs : []),
   ];
+  const previewTab =
+    open && mobileLayout ? tabs.find((tab) => tab.id === previewId) : undefined;
+  const previewGroup = groups.find((group) =>
+    group.tabs.some((tab) => tab.id === previewId),
+  );
   const contextTab = visibleTabs.find((tab) => tab.id === contextMenu?.itemId);
   const contextGroup = groups.find((group) =>
     group.tabs.some((tab) => tab.id === contextMenu?.itemId),
@@ -120,6 +141,11 @@ export function Dashboard({
     if (!open) return;
     return () => setContextMenu(null);
   }, [open]);
+
+  useEffect(() => {
+    if (!open || !mobileLayout) return;
+    return () => setPreview(null);
+  }, [open, mobileLayout, groupId]);
 
   const copyTabLink = async (sharedGroupId: string, tabId: string) => {
     try {
@@ -200,7 +226,7 @@ export function Dashboard({
                 statusNames={displayStatusNames}
                 column={column}
                 drag={drag}
-                activeTabId={activeTabId}
+                activeTabId={previewTab?.id ?? activeTabId}
                 groups={groups}
                 showGroupNames={showGroupNames}
                 tabColorCycle={tabColorCycle}
@@ -214,6 +240,14 @@ export function Dashboard({
           </div>
         </div>
       </div>
+      {previewTab && (
+        <DashboardPreview
+          tab={previewTab}
+          returnFocusTo={preview?.trigger ?? null}
+          groupName={previewGroup?.name}
+          onClose={() => setPreview(null)}
+        />
+      )}
       {contextMenu && contextTab && (
         <TabContextMenu
           left={contextMenu.left}

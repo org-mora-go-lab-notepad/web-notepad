@@ -19,28 +19,20 @@ test("3. Note는 PC·모바일과 두 테마에서 탭·대시보드에 같은 Y
             createTabFixture("tab-2", "Note task", {
               dashboardStatus: "icebox",
               tabColor: "purple",
-              open: false,
             }),
           ],
-          { dashboardVisibility: { icebox: true, done: true } },
+          {
+            activeTabId: "tab-2",
+            dashboardVisibility: { icebox: true, done: true },
+          },
         ),
       ],
     });
     await openPanel(page, "dashboard-panel");
-    await dashboardColumn(page, "icebox")
-      .locator(".dashboard-card-open")
-      .click();
     const tab = page.locator('.tab-item[data-dashboard-status="icebox"]');
     await expect(
       tab.getByRole("tab", { name: "Note task", exact: true }),
     ).toHaveAttribute("aria-selected", "true");
-    if (viewport.width <= 512) {
-      await expect(page.locator("#dashboard-panel")).toHaveAttribute(
-        "aria-hidden",
-        "true",
-      );
-      await openPanel(page, "dashboard-panel");
-    }
 
     for (const theme of ["dark", "light"]) {
       await page.evaluate(

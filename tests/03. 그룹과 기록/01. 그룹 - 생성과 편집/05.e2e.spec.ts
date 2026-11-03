@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { GROUP_SIDEBAR_MAX_RATIO } from "../../__constant__";
 import { groupMenu, groupsCommand } from "../../__util__";
 
 test("5. PC 그룹 사이드바는 기본 280px을 최대 폭 안에서 사용하고 모바일은 전체 너비를 사용한다", async ({
@@ -11,7 +12,7 @@ test("5. PC 그룹 사이드바는 기본 280px을 최대 폭 안에서 사용�
 
   await page.setViewportSize({ width: 513, height: 800 });
   expect((await groupMenu(page).boundingBox())!.width).toBeCloseTo(
-    513 * 0.51,
+    513 * GROUP_SIDEBAR_MAX_RATIO,
     1,
   );
 

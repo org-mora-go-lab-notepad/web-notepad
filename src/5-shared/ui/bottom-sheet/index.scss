@@ -1,0 +1,75 @@
+@use "../../style/variable" as v;
+
+.bottom-sheet {
+  position: fixed;
+  inset: auto 0 0;
+  margin: 0;
+  width: 100%;
+  max-width: none;
+  height: 82dvh;
+  max-height: calc(100dvh - 16px);
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid v.$line;
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+  background: v.$raised;
+  color: v.$ink;
+  font-family: v.$sans;
+  box-shadow: 0 -12px 40px rgb(0 0 0 / 20%);
+
+  &[open] {
+    display: grid;
+    grid-template-rows: 18px auto minmax(0, 1fr);
+  }
+  &::backdrop {
+    background: rgb(0 0 0 / 32%);
+  }
+  .bottom-sheet-grip {
+    width: 36px;
+    height: 4px;
+    margin: 8px auto 0;
+    border-radius: 4px;
+    background: v.$dim;
+  }
+  .bottom-sheet-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px 12px;
+    border-bottom: 1px solid v.$line;
+    h2 {
+      flex: 1;
+      min-width: 0;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: v.font(20px);
+      font-weight: 500;
+    }
+    button {
+      flex: 0 0 44px;
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: v.$ink;
+    }
+  }
+  .bottom-sheet-content {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 16px 18px calc(24px + env(safe-area-inset-bottom));
+    -webkit-overflow-scrolling: touch;
+  }
+  button:focus-visible,
+  .bottom-sheet-content:focus-visible {
+    outline: 2px solid v.$signal;
+    outline-offset: -2px;
+  }
+}

@@ -2,6 +2,7 @@
 @use "../../5-shared/style/variable" as v;
 @use "./style/board";
 @use "./style/dashboard-options";
+@use "./style/dashboard-preview";
 @use "./style/dashboard-status-editor";
 
 .dashboard {

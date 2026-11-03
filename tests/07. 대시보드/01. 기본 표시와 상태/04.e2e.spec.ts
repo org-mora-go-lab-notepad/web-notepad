@@ -18,5 +18,6 @@ test("4. 숨긴 탭 카드를 누르면 에디터에 다시 열고 PC 고정 패
   await dashboardColumn(page, "todo").locator(".dashboard-card-open").click();
   await expect(page.locator("textarea")).toHaveValue("Alpha task\nalpha body");
   await expect(page.locator(".tab-item")).toHaveCount(3);
+  await expect(page.locator(".dashboard-preview")).toHaveCount(0);
   await expect(dashboardPanel(page)).toHaveAttribute("aria-hidden", "false");
 });

@@ -54,11 +54,33 @@ test("3. PC와 모바일에서 대시보드를 열 때 선택한 카드 위치�
       .locator('.dashboard-card[data-tab-id="card-00"] .dashboard-card-open')
       .click();
     if (viewport.width <= 512) {
+      const sheet = page.locator(".dashboard-preview");
+      await expect(sheet).toBeVisible();
       await expect(page.locator("#dashboard-panel")).toHaveAttribute(
         "aria-hidden",
+        "false",
+      );
+      await sheet
+        .getByRole("button", { name: "Close tab preview", exact: true })
+        .click();
+      await expect(sheet).toHaveCount(0);
+      await expect(selected.locator(".dashboard-card-open")).toHaveAttribute(
+        "aria-current",
         "true",
       );
+      await page.locator(".dashboard-command").click();
       await openPanel(page, "dashboard-panel");
+      await expect
+        .poll(async () => {
+          const item = (await selected.boundingBox())!,
+            bounds = (await list.boundingBox())!;
+          return (
+            item.y >= bounds.y &&
+            item.y + item.height <= bounds.y + bounds.height
+          );
+        })
+        .toBe(true);
+      continue;
     }
     await expect(
       dashboardColumn(page, "todo").locator(
