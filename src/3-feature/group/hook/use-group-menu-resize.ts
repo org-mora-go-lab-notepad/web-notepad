@@ -37,9 +37,16 @@ export function useGroupMenuResize(menuRef: RefObject<HTMLDivElement | null>) {
     (event: ReactPointerEvent<HTMLDivElement>) => {
       if (!menuRef.current) return;
       event.preventDefault();
+      const startWidth = menuRef.current.getBoundingClientRect().width;
+      const startX = event.clientX;
+      const right =
+        menuRef.current
+          .closest("[data-group-position]")
+          ?.getAttribute("data-group-position") === "right";
       let width: number | null = null;
       const handleMove = (moveEvent: PointerEvent) => {
-        width = clampWidth(moveEvent.clientX);
+        const delta = moveEvent.clientX - startX;
+        width = clampWidth(startWidth + (right ? -delta : delta));
         applyWidth(width);
       };
       const handleUp = () => {

@@ -29,10 +29,6 @@ test("1. PC 진입점을 푸터에 고정하고 중복 고정 없이 다시 해�
   await expect(
     pinned.getByRole("button", { name: "Pinned Group" }),
   ).toBeVisible();
-  await page
-    .locator('[data-footer-item="core:groups"]')
-    .click({ button: "right" });
-  await expect(page.locator(".footer-pin-menu")).toHaveCount(0);
   await pinned.click({ button: "right" });
   await page.getByRole("menuitem", { name: "Unpin from footer" }).click();
   await expect(pinned).toHaveCount(0);

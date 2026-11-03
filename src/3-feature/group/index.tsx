@@ -43,6 +43,9 @@ function GroupSidebar({
   onMoveGroup,
 }: GroupMenuProps) {
   const { t } = useI18n();
+  const groupPosition = useNotepadStore(
+    (state) => state.settings.groupPosition,
+  );
   const sharing = useContext(GroupSharingContext);
   const [accessAction, setAccessAction] = useState<{
     groupId: string;
@@ -178,7 +181,7 @@ function GroupSidebar({
   }, [footerMenuOpen, onClose]);
 
   return createPortal(
-    <div className="group">
+    <div className="group" data-group-position={groupPosition}>
       <div
         className="group-sidebar-backdrop"
         onClick={onClose}

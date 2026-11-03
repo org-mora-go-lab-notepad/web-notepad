@@ -49,43 +49,49 @@
     background: v.$panel;
   }
 
-  // Dock the entire workspace, including tab strips and footer, beside a pinned drawer.
-  @media (min-width: 641px) {
-    &.is-panel-pinned .workspace {
-      width: calc(100% - #{v.$side-panel-width});
-    }
-
-    &[data-panel-position="left"].is-panel-pinned .workspace {
-      margin-left: v.$side-panel-width;
-    }
-  }
+  --group-sidebar-space: 0px;
+  --group-sidebar-left-space: 0px;
+  --pinned-panel-space: 0px;
+  --pinned-panel-left-space: 0px;
 
   @media (min-width: 513px) {
-    &.is-group-sidebar-open .workspace {
-      width: calc(100% - min(var(--group-sidebar-width, 280px), 51vw));
-      margin-left: min(var(--group-sidebar-width, 280px), 51vw);
+    &.is-group-sidebar-open {
+      --group-sidebar-space: min(var(--group-sidebar-width, 280px), 51vw);
+    }
+
+    &.is-group-sidebar-open[data-group-position="left"] {
+      --group-sidebar-left-space: var(--group-sidebar-space);
+    }
+
+    .workspace {
+      width: calc(
+        100% - var(--group-sidebar-space) - var(--pinned-panel-space)
+      );
+      margin-left: calc(
+        var(--group-sidebar-left-space) + var(--pinned-panel-left-space)
+      );
     }
   }
 
   @media (min-width: 641px) {
-    &.is-group-sidebar-open.is-panel-pinned .workspace {
-      width: calc(
-        100% - min(var(--group-sidebar-width, 280px), 51vw) -
-          #{v.$side-panel-width}
-      );
+    &.is-panel-pinned {
+      --pinned-panel-space: #{v.$side-panel-width};
     }
 
-    &.is-group-sidebar-open.is-panel-pinned[data-panel-position="left"]
-      .workspace {
-      margin-left: calc(
-        min(var(--group-sidebar-width, 280px), 51vw) + #{v.$side-panel-width}
-      );
+    &.is-panel-pinned[data-panel-position="left"] {
+      --pinned-panel-left-space: var(--pinned-panel-space);
     }
 
-    &.is-group-sidebar-open[data-panel-position="left"]
+    &.is-group-sidebar-open[data-group-position="left"][data-panel-position="left"]
       .side-panel:not(.is-expanded)
       .side-panel-drawer {
-      left: min(var(--group-sidebar-width, 280px), 51vw);
+      left: var(--group-sidebar-space);
+    }
+
+    &.is-group-sidebar-open[data-group-position="right"][data-panel-position="right"]
+      .side-panel:not(.is-expanded)
+      .side-panel-drawer {
+      right: var(--group-sidebar-space);
     }
   }
 

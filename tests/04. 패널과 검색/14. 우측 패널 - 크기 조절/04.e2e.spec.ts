@@ -10,6 +10,7 @@ test("4. 좌측에 배치한 고정 패널의 크기를 조절할 수 있다", a
   await openSettingsPanel(page);
   await page
     .locator("#settings-panel")
+    .getByRole("radiogroup", { name: "Panel Position", exact: true })
     .getByRole("radio", { name: "Left", exact: true })
     .check();
   await page.locator("#settings-panel .side-panel-close").click();

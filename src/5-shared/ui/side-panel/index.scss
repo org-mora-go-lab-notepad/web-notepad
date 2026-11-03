@@ -35,7 +35,7 @@
     background: var(--color-drawer);
     box-shadow: none;
     transform: translateX(102%);
-    transition: transform 220ms ease;
+    transition: none;
 
     &.is-open {
       box-shadow: -20px 0 60px rgba(0, 0, 0, 0.18);
@@ -165,11 +165,6 @@
       outline-offset: 2px;
       color: v.$ink;
     }
-  }
-
-  // The Panel Slide setting can turn the slide off everywhere.
-  [data-panel-slide="off"] & .side-panel-drawer {
-    transition: none;
   }
 
   // A pinned drawer docks beside the workspace instead of covering it.

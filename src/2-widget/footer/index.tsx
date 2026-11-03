@@ -54,6 +54,10 @@ export function Footer({
   const { t } = useI18n();
   const router = useRouter();
   const footerItems = useNotepadStore((state) => state.settings.footerItems);
+  const unpinnedItems = CORE_FOOTER_ITEM_IDS.filter(
+    (id) => !footerItems.includes(id),
+  );
+  const displayedItems = [...footerItems, ...unpinnedItems];
   const iconsOnly = useNotepadStore((state) => state.settings.footerIconsOnly);
   const setFooterItems = useNotepadStore((state) => state.setFooterItems);
   const [pinMenu, setPinMenu] = useState<{
@@ -78,12 +82,15 @@ export function Footer({
       dockRef.current?.querySelectorAll<HTMLElement>("[data-footer-item]") ??
         [],
     );
-    if (!items.length) return null;
-    const next = items.find((item) => {
+    const visibleItems = items.filter(
+      (item) => item.getClientRects().length > 0,
+    );
+    if (!visibleItems.length) return null;
+    const next = visibleItems.find((item) => {
       const rect = item.getBoundingClientRect();
       return clientX < rect.left + rect.width / 2;
     });
-    const target = next ?? items[items.length - 1];
+    const target = next ?? visibleItems[visibleItems.length - 1];
     const id = target.dataset.footerItem!;
     return id === draggingItem.current
       ? null
@@ -101,7 +108,7 @@ export function Footer({
   useEffect(() => {
     const requestPin = (event: Event) => {
       const detail = (event as CustomEvent<FooterPinRequestDetail>).detail;
-      if (!detail?.id || CORE_ITEMS.has(detail.id)) return;
+      if (!detail?.id) return;
       setPinMenu({ id: detail.id, x: detail.x, y: detail.y });
     };
     const close = () => setPinMenu(null);
@@ -147,6 +154,14 @@ export function Footer({
   };
 
   const activateItem = async (id: string) => {
+    if (id === "core:groups") {
+      onToggleGroups();
+      return;
+    }
+    if (id === "core:dashboard") {
+      onToggleDashboard();
+      return;
+    }
     if (id.startsWith("group:")) {
       onSelectGroup(id.slice("group:".length));
       return;
@@ -164,8 +179,12 @@ export function Footer({
       if (onOpenSettings) onOpenSettings();
       else router.push("/?panel=settings");
     } else if (id === "account:my-page") router.push("/my-page");
-    else if (id === "account:board") router.push("/board");
-    else if (id === "account:logout") {
+    else if (id === "account:board") {
+      if (window.location.pathname === "/board") {
+        window.history.pushState(window.history.state, "", "/board");
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      } else router.push("/board");
+    } else if (id === "account:logout") {
       const response = await fetch("/api/auth/logout", { method: "POST" });
       if (response.ok) window.dispatchEvent(new Event("notepad-auth-changed"));
     }
@@ -188,7 +207,7 @@ export function Footer({
   const itemFrame = (id: string, content: ReactNode) => (
     <div
       key={id}
-      className={`footer-dock-item ${CORE_ITEMS.has(id) ? "is-core" : "is-custom"} ${id.replace(":", "-")} ${draggingId === id ? "is-dragging" : ""} ${dropTarget?.id === id ? `is-drop-${dropTarget.side}` : ""}`}
+      className={`footer-dock-item ${CORE_ITEMS.has(id) ? "is-core" : "is-custom"} ${id.replace(":", "-")} ${CORE_ITEMS.has(id) && !footerItems.includes(id) ? "is-unpinned" : ""} ${draggingId === id ? "is-dragging" : ""} ${dropTarget?.id === id ? `is-drop-${dropTarget.side}` : ""}`}
       data-footer-item={id}
       draggable
       onPointerDown={(event) => {
@@ -207,11 +226,7 @@ export function Footer({
       }}
       onDragEnd={finishDrag}
       onContextMenu={(event) => {
-        if (
-          CORE_ITEMS.has(id) ||
-          window.matchMedia("(max-width: 512px)").matches
-        )
-          return;
+        if (window.matchMedia("(max-width: 512px)").matches) return;
         event.preventDefault();
         setPinMenu({ id, x: event.clientX, y: event.clientY });
       }}
@@ -435,10 +450,11 @@ export function Footer({
             finishDrag();
           }}
         >
-          {footerItems.map(renderItem)}
+          {displayedItems.map(renderItem)}
         </div>
       </div>
       <MoreMenu
+        unpinnedItems={unpinnedItems}
         searchOpen={searchOpen}
         onActivate={(id) => void activateItem(id)}
       />

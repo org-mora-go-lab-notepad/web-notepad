@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  CircleUserRound,
-  LogIn,
-  LogOut,
-  MessageSquare,
-  UserRound,
-} from "lucide-react";
+import { CircleUserRound, LogIn, LogOut, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -240,23 +234,6 @@ export function Auth() {
               >
                 <UserRound size={18} />
                 <span>{t.myPage}</span>
-              </Link>
-              <Link
-                href="/board"
-                role="menuitem"
-                onContextMenu={(event) =>
-                  requestFooterPin(event, "account:board")
-                }
-                onClick={(event) => {
-                  closeMenu();
-                  if (window.location.pathname !== "/board") return;
-                  event.preventDefault();
-                  window.history.pushState(window.history.state, "", "/board");
-                  window.dispatchEvent(new PopStateEvent("popstate"));
-                }}
-              >
-                <MessageSquare size={18} />
-                <span>{t.board}</span>
               </Link>
             </div>,
             document.body,

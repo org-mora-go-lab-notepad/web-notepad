@@ -9,6 +9,13 @@ test("5. 더보기의 테마 토글은 즉시 적용되고 페이지 이동과 �
 }) => {
   await page.goto("/");
   const menu = await openMoreMenu(page);
+  await expect(menu.locator(":scope > .theme")).toHaveCount(1);
+  expect(
+    await menu.locator(":scope > *").first().getAttribute("class"),
+  ).toContain("theme");
+  await menu.getByRole("button", { name: "Guide", exact: true }).focus();
+  await page.keyboard.press("Home");
+  await expect(menu.getByRole("switch", { name: "Theme" })).toBeFocused();
   const toggle = menu.getByRole("switch", { name: "Theme" });
   await toggle.check();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");

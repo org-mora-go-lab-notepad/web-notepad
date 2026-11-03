@@ -9,12 +9,17 @@ test("3. Panel Position의 기본 Right와 Left 선택을 모든 사이드 패�
   await openSettingsPanel(page);
   const settings = page.locator("#settings-panel");
   await expect(
-    settings.getByRole("radio", { name: "Right", exact: true }),
+    settings
+      .getByRole("radiogroup", { name: "Panel Position", exact: true })
+      .getByRole("radio", { name: "Right", exact: true }),
   ).toBeChecked();
   await expect(settings.locator(".setting-section h3").nth(5)).toHaveText(
     "Panel Position",
   );
-  await settings.getByRole("radio", { name: "Left", exact: true }).check();
+  await settings
+    .getByRole("radiogroup", { name: "Panel Position", exact: true })
+    .getByRole("radio", { name: "Left", exact: true })
+    .check();
   await expect(page.locator(".home")).toHaveAttribute(
     "data-panel-position",
     "left",

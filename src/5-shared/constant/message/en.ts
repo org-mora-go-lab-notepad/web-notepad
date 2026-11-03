@@ -231,7 +231,7 @@ export const en = {
   tabColorGroup: (order: number) => `Tab color ${order}`,
   tabColorHint: "New tabs start with the first color.",
   language: "Language",
-  panelSlide: "Panel Slide",
+  groupPosition: "Group Position",
   panelPosition: "Panel Position",
   footerIconsOnly: "Footer Icons Only",
   pinToFooter: "Pin to footer",

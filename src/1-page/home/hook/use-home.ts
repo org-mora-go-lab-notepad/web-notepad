@@ -352,7 +352,7 @@ export function useHome() {
     removeGroup,
     fontScale: settings.fontScale,
     language: settings.language,
-    panelSlide: settings.panelSlide,
+    groupPosition: settings.groupPosition,
     panelPosition: settings.panelPosition,
   };
 }
