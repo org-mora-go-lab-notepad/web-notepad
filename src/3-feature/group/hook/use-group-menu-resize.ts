@@ -7,18 +7,16 @@ import {
   useEffect,
 } from "react";
 
-const MIN_WIDTH = 192;
-const MAX_WIDTH_RATIO = 0.51;
 const WIDTH_PROPERTY = "--group-sidebar-width";
 const WIDTH_STORAGE_KEY = "web-notepad-group-sidebar-width";
 
-const clampWidth = (width: number) =>
-  Math.round(
-    Math.min(
-      Math.max(width, MIN_WIDTH),
-      Math.floor(window.innerWidth * MAX_WIDTH_RATIO),
-    ),
-  );
+// Read the CSS limits so drag behavior cannot drift from the drawer's layout.
+const clampWidth = (width: number, menu: HTMLElement) => {
+  const style = getComputedStyle(menu);
+  const minimum = parseFloat(style.minWidth) || 0;
+  const maximum = parseFloat(style.maxWidth) || window.innerWidth;
+  return Math.round(Math.min(Math.max(width, minimum), Math.floor(maximum)));
+};
 
 const applyWidth = (width: number) =>
   document.documentElement.style.setProperty(WIDTH_PROPERTY, `${width}px`);
@@ -27,11 +25,12 @@ export function useGroupMenuResize(menuRef: RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     try {
       const stored = Number(localStorage.getItem(WIDTH_STORAGE_KEY));
-      if (stored > 0) applyWidth(clampWidth(stored));
+      if (stored > 0 && menuRef.current)
+        applyWidth(clampWidth(stored, menuRef.current));
     } catch {
       // Storage is unavailable; keep the default width.
     }
-  }, []);
+  }, [menuRef]);
 
   return useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -46,7 +45,10 @@ export function useGroupMenuResize(menuRef: RefObject<HTMLDivElement | null>) {
       let width: number | null = null;
       const handleMove = (moveEvent: PointerEvent) => {
         const delta = moveEvent.clientX - startX;
-        width = clampWidth(startWidth + (right ? -delta : delta));
+        width = clampWidth(
+          startWidth + (right ? -delta : delta),
+          menuRef.current!,
+        );
         applyWidth(width);
       };
       const handleUp = () => {

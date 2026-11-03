@@ -10,9 +10,9 @@
     position: fixed;
     inset: 0 auto var(--footer-height) 0;
     z-index: 50;
-    width: min(var(--group-sidebar-width, 280px), 51vw);
+    width: v.$group-sidebar-width;
     min-width: 192px;
-    max-width: 51vw;
+    max-width: v.$group-sidebar-max-width;
     display: flex;
     flex-direction: column;
     border-right: 1px solid v.$line;

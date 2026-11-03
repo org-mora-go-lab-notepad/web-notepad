@@ -95,6 +95,7 @@ export const en = {
   shareInviteJoining: "Joining shared group...",
   shareInviteJoined: "Shared group added. You can edit it now.",
   shareInviteError: "Could not open this shared group link.",
+  closeTabPreview: "Close tab preview",
   dashboardTitle: "Card",
   dashboardOptions: "Card options",
   editStatus: "Edit Status",

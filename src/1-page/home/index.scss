@@ -4,6 +4,7 @@
 @use "../../5-shared/ui/empty-state";
 @use "../../5-shared/ui/corner-popover";
 @use "../../5-shared/ui/side-panel";
+@use "../../5-shared/ui/bottom-sheet";
 @use "../../5-shared/ui/tab-context-menu";
 @use "../../2-widget/header";
 @use "../../2-widget/body";
@@ -56,7 +57,7 @@
 
   @media (min-width: 513px) {
     &.is-group-sidebar-open {
-      --group-sidebar-space: min(var(--group-sidebar-width, 280px), 51vw);
+      --group-sidebar-space: #{v.$group-sidebar-width};
     }
 
     &.is-group-sidebar-open[data-group-position="left"] {

@@ -51,3 +51,10 @@ $extra-tab-colors: (
 
 // PC panel width: reserve at least 20% of the viewport for the workspace.
 $side-panel-width: clamp(336px, var(--side-panel-width, 462px), 80vw);
+
+// One layout boundary shared by the group drawer and reserved workspace space.
+$group-sidebar-max-width: 45.9vw;
+$group-sidebar-width: min(
+  var(--group-sidebar-width, 280px),
+  $group-sidebar-max-width
+);
