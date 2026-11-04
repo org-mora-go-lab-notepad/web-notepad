@@ -1,15 +1,19 @@
-import { useId, useState } from "react";
+import { useId } from "react";
 
 import { compareDashboardCards, getStatusColor } from "@/src/4-entity/notepad";
 import { useI18n } from "@/src/5-shared/hook";
 
-import { useDashboardMobileLayout } from "../../hook";
+import {
+  useDashboardColumnCollapse,
+  useDashboardMobileLayout,
+} from "../../hook";
 import type { DashboardColumnProps } from "../../type";
 import { DashboardCard } from "./dashboard-card";
 import { DashboardStatus } from "./dashboard-status";
 
 export function DashboardColumn({
   column,
+  groupId,
   drag,
   activeTabId,
   groups,
@@ -22,7 +26,7 @@ export function DashboardColumn({
 }: DashboardColumnProps) {
   const { status, tabs: columnTabs } = column;
   const mobile = useDashboardMobileLayout();
-  const [collapsed, setCollapsed] = useState(false);
+  const { collapsed, toggle } = useDashboardColumnCollapse(groupId, status);
   const cardsId = useId();
   const { t } = useI18n();
   const statusLabel = {
@@ -59,7 +63,7 @@ export function DashboardColumn({
       <DashboardStatus
         className="dashboard-column-status"
         collapsed={mobile ? collapsed : undefined}
-        onToggle={mobile ? () => setCollapsed(!collapsed) : undefined}
+        onToggle={mobile ? toggle : undefined}
         controls={cardsId}
         status={status}
         label={statusNames[status] ?? statusLabel}

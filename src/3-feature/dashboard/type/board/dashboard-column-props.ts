@@ -5,6 +5,7 @@ import type { DashboardProps } from "..";
 
 export type DashboardColumnProps = Pick<
   DashboardProps,
+  | "groupId"
   | "activeTabId"
   | "groups"
   | "showGroupNames"
