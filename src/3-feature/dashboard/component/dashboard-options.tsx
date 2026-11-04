@@ -82,6 +82,7 @@ export function DashboardOptions({
               type="button"
               onClick={() => {
                 setOpen(false);
+                triggerRef.current?.focus({ preventScroll: true });
                 onAddTab();
               }}
             >

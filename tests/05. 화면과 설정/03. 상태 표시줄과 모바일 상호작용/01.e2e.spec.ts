@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { openAddTabCommand } from "../../__util__";
+
 test("1. PC와 모바일 하단 메뉴는 가로 스크롤 없이 정해진 버튼 높이로 표시된다", async ({
   page,
 }) => {
@@ -116,7 +118,7 @@ test("1. PC와 모바일 하단 메뉴는 가로 스크롤 없이 정해진 버�
     observer.observe(document.body, { childList: true });
     window.setTimeout(() => observer.disconnect(), 1000);
   });
-  await page.getByRole("button", { name: "New tab", exact: true }).click();
+  await (await openAddTabCommand(page)).click();
   expect(
     await page.evaluate(
       () =>

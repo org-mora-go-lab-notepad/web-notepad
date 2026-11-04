@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { MOBILE_VIEWPORT } from "../../__constant__";
+import { openAddTabCommand } from "../../__util__";
 import { closeMobileEditor, openEditor } from "../../__util__";
 import { groupsCommand } from "../../__util__";
 
@@ -13,7 +14,7 @@ test("6. 모바일 뒤로가기는 그룹 사이드바를 먼저 닫고 이후 �
   const editor = page.locator("textarea:visible");
   await editor.fill("First note");
   await closeMobileEditor(page);
-  await page.getByRole("button", { name: "New tab", exact: true }).click();
+  await (await openAddTabCommand(page)).click();
   await editor.fill("Second note");
   await closeMobileEditor(page);
   const noteUrl = page.url();

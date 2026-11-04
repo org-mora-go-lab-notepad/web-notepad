@@ -32,6 +32,7 @@ test("1. 모바일 헤더는 닫기를 숨기고 오른쪽 옵션 맨 위에 Add
     "Created from options",
   );
   await page.locator(".bottom-sheet-header button").click();
+  await expect(options).toBeFocused();
   await expect(
     page.locator('.dashboard-card[data-tab-id="long-note"]'),
   ).toContainText(previewData.long.title);

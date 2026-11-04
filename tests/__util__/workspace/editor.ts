@@ -2,13 +2,21 @@ import { expect, type Page } from "@playwright/test";
 
 import { readStoredState } from "../state";
 
+export async function openAddTabCommand(page: Page) {
+  if ((page.viewportSize()?.width ?? 1280) <= 512) {
+    if (!(await page.locator("#dashboard-options-menu").isVisible()))
+      await page.locator(".dashboard-options-trigger").click();
+    return page.locator(".dashboard-add-tab");
+  }
+  return page.getByRole("button", { name: "New tab", exact: true }).first();
+}
+
 // User-driven preparation for editing scenarios; empty-workspace contracts use page.goto directly.
 export async function openEditor(page: Page) {
   await page.goto("/");
   await expect(page.locator(".initial-sync-lock")).toHaveCount(0);
   if ((page.viewportSize()?.width ?? 1280) <= 512) {
-    await page.locator(".dashboard-options-trigger").click();
-    await page.locator(".dashboard-add-tab").click();
+    await (await openAddTabCommand(page)).click();
     await expect(page.locator(".dashboard-preview textarea")).toBeVisible();
     return;
   }
@@ -41,8 +49,7 @@ export async function ensureEditorTab(page: Page) {
     );
     if (await card.isVisible()) await card.click();
     else {
-      await page.locator(".dashboard-options-trigger").click();
-      await page.locator(".dashboard-add-tab").click();
+      await (await openAddTabCommand(page)).click();
     }
     await expect(page.locator(".dashboard-preview textarea")).toBeVisible();
     return;
