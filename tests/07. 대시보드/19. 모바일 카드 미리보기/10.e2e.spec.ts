@@ -11,7 +11,11 @@ test("10. 상태 제목으로 목록을 접고 펼친다", async ({ page, previe
   const chevron = (await column
     .locator(".dashboard-status-chevron")
     .boundingBox())!;
-  expect(chevron.x - count.x - count.width).toBeCloseTo(15, 0);
+  expect(chevron.x - count.x - count.width).toBeCloseTo(20, 0);
+  expect(page.viewportSize()!.width - chevron.x - chevron.width).toBeCloseTo(
+    20,
+    0,
+  );
   await expect(column.locator("svg.lucide-chevron-down")).toBeVisible();
   await column.locator(".dashboard-status-toggle").click();
   await expect(column.locator(".dashboard-cards")).toBeHidden();

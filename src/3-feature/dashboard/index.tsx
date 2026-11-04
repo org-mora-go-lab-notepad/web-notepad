@@ -252,6 +252,7 @@ export function Dashboard({
             {displayColumns.map((column) => (
               <DashboardColumn
                 key={`${groupId}:${column.status}`}
+                groupId={groupId}
                 statusNames={displayStatusNames}
                 column={column}
                 drag={drag}
