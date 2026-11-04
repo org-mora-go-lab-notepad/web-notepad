@@ -109,3 +109,12 @@
     right: 12px;
   }
 }
+
+@media (min-width: 513px) {
+  .dashboard .side-panel-header :is(.side-panel-action, .side-panel-close) {
+    border-color: transparent;
+    &:hover {
+      border-color: v.$line;
+    }
+  }
+}

@@ -337,3 +337,12 @@
     display: none;
   }
 }
+
+@media (min-width: 513px) {
+  .group .group-sidebar-header > button {
+    border-color: transparent;
+    &:hover {
+      border-color: v.$line;
+    }
+  }
+}
