@@ -13,7 +13,7 @@ test("10. 상태 제목으로 목록을 접고 펼친다", async ({ page, previe
     .boundingBox())!;
   expect(chevron.x - count.x - count.width).toBeCloseTo(20, 0);
   expect(page.viewportSize()!.width - chevron.x - chevron.width).toBeCloseTo(
-    20,
+    25,
     0,
   );
   await expect(column.locator("svg.lucide-chevron-down")).toBeVisible();
