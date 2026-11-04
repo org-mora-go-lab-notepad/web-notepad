@@ -2,7 +2,7 @@
 
 탭과 그룹으로 메모를 정리하고, 대시보드와 공유 보드로 협업하는 브라우저 노트 앱입니다.
 
-**현재 버전:** `1.10.4` · **개발 서버:** `http://localhost:3000` · **E2E:** 753개
+**현재 버전:** `1.10.4` · **개발 서버:** `http://localhost:3000` · **E2E:** 755개
 
 [PRD](PRD.md) · [상세 요구사항](tests-prd/) · [E2E 가이드](tests/README.md) · [버전 이력](versions/)
 
@@ -137,7 +137,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-현재 프런트 753개의 E2E가 등록되어 있습니다. `npm run test:e2e`는 BFF 체크아웃 없이 격리된 메모리 Mock 서버에서 전체 테스트를 실행합니다. `npm run test:e2e:bff`는 같은 전체 테스트를 실제 로컬 BFF에 연결해 검증하며 `NOTEPAD_BFF_DIR`로 경로를 지정할 수 있습니다. 이 모드에서만 BFF 저장소의 `npm ci`가 필요하며 별도 로컬 파일 DB를 사용합니다. CI도 Mock·BFF 전체 검증을 각각 실행합니다. `tests-prd/` 번호 요구사항과 `tests/` 파일은 1:1로 대응합니다. [Mock 개발 안내](tests/__mock__/README.md)를 참고하세요.
+현재 프런트 755개의 E2E가 등록되어 있습니다. `npm run test:e2e`는 BFF 체크아웃 없이 격리된 메모리 Mock 서버에서 전체 테스트를 실행합니다. `npm run test:e2e:bff`는 같은 전체 테스트를 실제 로컬 BFF에 연결해 검증하며 `NOTEPAD_BFF_DIR`로 경로를 지정할 수 있습니다. 이 모드에서만 BFF 저장소의 `npm ci`가 필요하며 별도 로컬 파일 DB를 사용합니다. CI도 Mock·BFF 전체 검증을 각각 실행합니다. `tests-prd/` 번호 요구사항과 `tests/` 파일은 1:1로 대응합니다. [Mock 개발 안내](tests/__mock__/README.md)를 참고하세요.
 
 ## 버전과 배포
 

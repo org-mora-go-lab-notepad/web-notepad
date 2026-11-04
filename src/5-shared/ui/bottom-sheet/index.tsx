@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import { useId } from "react";
 
+import { useTouchTap } from "../../hook";
 import { trapFocus } from "../../util";
 import { useBottomSheet, useBottomSheetResize } from "./hook";
 import type { BottomSheetProps } from "./type";
@@ -17,11 +18,13 @@ export function BottomSheet({
   children,
 }: BottomSheetProps) {
   const titleId = useId();
+  const touchTap = useTouchTap();
   const { dialogRef, close } = useBottomSheet(onClose, returnFocusTo);
   const resize = useBottomSheetResize(dialogRef, close);
   const { height, saveHeight } = resize;
   return (
     <dialog
+      {...touchTap}
       ref={dialogRef}
       className={`bottom-sheet ${className}`}
       data-resizing={resize.resizing || undefined}
@@ -57,6 +60,11 @@ export function BottomSheet({
         aria-valuemin={25}
         aria-valuemax={100}
         aria-valuenow={height}
+        onTouchEnd={(event) => event.preventDefault()}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        }}
         onPointerDown={resize.onPointerDown}
         onPointerMove={resize.onPointerMove}
         onPointerUp={resize.onPointerUp}

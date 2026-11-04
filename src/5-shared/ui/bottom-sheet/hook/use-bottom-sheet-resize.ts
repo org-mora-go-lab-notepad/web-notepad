@@ -54,6 +54,8 @@ export function useBottomSheetResize(
     saveHeight,
     onPointerDown: (event: PointerEvent<HTMLDivElement>) => {
       if (!event.isPrimary || event.button !== 0 || animation.current) return;
+      // A resize must not start a compatibility mouse/focus sequence.
+      event.preventDefault();
       const current =
         ((dialogRef.current?.getBoundingClientRect().height ?? 0) /
           window.innerHeight) *
@@ -81,6 +83,8 @@ export function useBottomSheetResize(
       const drag = sample(event);
       if (!drag) return;
       gesture.current = null;
+      if (event.currentTarget.hasPointerCapture(event.pointerId))
+        event.currentTarget.releasePointerCapture(event.pointerId);
       setResizing(false);
       const first = drag.samples[0];
       const elapsed = event.timeStamp - first.time;
@@ -115,9 +119,11 @@ export function useBottomSheetResize(
         : snap(dragged);
       saveHeight(clamp(next));
     },
-    onPointerCancel: () => {
+    onPointerCancel: (event: PointerEvent<HTMLDivElement>) => {
       const drag = gesture.current;
       gesture.current = null;
+      if (event.currentTarget.hasPointerCapture(event.pointerId))
+        event.currentTarget.releasePointerCapture(event.pointerId);
       setResizing(false);
       if (drag) setHeight(snap(drag.height));
     },

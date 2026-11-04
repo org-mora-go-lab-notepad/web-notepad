@@ -26,6 +26,13 @@ test("3. 사이드바 닫기 버튼은 대상 이름을 제공한다", async ({ 
           await expect(
             page.getByRole("button", { name: "Close Group" }),
           ).toBeVisible();
+          const header = (await page
+            .locator(".group-sidebar-header")
+            .boundingBox())!;
+          const close = (await page
+            .getByRole("button", { name: "Close Group" })
+            .boundingBox())!;
+          expect(header.x + header.width - close.x - close.width).toBe(4);
         },
         { box: true },
       );
