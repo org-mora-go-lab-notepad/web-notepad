@@ -55,7 +55,7 @@ test("2. 다른 기기의 화면을 다시 활성화하면 저장된 글을 가�
       await test.step(
         "검증 1: 2. 다른 기기의 화면을 다시 활성화하면 저장된 글을 가져온다 — PRD에 기록된 사용자 결과를 이 파일의 assertion으로 직접 확인한다",
         async () => {
-          await expect(mobile.locator("textarea").first()).toHaveValue(
+          await expect(mobile.locator("textarea:visible").first()).toHaveValue(
             "열린 기기로 전달할 글",
             { timeout: 15_000 },
           );

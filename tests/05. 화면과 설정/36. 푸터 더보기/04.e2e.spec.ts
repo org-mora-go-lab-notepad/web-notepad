@@ -23,15 +23,15 @@ test("4. 모바일 스와이프 이후 더보기와 검색을 첫 터치로 연�
   await expect(page.locator("textarea")).toHaveValue("First note");
   await expect(page.locator(".home")).toHaveAttribute("aria-busy", "false");
   const footer = page.locator(".footer");
-  await expect(footer).toHaveAttribute("data-swipe-tabs", "true");
+  await expect(footer).toHaveAttribute("data-swipe-tabs", "false");
   await swipeTouch(footer, "left");
-  await expect(page.locator("textarea")).toHaveValue("Second note");
+  await expect(page.locator("textarea")).toHaveValue("First note");
   await footer.locator(".more-command").tap();
   const menu = page.locator("#group-more-menu");
   await expect(menu).toBeVisible();
   await menu.getByRole("button", { name: "Search", exact: true }).tap();
   await expect(page.locator("#global-search-popup")).toBeVisible();
   await expect(menu).toHaveCount(0);
-  await expect(page.locator("textarea")).toHaveValue("Second note");
+  await expect(page.locator("textarea")).toHaveValue("First note");
   await expect(page.locator("textarea")).not.toBeFocused();
 });

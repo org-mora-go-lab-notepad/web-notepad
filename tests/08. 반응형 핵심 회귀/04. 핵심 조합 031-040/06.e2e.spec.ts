@@ -28,7 +28,7 @@ test("6. 390x844 system 1.1 핵심 반응형 계약을 유지한다", async ({ p
   const main = page.locator("main.home");
   const footer = page.locator(".footer");
   await expect(main).toBeVisible();
-  await expect(page.locator("textarea").first()).toBeVisible();
+  await expect(page.locator("textarea:visible").first()).toBeVisible();
   await expect(footer).toBeVisible();
   await expect(page.locator(".group-select-command")).toBeVisible();
   await expect(page.locator(".dashboard-command")).toBeVisible();

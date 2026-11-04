@@ -31,7 +31,11 @@ test("3. Note는 PC·모바일과 두 테마에서 탭·대시보드에 같은 Y
     await openPanel(page, "dashboard-panel");
     const tab = page.locator('.tab-item[data-dashboard-status="icebox"]');
     await expect(
-      tab.getByRole("tab", { name: "Note task", exact: true }),
+      tab.getByRole("tab", {
+        name: "Note task",
+        exact: true,
+        includeHidden: true,
+      }),
     ).toHaveAttribute("aria-selected", "true");
 
     for (const theme of ["dark", "light"]) {

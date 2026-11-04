@@ -3,8 +3,8 @@
 
 .header {
   position: relative;
-  height: 39px;
-  min-height: 39px;
+  height: v.$desktop-strip-height;
+  min-height: v.$desktop-strip-height;
   min-width: 0;
   display: flex;
   border-bottom: 1px solid v.$line;
@@ -99,7 +99,7 @@
   .add-tab {
     width: 33px;
     min-width: 33px;
-    height: 39px;
+    height: v.$desktop-strip-height;
 
     @media (max-width: 512px) {
       width: 33px * v.$mobile-scale;

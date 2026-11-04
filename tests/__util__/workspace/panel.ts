@@ -1,5 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 
+import { closeMobileEditor } from "./editor";
+
 // The group button on the left of the bottom bar (icon + current group name).
 export const groupsCommand = (page: Page) =>
   page.locator(".group-select-command");
@@ -23,6 +25,7 @@ export const shortcutsCommand = (page: Page) =>
   page.locator('button[aria-controls="shortcuts-panel"]');
 
 export async function openMoreMenu(page: Page) {
+  await closeMobileEditor(page);
   const menu = page.locator("#group-more-menu");
   if (!(await menu.isVisible())) await moreCommand(page).click();
   await expect(menu).toBeVisible();
@@ -30,6 +33,7 @@ export async function openMoreMenu(page: Page) {
 }
 
 export async function openSystemGroupMenu(page: Page) {
+  await closeMobileEditor(page);
   if ((await groupsCommand(page).getAttribute("aria-expanded")) !== "true")
     await groupsCommand(page).click();
   const menu = page.locator("#group-system-menu");
@@ -40,6 +44,7 @@ export async function openSystemGroupMenu(page: Page) {
 export const openHeaderMenu = openMoreMenu;
 
 export async function openPanel(page: Page, panelId: string) {
+  await closeMobileEditor(page);
   if (panelId === "bookmarks-panel") {
     await openBookmarksPanel(page);
     return;
@@ -143,7 +148,10 @@ export async function createGroupWithTab(page: Page, name: string) {
     .click();
 }
 export async function createGroupsWithTabs(page: Page, ...names: string[]) {
-  for (const name of names) await createGroupWithTab(page, name);
+  for (const name of names) {
+    await createGroupWithTab(page, name);
+    await closeMobileEditor(page);
+  }
   if (await page.locator("#group-system-menu").isVisible())
     await page.keyboard.press("Escape");
   if ((await groupsCommand(page).getAttribute("aria-expanded")) === "true")
@@ -162,6 +170,7 @@ export async function createGroups(page: Page, ...names: string[]) {
 
 // Opens the group sidebar, selects the group with the exact name and closes it when needed.
 export async function switchGroup(page: Page, name: string) {
+  await closeMobileEditor(page);
   if (
     name === "All Group" ||
     name === "All My Group" ||

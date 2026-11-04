@@ -231,13 +231,13 @@ test("2. 공유 그룹 보드 상세의 글자를 2px 키운다", async ({
   const mobileFooter = page.locator(".board-mobile-footer .footer");
   await expect(mobileFooter).toBeVisible();
   await swipeTouch(page.locator(".board-note-preview"), "left");
-  await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
+  await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
   await swipeTouch(page.locator(".board-note-preview"), "right");
   await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
   const swipeFooter = (direction: "left" | "right") =>
     swipeTouch(mobileFooter, direction);
   await swipeFooter("left");
-  await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
+  await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
   await swipeFooter("right");
   await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
   const mobileFooterBounds = (await mobileFooter.boundingBox())!;

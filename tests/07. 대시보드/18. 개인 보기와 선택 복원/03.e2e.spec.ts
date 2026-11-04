@@ -64,22 +64,19 @@ test("3. PC와 모바일에서 대시보드를 열 때 선택한 카드 위치�
         .getByRole("button", { name: "Close tab preview", exact: true })
         .click();
       await expect(sheet).toHaveCount(0);
-      await expect(selected.locator(".dashboard-card-open")).toHaveAttribute(
+      const current = dashboardColumn(page, "todo").locator(
+        '.dashboard-card[data-tab-id="card-00"]',
+      );
+      await expect(current.locator(".dashboard-card-open")).toHaveAttribute(
         "aria-current",
         "true",
       );
-      await page.locator(".dashboard-command").click();
-      await openPanel(page, "dashboard-panel");
-      await expect
-        .poll(async () => {
-          const item = (await selected.boundingBox())!,
-            bounds = (await list.boundingBox())!;
-          return (
-            item.y >= bounds.y &&
-            item.y + item.height <= bounds.y + bounds.height
-          );
-        })
-        .toBe(true);
+      await page.reload();
+      await expect(current.locator(".dashboard-card-open")).toHaveAttribute(
+        "aria-current",
+        "true",
+      );
+      await expect(current).toBeInViewport();
       continue;
     }
     await expect(

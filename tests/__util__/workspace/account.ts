@@ -2,9 +2,11 @@ import { expect, type Page } from "@playwright/test";
 
 import { signedSession } from "../../__fixture__";
 import { authenticateBrowser } from "../auth";
+import { closeMobileEditor } from "./editor";
 
 // Account menu cases use a real, isolated session when setup starts as a guest.
 export async function openAccountMenu(page: Page) {
+  await closeMobileEditor(page);
   await expect(page.locator(".auth-command:not(.is-loading)")).toBeVisible();
   const trigger = page.locator("button.auth-command");
   if (!(await trigger.count())) {

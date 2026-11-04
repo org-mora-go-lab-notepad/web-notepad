@@ -1,10 +1,12 @@
 "use client";
 
-import { Maximize2, Minimize2 } from "lucide-react";
+import { Maximize2, Minimize2, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import {
+  ALL_SHARED_GROUP_ID,
   compareGroups,
+  getActiveGroup,
   getDashboardColumns,
   getTabStatus,
   isSharedGroupId,
@@ -38,7 +40,9 @@ const MOBILE_STATUS_ORDER: TabStatus[] = [
 ];
 
 export function Dashboard({
+  renderTabEditor,
   groupId,
+  groupName,
   statusNames,
   onSaveStatusNames,
   visibility,
@@ -86,6 +90,7 @@ export function Dashboard({
   const openCard = (tabId: string) => {
     if (drag.isRecentDrag()) return;
     if (mobileLayout) {
+      onOpenTab(tabId);
       setContextMenu(null);
       setPreview({
         id: tabId,
@@ -122,14 +127,17 @@ export function Dashboard({
   ];
   const previewTab =
     open && mobileLayout ? tabs.find((tab) => tab.id === previewId) : undefined;
-  const previewGroup = groups.find((group) =>
-    group.tabs.some((tab) => tab.id === previewId),
-  );
   const contextTab = visibleTabs.find((tab) => tab.id === contextMenu?.itemId);
   const contextGroup = groups.find((group) =>
     group.tabs.some((tab) => tab.id === contextMenu?.itemId),
   );
   const drag = useDashboardDrag({ visibleTabs, onMoveCard });
+
+  useEffect(() => {
+    const closeMenu = () => setContextMenu(null);
+    window.addEventListener("popstate", closeMenu);
+    return () => window.removeEventListener("popstate", closeMenu);
+  }, []);
 
   useEffect(() => {
     if (!linkFeedback) return;
@@ -164,11 +172,34 @@ export function Dashboard({
     <SidePanel
       className="dashboard"
       id="dashboard-panel"
-      title={t.dashboardTitle}
+      title={mobileLayout ? groupName : t.dashboardTitle}
       open={open}
       expanded={open && expanded}
       headerActions={
         <>
+          {mobileLayout && groupId !== ALL_SHARED_GROUP_ID && (
+            <button
+              type="button"
+              className="side-panel-action dashboard-add-tab"
+              aria-label={t.newTab}
+              onClick={() => {
+                const blank = tabs.find(
+                  (tab) => tab.open && !tab.content.trim(),
+                );
+                if (blank) {
+                  openCard(blank.id);
+                  return;
+                }
+                useNotepadStore.getState().addTab();
+                const id = getActiveGroup(
+                  useNotepadStore.getState(),
+                )?.activeTabId;
+                if (id) openCard(id);
+              }}
+            >
+              <Plus size={18} aria-hidden="true" />
+            </button>
+          )}
           {open && (
             <DashboardOptions
               key={groupId}
@@ -205,7 +236,10 @@ export function Dashboard({
       }
       closeLabel={t.closePanel(t.dashboardTitle)}
       ariaLabel={t.dashboardTitle}
-      onClose={onClose}
+      onClose={() => {
+        setContextMenu(null);
+        onClose();
+      }}
     >
       <div className="dashboard-content" ref={contentRef}>
         <DashboardStatuses
@@ -222,11 +256,11 @@ export function Dashboard({
           >
             {displayColumns.map((column) => (
               <DashboardColumn
-                key={column.status}
+                key={`${groupId}:${column.status}`}
                 statusNames={displayStatusNames}
                 column={column}
                 drag={drag}
-                activeTabId={previewTab?.id ?? activeTabId}
+                activeTabId={previewId ?? activeTabId}
                 groups={groups}
                 showGroupNames={showGroupNames}
                 tabColorCycle={tabColorCycle}
@@ -244,7 +278,7 @@ export function Dashboard({
         <DashboardPreview
           tab={previewTab}
           returnFocusTo={preview?.trigger ?? null}
-          groupName={previewGroup?.name}
+          editor={renderTabEditor(previewTab)}
           onClose={() => setPreview(null)}
         />
       )}

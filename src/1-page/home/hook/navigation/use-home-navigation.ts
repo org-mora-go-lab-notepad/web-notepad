@@ -109,7 +109,10 @@ export function useHomeNavigation({ hydrated, addTabToPane }: Options) {
       setOpenPanel((current) =>
         snapshot.panel === null && keepsPanelOpenRef.current()
           ? current
-          : snapshot.panel,
+          : (snapshot.panel ??
+            (window.matchMedia("(max-width: 512px)").matches
+              ? "dashboard"
+              : null)),
       );
     },
     [updateGroupMenuOpen],
@@ -131,6 +134,24 @@ export function useHomeNavigation({ hydrated, addTabToPane }: Options) {
     return () =>
       window.removeEventListener("notepad-cloud-applied", replaceCurrentView);
   }, [replaceCurrentView]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 512px)");
+    let frame = 0;
+    const showCards = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        if (hydrated && media.matches)
+          setOpenPanel((panel) => panel ?? "dashboard");
+      });
+    };
+    showCards();
+    media.addEventListener("change", showCards);
+    return () => {
+      cancelAnimationFrame(frame);
+      media.removeEventListener("change", showCards);
+    };
+  }, [hydrated]);
 
   const closeGroupMenu = useCallback(() => {
     updateGroupMenuOpen(false);
@@ -166,13 +187,18 @@ export function useHomeNavigation({ hydrated, addTabToPane }: Options) {
       pushView(getCurrentView(backgroundPanel));
       return;
     }
-    setOpenPanel(null);
+    const next = window.matchMedia("(max-width: 512px)").matches
+      ? "dashboard"
+      : null;
+    setOpenPanel(next);
     setBackgroundPanel(null);
-    pushView(getCurrentView(null));
+    pushView(getCurrentView(next));
   }, [backgroundPanel, getCurrentView, openPanel, pushView]);
 
   const toggleSidePanel = useCallback(
     (panel: ViewPanel) => {
+      if (window.matchMedia("(max-width: 512px)").matches)
+        updateGroupMenuOpen(false);
       if (openPanel === panel) {
         if (
           panel === "bookmarks" ||
@@ -198,15 +224,30 @@ export function useHomeNavigation({ hydrated, addTabToPane }: Options) {
       setOpenPanel(panel);
       pushView(getCurrentView(panel));
     },
-    [closeSidePanels, getCurrentView, keepsPanelOpen, openPanel, pushView],
+    [
+      closeSidePanels,
+      getCurrentView,
+      keepsPanelOpen,
+      openPanel,
+      pushView,
+      updateGroupMenuOpen,
+    ],
   );
 
   // Records a panel action; the panel closes unless it is pinned.
   const finishPanelAction = useCallback(() => {
-    const panel = keepsPanelOpen() ? openPanel : null;
+    const mobile = window.matchMedia("(max-width: 512px)").matches;
+    if (mobile) updateGroupMenuOpen(false);
+    const panel = mobile ? "dashboard" : keepsPanelOpen() ? openPanel : null;
     setOpenPanel(panel);
     pushView(getCurrentView(panel));
-  }, [getCurrentView, keepsPanelOpen, openPanel, pushView]);
+  }, [
+    getCurrentView,
+    keepsPanelOpen,
+    openPanel,
+    pushView,
+    updateGroupMenuOpen,
+  ]);
 
   const finishBookmarkAction = useCallback(() => {
     if (window.matchMedia("(max-width: 512px)").matches)
@@ -232,6 +273,8 @@ export function useHomeNavigation({ hydrated, addTabToPane }: Options) {
         document.querySelector("dialog[open]")
       )
         return;
+      if (groupMenuOpen && window.matchMedia("(max-width: 512px)").matches)
+        return;
       if (keepsPanelOpen()) return;
       event.preventDefault();
       if (document.activeElement instanceof HTMLElement)
@@ -241,7 +284,7 @@ export function useHomeNavigation({ hydrated, addTabToPane }: Options) {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [closeSidePanels, keepsPanelOpen, openPanel]);
+  }, [closeSidePanels, keepsPanelOpen, openPanel, groupMenuOpen]);
 
   return {
     groupMenuOpen,

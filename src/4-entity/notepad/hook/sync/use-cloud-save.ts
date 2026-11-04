@@ -132,6 +132,9 @@ export function useCloudSave(hydrated: boolean) {
       }
       if (preserveShared && source.sharedDashboardVisibility === undefined)
         source.sharedDashboardVisibility = current.sharedDashboardVisibility;
+      // Older snapshots predate footer customization; keep this device’s saved choice.
+      source.settings.footerItems ??= current.settings.footerItems;
+      source.settings.footerIconsOnly ??= current.settings.footerIconsOnly;
       // Shared groups have their own membership checks and revision protocol.
       source.groups = [
         ...source.groups.filter(

@@ -23,6 +23,7 @@ export function Panel({
   tabColorCycle,
   groups,
   activeGroupId,
+  activeGroupName,
   groupMenuOpen,
   globalSearchQuery,
   onClose,
@@ -30,6 +31,7 @@ export function Panel({
   onGlobalSearchQueryChange,
   onOpenBookmark,
   onRemoveBookmark,
+  renderTabEditor,
   onOpenDashboardTab,
   onMoveDashboardCard,
   onSaveDashboardStatusNames,
@@ -64,7 +66,9 @@ export function Panel({
         onRemove={onRemoveBookmark}
       />
       <Dashboard
+        renderTabEditor={renderTabEditor}
         groupId={activeGroupId}
+        groupName={activeGroupName}
         statusNames={dashboardStatusNames}
         onSaveStatusNames={onSaveDashboardStatusNames}
         visibility={dashboardVisibility}

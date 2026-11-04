@@ -98,6 +98,7 @@ export const ko: Messages = {
   shareInviteJoining: "공유 그룹에 참여하는 중...",
   shareInviteJoined: "공유 그룹이 추가되었습니다. 이제 수정할 수 있습니다.",
   shareInviteError: "공유 그룹 링크를 열지 못했습니다.",
+  editorHeight: "편집기 높이",
   closeTabPreview: "탭 미리보기 닫기",
   dashboardTitle: "카드",
   dashboardOptions: "카드 옵션",

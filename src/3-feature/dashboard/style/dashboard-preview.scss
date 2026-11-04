@@ -1,20 +1,12 @@
 @use "../../../5-shared/style/variable" as v;
-
-.dashboard {
-  .dashboard-preview-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-    color: v.$muted;
-    font-size: v.font(13px);
+.dashboard .dashboard-preview {
+  .bottom-sheet-content {
+    padding: 0;
+    display: grid;
+    overflow: hidden;
   }
-  .dashboard-preview-text {
-    margin: 0;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    font: v.font(16px) / 1.7 v.$mono;
-    tab-size: 4;
-    user-select: text;
+  .note-editor {
+    height: 100%;
+    font-family: v.$mono;
   }
 }

@@ -25,7 +25,7 @@ test("5. 모바일 탭 타이틀과 편집기는 기존 축소 크기를 유지�
         { box: true },
       );
 
-      const editor = page.locator(".note-area");
+      const editor = page.locator(".note-area:visible");
 
       await test.step(
         "검증 1: 5. 모바일 탭 타이틀과 편집기는 기존 축소 크기를 유지하고 에디터만 1px 늘려 줄 번호 크기를 유지한다 — PRD에 기록된 사용자 결과를 이 파일의 assertion으로 직접 확인한다",
@@ -57,7 +57,7 @@ test("5. 모바일 탭 타이틀과 편집기는 기존 축소 크기를 유지�
       await test.step(
         "검증 4: 5. 모바일 탭 타이틀과 편집기는 기존 축소 크기를 유지하고 에디터만 1px 늘려 줄 번호 크기를 유지한다 — PRD에 기록된 사용자 결과를 이 파일의 assertion으로 직접 확인한다",
         async () => {
-          await expect(page.locator(".line-rail")).toHaveCSS(
+          await expect(page.locator(".line-rail:visible")).toHaveCSS(
             "font-size",
             "10.8px",
           );

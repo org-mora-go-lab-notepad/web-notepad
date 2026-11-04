@@ -12,7 +12,7 @@
     min-width: 0;
     min-height: 0;
     display: grid;
-    grid-template-rows: 39px minmax(0, 1fr);
+    grid-template-rows: v.$desktop-strip-height minmax(0, 1fr);
 
     @media (max-width: 512px) {
       grid-template-rows: 45px minmax(0, 1fr);

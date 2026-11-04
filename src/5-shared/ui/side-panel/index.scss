@@ -256,3 +256,11 @@
     }
   }
 }
+
+@media (min-width: 513px) {
+  .side-panel .side-panel-header {
+    height: v.$desktop-strip-height;
+    min-height: v.$desktop-strip-height;
+    padding-block: 3px;
+  }
+}

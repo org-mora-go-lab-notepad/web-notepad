@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import { BOTH_VIEWPORTS } from "../../__constant__";
 import { groupsCommand } from "../../__util__";
 
-test("3. 현재 그룹은 PC 푸터 왼쪽, 모바일 메뉴 버튼에 표시한다", async ({
+test("3. 현재 그룹은 PC 푸터 왼쪽, 모바일 카드 헤더에 표시한다", async ({
   page,
 }) => {
   await page.goto("/");
@@ -23,11 +23,11 @@ test("3. 현재 그룹은 PC 푸터 왼쪽, 모바일 메뉴 버튼에 표시한
     if (viewport.width <= 512) {
       await expect(page.locator(".footer-current-group")).toBeHidden();
       await expect(command).toHaveCSS("gap", "4px");
-      await expect(command.locator(".group-command-label")).toBeHidden();
+      await expect(command.locator(".group-command-label")).toBeVisible();
       await expect(command.locator(".group-current-value")).toHaveText(
         "Ungrouped",
       );
-      await expect(command.locator(".group-current-value")).toBeVisible();
+      await expect(command.locator(".group-current-value")).toBeHidden();
       await expect(page.locator(".current-group-panel")).toHaveCount(0);
     } else {
       const currentGroup = page.locator(".footer-current-group");

@@ -20,7 +20,8 @@ test("6. 모바일 WebView의 긴 문서에서 편집기와 번호의 줄 간격
     await ensureEditorTab(page);
     for (const width of [390, 320, 600]) {
       await page.setViewportSize({ width, height: 800 });
-      const editor = page.locator("textarea").first();
+      await ensureEditorTab(page);
+      const editor = page.locator("textarea:visible").first();
       await editor.fill(
         Array.from({ length: 160 }, (_, i) => "line " + i).join("\n"),
       );

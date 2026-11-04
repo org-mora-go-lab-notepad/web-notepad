@@ -5,6 +5,7 @@ import type { GroupEntry, NoteTab, TabColor } from "@/src/4-entity/notepad";
 import type { ViewPanel } from "@/src/5-shared";
 
 export type PanelProps = {
+  renderTabEditor: ComponentProps<typeof Dashboard>["renderTabEditor"];
   onSaveDashboardStatusNames: ComponentProps<
     typeof Dashboard
   >["onSaveStatusNames"];
@@ -20,6 +21,7 @@ export type PanelProps = {
   tabColorCycle: TabColor[];
   groups: GroupEntry[];
   activeGroupId: string;
+  activeGroupName: string;
   groupMenuOpen: boolean;
   globalSearchQuery: string;
   onClose: () => void;

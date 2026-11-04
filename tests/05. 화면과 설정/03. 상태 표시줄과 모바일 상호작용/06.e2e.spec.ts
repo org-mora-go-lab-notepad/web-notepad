@@ -2,7 +2,12 @@ import { expect, test } from "@playwright/test";
 
 import { BOTH_VIEWPORTS } from "../../__constant__";
 import { createGroupFixture, createTabFixture } from "../../__fixture__";
-import { openMoreMenu, seedStoredStateOnLoad } from "../../__util__";
+import {
+  closeMobileEditor,
+  ensureEditorTab,
+  openMoreMenu,
+  seedStoredStateOnLoad,
+} from "../../__util__";
 
 test("6. UI 문구의 선택을 막고 입력과 본문 복사를 위한 선택은 유지한다", async ({
   page,
@@ -37,7 +42,9 @@ test("6. UI 문구의 선택을 막고 입력과 본문 복사를 위한 선택�
       "user-select",
       "none",
     );
-    const editor = page.locator("textarea").first();
+    await page.keyboard.press("Escape");
+    await ensureEditorTab(page);
+    const editor = page.locator("textarea:visible").first();
     await expect(editor).toHaveCSS("user-select", "text");
     await editor.fill("Selectable note");
     await editor.selectText();
@@ -46,6 +53,8 @@ test("6. UI 문구의 선택을 막고 입력과 본문 복사를 위한 선택�
         element.value.slice(element.selectionStart, element.selectionEnd),
       ),
     ).toBe("Selectable note");
+    await closeMobileEditor(page);
+    await openMoreMenu(page);
     await page.locator(".footer .global-search-command").click();
     const dialog = page.getByRole("dialog");
     const input = dialog.getByRole("searchbox");

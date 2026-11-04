@@ -6,8 +6,8 @@
   margin: 0;
   width: 100%;
   max-width: none;
-  height: 82dvh;
-  max-height: calc(100dvh - 16px);
+  height: 75dvh;
+  max-height: 100dvh;
   padding: 0;
   overflow: hidden;
   border: 1px solid v.$line;
@@ -27,10 +27,14 @@
   }
   .bottom-sheet-grip {
     width: 36px;
-    height: 4px;
-    margin: 8px auto 0;
+    height: 18px;
+    touch-action: none;
+    cursor: ns-resize;
+    border-block: 7px solid transparent;
+    margin: 0 auto;
     border-radius: 4px;
     background: v.$dim;
+    background-clip: content-box;
   }
   .bottom-sheet-header {
     display: flex;
@@ -67,6 +71,7 @@
     padding: 16px 18px calc(24px + env(safe-area-inset-bottom));
     -webkit-overflow-scrolling: touch;
   }
+  .bottom-sheet-grip:focus-visible,
   button:focus-visible,
   .bottom-sheet-content:focus-visible {
     outline: 2px solid v.$signal;

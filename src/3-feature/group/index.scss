@@ -322,3 +322,12 @@
     animation: none;
   }
 }
+
+@media (min-width: 513px) {
+  .group .group-sidebar-header {
+    height: v.$desktop-strip-height;
+    min-height: v.$desktop-strip-height;
+    flex-shrink: 0;
+    padding-block: 3px;
+  }
+}

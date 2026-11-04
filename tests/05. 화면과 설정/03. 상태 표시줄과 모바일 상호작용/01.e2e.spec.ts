@@ -23,7 +23,9 @@ test("1. PC와 모바일 하단 메뉴는 가로 스크롤 없이 정해진 버�
       .evaluate((element) => getComputedStyle(element).fontSize);
     if (width <= 512) expect(dashboardFontSize).toBe("12px");
     for (const label of [
-      page.locator(".group-current-value"),
+      page.locator(
+        width <= 512 ? ".group-command-label" : ".group-current-value",
+      ),
       page.locator(".footer .auth-command > span"),
     ]) {
       await expect(label).toHaveCSS("font-size", dashboardFontSize);
@@ -122,6 +124,7 @@ test("1. PC와 모바일 하단 메뉴는 가로 스크롤 없이 정해진 버�
           .__tapFeedbackSeen ?? 0,
     ),
   ).toBe(0);
+  await page.locator(".dashboard-preview .bottom-sheet-header button").click();
   await page.locator(".dashboard-command").click();
   await expect
     .poll(() =>

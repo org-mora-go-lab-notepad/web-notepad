@@ -128,7 +128,7 @@
   .tab-select {
     min-width: 0;
     flex: 1;
-    height: 39px;
+    height: v.$desktop-strip-height;
     display: flex;
     align-items: center;
     gap: 0;
@@ -210,7 +210,7 @@
 
   .tab-close {
     width: 34px;
-    height: 39px;
+    height: v.$desktop-strip-height;
   }
 
   @media (max-width: 512px) {
