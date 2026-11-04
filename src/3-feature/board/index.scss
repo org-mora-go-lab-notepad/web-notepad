@@ -673,3 +673,7 @@
     opacity: 1;
   }
 }
+
+.board .board-note-preview {
+  touch-action: pan-y;
+}

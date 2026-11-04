@@ -56,12 +56,12 @@ test("8. 푸터 스와이프 직후 메뉴·대시보드·사용자 아이콘이
   await expect(footer.locator(".auth-command:not(.is-loading)")).toBeVisible();
   await expect(page.locator("textarea")).toHaveValue("First note");
   await expect(page.locator(".initial-sync-lock")).toHaveCount(0);
-  await expect(footer).toHaveAttribute("data-swipe-tabs", "true");
+  await expect(footer).toHaveAttribute("data-swipe-tabs", "false");
   await swipeTouch(footer, "left");
-  await expect(page.locator("textarea")).toHaveValue("Second note");
+  await expect(page.locator("textarea")).toHaveValue("First note");
   await expect(page.locator("#dashboard-panel")).toHaveAttribute(
     "aria-hidden",
-    "true",
+    "false",
   );
   await compatibilityClick(menu);
   await expect(page.locator("#groups-menu")).toHaveCount(0);
@@ -77,7 +77,7 @@ test("8. 푸터 스와이프 직후 메뉴·대시보드·사용자 아이콘이
   await compatibilityClick(dashboard);
   await expect(page.locator("#dashboard-panel")).toHaveAttribute(
     "aria-hidden",
-    "true",
+    "false",
   );
 
   await dashboard.tap();
@@ -90,11 +90,11 @@ test("8. 푸터 스와이프 직후 메뉴·대시보드·사용자 아이콘이
   await dashboard.tap();
   await expect(page.locator("#dashboard-panel")).toHaveAttribute(
     "aria-hidden",
-    "true",
+    "false",
   );
 
   await swipeTouch(footer, "left");
-  await expect(page.locator("textarea")).toHaveValue("Second note");
+  await expect(page.locator("textarea")).toHaveValue("First note");
   await compatibilityClick(account);
   await expect(page.locator("#account-menu")).toHaveCount(0);
 
@@ -129,7 +129,7 @@ test("8. 푸터 스와이프 직후 메뉴·대시보드·사용자 아이콘이
   await dashboard.tap();
   await expect(dashboard).toHaveAttribute("aria-expanded", "true");
   await dashboard.tap();
-  await expect(dashboard).toHaveAttribute("aria-expanded", "false");
+  await expect(dashboard).toHaveAttribute("aria-expanded", "true");
   await account.tap();
   await expect(page.locator("#account-menu")).toBeVisible();
 });

@@ -1,6 +1,9 @@
+import { useId, useState } from "react";
+
 import { compareDashboardCards, getStatusColor } from "@/src/4-entity/notepad";
 import { useI18n } from "@/src/5-shared/hook";
 
+import { useDashboardMobileLayout } from "../../hook";
 import type { DashboardColumnProps } from "../../type";
 import { DashboardCard } from "./dashboard-card";
 import { DashboardStatus } from "./dashboard-status";
@@ -18,6 +21,9 @@ export function DashboardColumn({
   onOpenContextMenu,
 }: DashboardColumnProps) {
   const { status, tabs: columnTabs } = column;
+  const mobile = useDashboardMobileLayout();
+  const [collapsed, setCollapsed] = useState(false);
+  const cardsId = useId();
   const { t } = useI18n();
   const statusLabel = {
     icebox: t.icebox,
@@ -52,12 +58,19 @@ export function DashboardColumn({
     >
       <DashboardStatus
         className="dashboard-column-status"
+        collapsed={mobile ? collapsed : undefined}
+        onToggle={mobile ? () => setCollapsed(!collapsed) : undefined}
+        controls={cardsId}
         status={status}
         label={statusNames[status] ?? statusLabel}
         count={columnTabs.length}
         tabColor={getStatusColor(status, tabColorCycle)}
       />
-      <div className="dashboard-cards">
+      <div
+        id={cardsId}
+        className="dashboard-cards"
+        hidden={mobile && collapsed}
+      >
         {columnTabs.length === 0 && (
           <div className="dashboard-empty">
             <p>{t.dashboardEmpty}</p>

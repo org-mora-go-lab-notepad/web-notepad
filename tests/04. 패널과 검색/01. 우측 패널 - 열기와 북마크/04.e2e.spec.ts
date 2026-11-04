@@ -11,12 +11,17 @@ test("4. 뒤로가기는 모바일 패널을 닫고 PC 고정 패널을 유지�
     await page.setViewportSize(viewport);
     for (const panelId of panelIds) {
       const panel = page.locator(`#${panelId}`);
+      if (viewport.width <= 512 && panelId === "dashboard-panel")
+        await page.locator(".group-select-command").click();
       await openPanel(page, panelId);
       await expect(panel).toHaveAttribute("aria-hidden", "false");
       await page.goBack();
       await expect(panel).toHaveAttribute(
         "aria-hidden",
-        viewport.width >= 641 ? "false" : "true",
+        viewport.width >= 641 ||
+          (viewport.width <= 512 && panelId === "dashboard-panel")
+          ? "false"
+          : "true",
       );
       if (viewport.width >= 641)
         await panel.locator(".side-panel-close").click();

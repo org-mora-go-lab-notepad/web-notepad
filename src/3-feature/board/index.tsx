@@ -51,8 +51,6 @@ const SYSTEM_BOARD_POST_IDS = new Set([
   `local-${UNGROUPED_GROUP_ID}`,
 ]);
 
-export const BOARD_NOTE_SWIPE_EVENT = "notepad-board-note-swipe";
-
 export function Board({ onReturnHome }: { onReturnHome?: () => void }) {
   const contentRef = useRef<HTMLDivElement>(null);
   const { t, language } = useI18n();
@@ -130,6 +128,7 @@ export function Board({ onReturnHome }: { onReturnHome?: () => void }) {
     },
     [],
   );
+  const editorSwipeStart = useRef<{ x: number; y: number } | null>(null);
   const swipeNote = useCallback(
     (direction: "left" | "right") => {
       if (!selected || orderedNotes.length < 2) return false;
@@ -145,14 +144,7 @@ export function Board({ onReturnHome }: { onReturnHome?: () => void }) {
     },
     [activateNote, activeNote?.id, orderedNotes, selected],
   );
-  useEffect(() => {
-    const handleFooterSwipe = (event: Event) => {
-      swipeNote((event as CustomEvent<"left" | "right">).detail);
-    };
-    window.addEventListener(BOARD_NOTE_SWIPE_EVENT, handleFooterSwipe);
-    return () =>
-      window.removeEventListener(BOARD_NOTE_SWIPE_EVENT, handleFooterSwipe);
-  }, [swipeNote]);
+
   useLayoutEffect(() => {
     if (!selected) return;
     contentRef.current
@@ -398,6 +390,29 @@ export function Board({ onReturnHome }: { onReturnHome?: () => void }) {
                   <article
                     key={`${activeNote.id}-${noteSlide?.sequence ?? 0}`}
                     ref={notePreviewRef}
+                    onPointerDown={(event) => {
+                      if (event.button !== 0) return;
+                      editorSwipeStart.current = {
+                        x: event.clientX,
+                        y: event.clientY,
+                      };
+                      event.currentTarget.setPointerCapture(event.pointerId);
+                    }}
+                    onPointerCancel={() => {
+                      editorSwipeStart.current = null;
+                    }}
+                    onPointerUp={(event) => {
+                      const start = editorSwipeStart.current;
+                      editorSwipeStart.current = null;
+                      if (!start) return;
+                      const dx = event.clientX - start.x,
+                        dy = event.clientY - start.y;
+                      if (
+                        Math.abs(dx) > 64 &&
+                        Math.abs(dx) > Math.abs(dy) * 1.5
+                      )
+                        swipeNote(dx < 0 ? "left" : "right");
+                    }}
                     className={`board-note-preview ${noteSlide ? `is-slide-${noteSlide.direction}` : ""}`}
                     id="board-active-note"
                     role="tabpanel"

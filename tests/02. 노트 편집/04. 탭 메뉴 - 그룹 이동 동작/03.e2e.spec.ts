@@ -12,7 +12,7 @@ test("3. 원래 그룹의 마지막 탭을 이동하면 자동 생성 없이 새
     await seedMoveGroupState(page);
     await moveTabToTarget(page, viewport);
     await expect(page.getByRole("tab")).toHaveCount(0);
-    await expect(page.locator("textarea")).toHaveCount(0);
+    await expect(page.locator("textarea:visible")).toHaveCount(0);
     await expect(
       page.getByRole("button", { name: "New tab", exact: true }).first(),
     ).toBeVisible();

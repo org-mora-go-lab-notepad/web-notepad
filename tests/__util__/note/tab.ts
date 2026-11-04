@@ -5,7 +5,9 @@ import { MOBILE_VIEWPORT, type Viewport } from "../../__constant__";
 export const activeTabItem = (page: Page) =>
   page.locator(".tab-item.is-active");
 export const activeTab = (page: Page) =>
-  page.locator('.tab-item.is-active [role="tab"]');
+  (page.viewportSize()?.width ?? 1280) <= 512
+    ? page.locator(".dashboard-card.is-active .dashboard-card-open")
+    : page.locator('.tab-item.is-active [role="tab"]');
 export const addTabButton = (page: Page) =>
   page.getByRole("button", { name: "New tab", exact: true });
 

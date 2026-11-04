@@ -11,7 +11,7 @@ test("4. 자동 줄바꿈된 번호를 선택하면 원본 줄의 모든 표시 
 }) => {
   await page.setViewportSize(MOBILE_VIEWPORT);
   await openEditor(page);
-  const editor = page.locator("textarea").first();
+  const editor = page.locator("textarea:visible").first();
   const lines = lineButtons(page);
   await editor.fill(content);
   await expect.poll(() => lines.count()).toBe(await countWrappedLines(editor));

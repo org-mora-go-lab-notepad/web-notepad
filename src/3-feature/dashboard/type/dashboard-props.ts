@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import type {
   DashboardStatusNames,
   DashboardVisibility,
@@ -8,7 +10,9 @@ import type {
 } from "@/src/4-entity/notepad";
 
 export type DashboardProps = {
+  renderTabEditor: (tab: NoteTab) => ReactNode;
   groupId: string;
+  groupName: string;
   statusNames: DashboardStatusNames;
   onSaveStatusNames: (names: DashboardStatusNames) => void;
   visibility: DashboardVisibility;

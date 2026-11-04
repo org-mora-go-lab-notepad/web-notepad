@@ -65,4 +65,6 @@ export async function seedMoveGroupState(
 
 // The seeded "Move me" tab that the move-group tests act on.
 export const moveGroupSourceTab = (page: Page) =>
-  page.getByRole("tab", { name: "Move me", exact: true });
+  (page.viewportSize()?.width ?? 1280) <= 512
+    ? page.locator('.dashboard-card[data-tab-id="tab-1"] .dashboard-card-open')
+    : page.getByRole("tab", { name: "Move me", exact: true });

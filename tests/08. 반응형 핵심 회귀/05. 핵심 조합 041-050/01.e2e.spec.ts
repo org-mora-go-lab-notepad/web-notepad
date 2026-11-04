@@ -28,7 +28,7 @@ test("1. 412x915 light 0.9 핵심 반응형 계약을 유지한다", async ({ pa
   const main = page.locator("main.home");
   const footer = page.locator(".footer");
   await expect(main).toBeVisible();
-  await expect(page.locator("textarea").first()).toBeVisible();
+  await expect(page.locator("textarea:visible").first()).toBeVisible();
   await expect(footer).toBeVisible();
   await expect(page.locator(".group-select-command")).toBeVisible();
   await expect(page.locator(".dashboard-command")).toBeVisible();

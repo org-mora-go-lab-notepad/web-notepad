@@ -58,3 +58,6 @@ $group-sidebar-width: min(
   var(--group-sidebar-width, 280px),
   $group-sidebar-max-width
 );
+
+// Shared desktop strip height keeps editor and drawer content aligned.
+$desktop-strip-height: 44px;

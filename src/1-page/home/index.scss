@@ -102,3 +102,12 @@
     overflow: hidden;
   }
 }
+
+@media (max-width: 512px) {
+  .home .workspace > .pane-group {
+    visibility: hidden;
+  }
+  .home.is-group-sidebar-open .dashboard {
+    visibility: hidden;
+  }
+}

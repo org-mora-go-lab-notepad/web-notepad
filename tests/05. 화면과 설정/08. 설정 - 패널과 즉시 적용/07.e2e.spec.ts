@@ -23,7 +23,7 @@ test("7. Footer Icons Only는 기본 Off이고 PC에만 즉시 적용해 복원�
   await expect(page.locator(".dashboard-command .status-label")).toBeHidden();
 
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(page.locator(".group-current-value")).toBeVisible();
+  await expect(page.locator(".group-command-label")).toBeVisible();
   await expect(page.locator(".dashboard-command .status-label")).toBeVisible();
   await page.setViewportSize({ width: 1280, height: 844 });
   await page.reload();

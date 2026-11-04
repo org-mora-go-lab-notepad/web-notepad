@@ -8,6 +8,7 @@ import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { useCloudSave, useHome, useSharedGroups } from "@/src/1-page/home/hook";
 import { readViewFromUrl } from "@/src/1-page/home/util";
 import { Footer, Panel } from "@/src/2-widget";
+import { NoteEditor } from "@/src/3-feature";
 import { isSharedGroupId, useNotepadStore } from "@/src/4-entity/notepad";
 import { MESSAGES } from "@/src/5-shared/constant";
 import {
@@ -24,6 +25,8 @@ const SHARED_TAB_LINK_MAX_AGE = 10 * 60 * 1000;
 
 export function Home() {
   const router = useRouter();
+  const sheetEditorRef = useRef<HTMLTextAreaElement>(null);
+  const sheetComposingRef = useRef(false);
   const {
     hydrated,
     groupMenuOpen,
@@ -367,6 +370,17 @@ export function Home() {
               )}
 
               <Panel
+                activeGroupName={activeGroupName}
+                renderTabEditor={(tab) => (
+                  <NoteEditor
+                    tab={tab}
+                    editorRef={sheetEditorRef}
+                    composingRef={sheetComposingRef}
+                    onChange={(content) =>
+                      useNotepadStore.getState().updateTab(tab.id, content)
+                    }
+                  />
+                )}
                 activeTabId={activeTab?.id}
                 openPanel={openPanel}
                 backgroundPanel={backgroundPanel}

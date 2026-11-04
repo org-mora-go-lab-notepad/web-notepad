@@ -14,6 +14,8 @@ test("2. 모바일 길게 누른 카드도 같은 상태 안에서 순서를 변
   await seedCards(page);
   await openPanel(page, "dashboard-panel");
   const cards = dashboardColumn(page, "todo").locator(".dashboard-card");
+  await cards.filter({ hasText: "Gamma" }).scrollIntoViewIfNeeded();
+  await cards.filter({ hasText: "Gamma" }).click({ trial: true });
   const source = (await cards.filter({ hasText: "Gamma" }).boundingBox())!;
   const target = (await cards.filter({ hasText: "Alpha" }).boundingBox())!;
   const session = await page.context().newCDPSession(page);
@@ -24,7 +26,7 @@ test("2. 모바일 길게 누른 카드도 같은 상태 안에서 순서를 변
         { x: source.x + source.width / 2, y: source.y + source.height / 2 },
       ],
     });
-    await page.waitForTimeout(350);
+    await expect(cards.filter({ hasText: "Gamma" })).toHaveClass(/is-dragging/);
     await session.send("Input.dispatchTouchEvent", {
       type: "touchMove",
       touchPoints: [{ x: target.x + target.width / 2, y: target.y + 8 }],

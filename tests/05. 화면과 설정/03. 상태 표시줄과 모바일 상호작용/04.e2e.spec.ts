@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { openPanel, openSettingsPanel } from "../../__util__";
 
-test("4. 모바일 패널은 푸터 위에서 끝나고 X로 닫으면 활성 표시를 해제한다", async ({
+test("4. 모바일 패널은 푸터 위에서 끝나고 닫기 이후 카드 화면을 유지한다", async ({
   page,
 }) => {
   await page.goto("/");
@@ -17,9 +17,9 @@ test("4. 모바일 패널은 푸터 위에서 끝나고 X로 닫으면 활성 �
   };
   await expectAboveFooter(panel);
   await page.locator("#dashboard-panel .side-panel-close").click();
-  await expect(panel).toHaveAttribute("aria-hidden", "true");
-  await expect(command).toHaveAttribute("aria-expanded", "false");
-  await expect(command).not.toHaveClass(/is-active/);
+  await expect(panel).toHaveAttribute("aria-hidden", "false");
+  await expect(command).toHaveAttribute("aria-expanded", "true");
+  await expect(command).toHaveClass(/is-active/);
 
   await page.locator(".group-select-command").click();
   await expectAboveFooter(page.locator(".group-menu"));

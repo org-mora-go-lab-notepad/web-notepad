@@ -89,3 +89,20 @@
     }
   }
 }
+
+@media (max-width: 512px) {
+  .dashboard .side-panel-header h2 {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dashboard .dashboard-add-tab {
+    order: 1;
+    flex-shrink: 0;
+  }
+  .dashboard .side-panel-close {
+    order: 2;
+    flex-shrink: 0;
+  }
+}

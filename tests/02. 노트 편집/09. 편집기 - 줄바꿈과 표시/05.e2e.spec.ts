@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { DESKTOP_VIEWPORT, MOBILE_VIEWPORT } from "../../__constant__";
-import { openEditor } from "../../__util__";
+import { ensureEditorTab, openEditor } from "../../__util__";
 import {
   expectSelectedLines,
   lineButtons,
@@ -15,7 +15,7 @@ test("5. 반응형 재줄바꿈 후에도 개행 기준 선택과 원본 줄 강
 }) => {
   await page.setViewportSize(MOBILE_VIEWPORT);
   await openEditor(page);
-  const editor = page.locator("textarea").first();
+  const editor = page.locator("textarea:visible").first();
   const lines = lineButtons(page);
   await editor.fill(content);
   await expect.poll(() => lines.count()).toBe(await countWrappedLines(editor));
@@ -46,6 +46,7 @@ test("5. 반응형 재줄바꿈 후에도 개행 기준 선택과 원본 줄 강
   expect(await storedSelection()).toEqual(selection);
 
   await page.setViewportSize(MOBILE_VIEWPORT);
+  await ensureEditorTab(page);
   await expect(lines).toHaveCount(mobileCount);
   await expectSelectedLines(page, [
     ...Array(selectedMobileLines).fill(true),

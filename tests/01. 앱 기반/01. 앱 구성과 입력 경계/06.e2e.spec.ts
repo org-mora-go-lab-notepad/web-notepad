@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { MOBILE_VIEWPORT, STORAGE_KEY } from "../../__constant__";
-import { openEditor } from "../../__util__";
+import { closeMobileEditor, openEditor } from "../../__util__";
 import {
   chooseGroupAction,
   createGroup,
@@ -41,6 +41,7 @@ test("6. 터치 에디터도 기존 축소 크기에서 1px 늘리고 다른 입
   );
   await page.keyboard.press("Escape");
 
+  await closeMobileEditor(page);
   await groupsCommand(page).click();
   await createGroup(page, "Alpha");
   expect(await fontSize(".group-create-form input")).toBeGreaterThanOrEqual(16);

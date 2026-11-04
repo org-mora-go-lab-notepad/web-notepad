@@ -8,12 +8,12 @@ test.use({
   viewport: { width: 390, height: 844 },
 });
 
-test("9. 모바일에서 모든 탭이 닫힌 에디터를 터치하면 새 탭 하나를 생성한다", async ({
+test("9. 모바일에서 카드 화면에서 새 탭을 누르면 새 탭 하나를 생성한다", async ({
   page,
 }) => {
   await page.goto("/");
   const surface = page.getByRole("button", {
-    name: "Create a tab in the empty editor",
+    name: "New tab",
     exact: true,
   });
   await expect(page.locator(".initial-sync-lock")).toHaveCount(0);
@@ -21,9 +21,9 @@ test("9. 모바일에서 모든 탭이 닫힌 에디터를 터치하면 새 탭 
   await expect(page.locator(".tab-item")).toHaveCount(0);
   await surface.tap();
   await expect(page.locator(".tab-item")).toHaveCount(1);
-  const editor = page.locator("textarea");
+  const editor = page.locator("textarea:visible");
   await expect(editor).toHaveValue("");
-  await expect(surface).toHaveCount(0);
+  await expect(page.locator(".dashboard-preview")).toBeVisible();
   await editor.tap();
   await editor.fill("Mobile created note");
   await editor.tap();

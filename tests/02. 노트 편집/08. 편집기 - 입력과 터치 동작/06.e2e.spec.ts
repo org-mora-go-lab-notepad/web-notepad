@@ -14,7 +14,7 @@ test("6. 편집기를 한 번 터치하면 브라우저가 정한 접힌 커서 
   try {
     const content = "First line\nSecond line\nThird line";
     await openEditor(page);
-    const editor = page.locator("textarea");
+    const editor = page.locator("textarea:visible");
     await editor.fill(content);
     await editor.tap({ position: { x: 25, y: 20 } });
     await expect(editor).toBeFocused();

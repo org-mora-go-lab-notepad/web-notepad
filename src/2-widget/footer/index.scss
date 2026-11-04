@@ -472,3 +472,13 @@
     }
   }
 }
+
+@media (max-width: 512px) {
+  .footer .group-current-value {
+    display: none !important;
+  }
+  .footer .group-command-label {
+    display: block !important;
+    margin-top: 1px;
+  }
+}

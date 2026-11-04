@@ -13,7 +13,10 @@ test("5. 같은 글의 동시 수정이 충돌해도 Recovered 중복 탭을 만
   await openDevice(mobile);
   await waitForSaved(mobile);
   await mobile.route("**/api/notepad/history", (route) => route.abort());
-  await mobile.locator("textarea").first().fill("모바일에서 수정한 본문");
+  await mobile
+    .locator("textarea:visible")
+    .first()
+    .fill("모바일에서 수정한 본문");
   await desktop.locator("textarea").first().fill("PC에서 수정한 본문");
   await waitForSaved(desktop);
   await mobile.unroute("**/api/notepad/history");

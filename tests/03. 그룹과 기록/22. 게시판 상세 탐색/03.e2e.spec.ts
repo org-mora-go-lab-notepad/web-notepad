@@ -9,7 +9,7 @@ test.use({
   viewport: { width: 390, height: 844 },
 });
 
-test("3. 모바일 보드 상세 푸터 제스처는 노트 탭을 순환하고 첫 탭이 즉시 동작한다", async ({
+test("3. 모바일 보드 상세 편집기 제스처는 노트 탭을 순환하고 첫 탭이 즉시 동작한다", async ({
   page,
   boardPost,
 }) => {
@@ -23,18 +23,18 @@ test("3. 모바일 보드 상세 푸터 제스처는 노트 탭을 순환하고 
   const secondTabName = await tabs.nth(1).textContent();
   await expect(footer).toBeVisible();
   await expect(dashboard).toBeVisible();
-  await swipeTouch(footer, "left");
+  await swipeTouch(page.locator(".board-note-preview"), "left");
   await expect(page.getByRole("tab", { selected: true })).toHaveText(
     secondTabName ?? "",
   );
   await expect(tabs.nth(1)).toBeInViewport();
 
-  await swipeTouch(footer, "right");
+  await swipeTouch(page.locator(".board-note-preview"), "right");
   await expect(page.getByRole("tab", { selected: true })).toHaveText(
     firstTabName ?? "",
   );
 
-  await swipeTouch(footer, "left");
+  await swipeTouch(page.locator(".board-note-preview"), "left");
   await expect(page.getByRole("tab", { selected: true })).toHaveText(
     secondTabName ?? "",
   );
