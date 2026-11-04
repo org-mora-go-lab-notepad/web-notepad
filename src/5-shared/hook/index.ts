@@ -8,3 +8,4 @@ export { useMobileLayout } from "./use-mobile-layout";
 export { useModalDialog } from "./use-modal-dialog";
 export { useScrollableListLayout } from "./use-scrollable-list-layout";
 export { useSplitPaneResize } from "./use-split-pane-resize";
+export { useTouchTap } from "./use-touch-tap";

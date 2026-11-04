@@ -4,7 +4,7 @@ import { Bookmark } from "lucide-react";
 import { type MouseEvent, useEffect, useRef } from "react";
 
 import { type NoteTab, type TabStatus } from "@/src/4-entity/notepad";
-import { useI18n } from "@/src/5-shared/hook";
+import { useI18n, useTouchTap } from "@/src/5-shared/hook";
 
 import type { DashboardCardProps } from "../../type";
 
@@ -41,6 +41,7 @@ export function DashboardCard({
   const lastDragAtRef = useRef<number | null>(null);
   const touchCleanupRef = useRef<(() => void) | null>(null);
   const preview = getPreview(tab);
+  const touchTap = useTouchTap(true);
   const { t } = useI18n();
   const touchLayout = () =>
     window.matchMedia("(max-width: 512px), (pointer: coarse)").matches;
@@ -184,6 +185,7 @@ export function DashboardCard({
 
   return (
     <article
+      {...touchTap}
       data-tab-id={tab.id}
       data-drop-placement={dropPlacement}
       onDragOver={onCardDragOver}
@@ -191,7 +193,10 @@ export function DashboardCard({
       className={`dashboard-card ${dragging ? "is-dragging" : ""} ${active ? "is-active" : ""} ${contextMenuTarget ? "is-context-menu-target" : ""}`}
       data-tab-color={tab.tabColor}
       draggable
-      onTouchStart={startTouch}
+      onTouchStart={(event) => {
+        touchTap.onTouchStart(event);
+        startTouch(event);
+      }}
       onContextMenu={(event) => {
         if (touchLayout()) {
           event.preventDefault();
