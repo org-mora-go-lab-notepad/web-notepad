@@ -7,6 +7,7 @@ export async function openEditor(page: Page) {
   await page.goto("/");
   await expect(page.locator(".initial-sync-lock")).toHaveCount(0);
   if ((page.viewportSize()?.width ?? 1280) <= 512) {
+    await page.locator(".dashboard-options-trigger").click();
     await page.locator(".dashboard-add-tab").click();
     await expect(page.locator(".dashboard-preview textarea")).toBeVisible();
     return;
@@ -39,7 +40,10 @@ export async function ensureEditorTab(page: Page) {
       `.dashboard-card[data-tab-id="${group?.activeTabId}"] .dashboard-card-open`,
     );
     if (await card.isVisible()) await card.click();
-    else await page.locator(".dashboard-add-tab").click();
+    else {
+      await page.locator(".dashboard-options-trigger").click();
+      await page.locator(".dashboard-add-tab").click();
+    }
     await expect(page.locator(".dashboard-preview textarea")).toBeVisible();
     return;
   }

@@ -24,7 +24,7 @@ import {
   UNGROUPED_GROUP_ID,
   useNotepadStore,
 } from "@/src/4-entity/notepad";
-import { useI18n } from "@/src/5-shared/hook";
+import { useI18n, useMobileLayout } from "@/src/5-shared/hook";
 import {
   FOOTER_PIN_REQUEST_EVENT,
   type FooterPinRequestDetail,
@@ -52,6 +52,8 @@ export function Footer({
   onToggleSearch,
 }: FooterProps) {
   const { t } = useI18n();
+  const mobile = useMobileLayout();
+  const dashboardSelected = dashboardOpen && (!mobile || !groupsOpen);
   const router = useRouter();
   const footerItems = useNotepadStore((state) => state.settings.footerItems);
   const unpinnedItems = CORE_FOOTER_ITEM_IDS.filter(
@@ -243,6 +245,7 @@ export function Footer({
           className={`status-command group-select-command ${groupsOpen ? "is-active" : ""}`}
           type="button"
           onClick={onToggleGroups}
+          aria-current={mobile && groupsOpen ? "page" : undefined}
           aria-expanded={groupsOpen}
           aria-haspopup="dialog"
           aria-controls="groups-menu"
@@ -271,9 +274,10 @@ export function Footer({
       return itemFrame(
         id,
         <button
-          className={`status-command dashboard-command ${dashboardOpen ? "is-active" : ""}`}
+          className={`status-command dashboard-command ${dashboardSelected ? "is-active" : ""}`}
           type="button"
           onClick={onToggleDashboard}
+          aria-current={mobile && dashboardSelected ? "page" : undefined}
           aria-expanded={dashboardOpen}
           aria-controls="dashboard-panel"
         >

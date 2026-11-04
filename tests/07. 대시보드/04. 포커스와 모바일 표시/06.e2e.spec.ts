@@ -13,7 +13,7 @@ test("6. 모바일에서 대시보드를 닫으면 탭 카드 드롭다운도 �
   await page.locator(".dashboard-card-open").first().dblclick();
   await expect(page.getByRole("menu", { name: "Tab actions" })).toBeVisible();
   await expect(page.locator(".dashboard-preview")).toHaveCount(0);
-  await page.locator("#dashboard-panel .side-panel-close").click();
+  await page.keyboard.press("Escape");
   await expect(page.locator("#dashboard-panel")).toHaveAttribute(
     "aria-hidden",
     "false",

@@ -21,12 +21,13 @@ test("9. 시트 높이를 재접속 후 복원한다", async ({ page, previewDat
       Math.max(0, y + ((current - target) / 100) * page.viewportSize()!.height),
       { steps: 8 },
     );
+    // A settled drag differs from the quick flick gesture.
+    await page.waitForTimeout(160);
     await page.mouse.up();
     await expect(grip).toHaveAttribute("aria-valuenow", String(target));
-    expect((await sheet.boundingBox())!.height).toBeCloseTo(
-      (page.viewportSize()!.height * target) / 100,
-      0,
-    );
+    await expect
+      .poll(async () => (await sheet.boundingBox())!.height)
+      .toBeCloseTo((page.viewportSize()!.height * target) / 100, 0);
   }
   await sheet.locator(".bottom-sheet-header button").click();
   await page.reload();

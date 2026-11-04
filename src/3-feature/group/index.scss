@@ -331,3 +331,9 @@
     padding-block: 3px;
   }
 }
+
+@media (max-width: 512px) {
+  .group .group-sidebar-header > button {
+    display: none;
+  }
+}

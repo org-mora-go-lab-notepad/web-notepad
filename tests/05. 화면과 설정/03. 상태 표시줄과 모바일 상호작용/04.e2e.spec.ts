@@ -16,14 +16,16 @@ test("4. 모바일 패널은 푸터 위에서 끝나고 닫기 이후 카드 화
     expect(bounds.y + bounds.height).toBeCloseTo(footerTop, 1);
   };
   await expectAboveFooter(panel);
-  await page.locator("#dashboard-panel .side-panel-close").click();
+  await expect(page.locator("#dashboard-panel .side-panel-close")).toBeHidden();
+  await command.click();
   await expect(panel).toHaveAttribute("aria-hidden", "false");
   await expect(command).toHaveAttribute("aria-expanded", "true");
   await expect(command).toHaveClass(/is-active/);
 
   await page.locator(".group-select-command").click();
   await expectAboveFooter(page.locator(".group-menu"));
-  await page.locator(".group-sidebar-header > button").click();
+  await expect(page.locator(".group-sidebar-header > button")).toBeHidden();
+  await page.locator(".group-select-command").click();
 
   await openSettingsPanel(page);
   await expectAboveFooter(page.locator("#settings-panel"));

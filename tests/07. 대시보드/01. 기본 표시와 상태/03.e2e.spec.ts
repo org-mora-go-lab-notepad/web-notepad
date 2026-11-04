@@ -27,7 +27,9 @@ test("3. 빈 상태에 상태별 안내를 표시하고 카드가 있는 상태�
     await expect(empty).toHaveText(["None", "None", "None", "None"]);
     if (viewport.width <= 512) await expect(empty.first()).toBeVisible();
     else await expect(empty.first()).toBeHidden();
-    await dashboardPanel(page).locator(".side-panel-close").click();
+    if (viewport.width > 512)
+      await dashboardPanel(page).locator(".side-panel-close").click();
+    else await page.keyboard.press("Escape");
     await ensureEditorTab(page);
     await page.locator("textarea:visible").first().fill("To Do task");
     await openPanel(page, "dashboard-panel");

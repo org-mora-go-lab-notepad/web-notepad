@@ -20,7 +20,14 @@ test("1. PC와 모바일에서 우측 세로 점 메뉴로 상태를 전환하�
       .locator(".side-panel-header h2")
       .boundingBox())!;
     const triggerBox = (await trigger.boundingBox())!;
-    expect(triggerBox.x - titleBox.x - titleBox.width).toBeCloseTo(10, 0);
+    if (viewport.width > 512)
+      expect(triggerBox.x - titleBox.x - titleBox.width).toBeCloseTo(10, 0);
+    else {
+      const header = (await panel.locator(".side-panel-header").boundingBox())!;
+      expect(
+        header.x + header.width - triggerBox.x - triggerBox.width,
+      ).toBeLessThanOrEqual(24);
+    }
     const iconBox = (await trigger.locator("svg").boundingBox())!;
     expect(iconBox.width).toBeCloseTo(14.4 * 1.2, 1);
     expect(iconBox.height).toBeCloseTo(14.4 * 1.2, 1);

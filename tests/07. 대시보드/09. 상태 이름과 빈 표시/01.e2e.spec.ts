@@ -85,12 +85,14 @@ test("1. Edit Status로 수정한 다섯 상태 이름은 해당 그룹에만 �
     ).toBe("gray");
     await page.reload();
     await expect(titles).toHaveText(displayedRenamed);
-    await panel.locator(".side-panel-close").click();
+    if (viewport.width > 512) await panel.locator(".side-panel-close").click();
+    else await page.keyboard.press("Escape");
     await switchGroup(page, "Ungrouped");
     await openPanel(page, "dashboard-panel");
     await toggleDashboardStatus(page, "icebox");
     await expect(titles).toHaveText(displayedOriginal);
-    await panel.locator(".side-panel-close").click();
+    if (viewport.width > 512) await panel.locator(".side-panel-close").click();
+    else await page.keyboard.press("Escape");
     await switchGroup(page, "Work");
     await openPanel(page, "dashboard-panel");
     await expect(titles).toHaveText(displayedRenamed);

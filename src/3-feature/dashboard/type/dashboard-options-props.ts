@@ -5,6 +5,7 @@ export type DashboardOptionsProps = Pick<
   "groupId" | "statusNames" | "onSaveStatusNames"
 > & {
   groupName: string;
+  onAddTab?: () => void;
   iceboxVisible: boolean;
   doneVisible: boolean;
   onToggleIcebox: () => void;

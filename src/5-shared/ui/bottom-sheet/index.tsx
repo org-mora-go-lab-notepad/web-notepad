@@ -1,10 +1,10 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useId, useRef, useState } from "react";
+import { useId } from "react";
 
 import { trapFocus } from "../../util";
-import { useBottomSheet } from "./hook";
+import { useBottomSheet, useBottomSheetResize } from "./hook";
 import type { BottomSheetProps } from "./type";
 
 export function BottomSheet({
@@ -17,29 +17,14 @@ export function BottomSheet({
   children,
 }: BottomSheetProps) {
   const titleId = useId();
-  const [height, setHeight] = useState(() => {
-    try {
-      const saved = Number(localStorage.getItem("notepad-sheet-height"));
-      return [25, 50, 75, 100].includes(saved) ? saved : 75;
-    } catch {
-      return 75;
-    }
-  });
-  const dragStart = useRef<{ y: number; height: number } | null>(null);
-  const saveHeight = (value: number) => {
-    setHeight(value);
-    try {
-      localStorage.setItem("notepad-sheet-height", String(value));
-    } catch {
-      /* Keep the current session usable without storage. */
-    }
-  };
-
   const { dialogRef, close } = useBottomSheet(onClose, returnFocusTo);
+  const resize = useBottomSheetResize(dialogRef, close);
+  const { height, saveHeight } = resize;
   return (
     <dialog
       ref={dialogRef}
       className={`bottom-sheet ${className}`}
+      data-resizing={resize.resizing || undefined}
       style={{ height: `${height}dvh` }}
       aria-modal="true"
       aria-labelledby={titleId}
@@ -72,37 +57,10 @@ export function BottomSheet({
         aria-valuemin={25}
         aria-valuemax={100}
         aria-valuenow={height}
-        onPointerDown={(event) => {
-          dragStart.current = { y: event.clientY, height };
-          event.currentTarget.setPointerCapture(event.pointerId);
-        }}
-        onPointerMove={(event) => {
-          const start = dragStart.current;
-          if (start)
-            setHeight(
-              Math.max(
-                25,
-                Math.min(
-                  100,
-                  start.height +
-                    ((start.y - event.clientY) / window.innerHeight) * 100,
-                ),
-              ),
-            );
-        }}
-        onPointerUp={(event) => {
-          const start = dragStart.current;
-          if (!start) return;
-          dragStart.current = null;
-          const next =
-            start.height +
-            ((start.y - event.clientY) / window.innerHeight) * 100;
-          saveHeight(Math.max(25, Math.min(100, Math.round(next / 25) * 25)));
-        }}
-        onPointerCancel={() => {
-          dragStart.current = null;
-          saveHeight(Math.round(height / 25) * 25);
-        }}
+        onPointerDown={resize.onPointerDown}
+        onPointerMove={resize.onPointerMove}
+        onPointerUp={resize.onPointerUp}
+        onPointerCancel={resize.onPointerCancel}
         onKeyDown={(event) => {
           if (event.key === "ArrowUp" || event.key === "ArrowDown") {
             event.preventDefault();
