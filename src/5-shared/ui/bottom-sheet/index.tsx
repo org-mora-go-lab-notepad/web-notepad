@@ -5,7 +5,11 @@ import { useId } from "react";
 
 import { useTouchTap } from "../../hook";
 import { trapFocus } from "../../util";
-import { useBottomSheet, useBottomSheetResize } from "./hook";
+import {
+  useBottomSheet,
+  useBottomSheetBackdrop,
+  useBottomSheetResize,
+} from "./hook";
 import type { BottomSheetProps } from "./type";
 
 export function BottomSheet({
@@ -21,10 +25,18 @@ export function BottomSheet({
   const touchTap = useTouchTap();
   const { dialogRef, close } = useBottomSheet(onClose, returnFocusTo);
   const resize = useBottomSheetResize(dialogRef, close);
+  const backdrop = useBottomSheetBackdrop(dialogRef, close);
   const { height, saveHeight } = resize;
   return (
     <dialog
       {...touchTap}
+      onPointerDown={(event) => {
+        touchTap.onPointerDown();
+        backdrop.onPointerDown(event);
+      }}
+      onPointerMove={backdrop.onPointerMove}
+      onPointerUp={backdrop.onPointerUp}
+      onPointerCancel={backdrop.onPointerCancel}
       ref={dialogRef}
       className={`bottom-sheet ${className}`}
       data-resizing={resize.resizing || undefined}
