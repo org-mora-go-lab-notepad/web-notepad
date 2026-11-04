@@ -22,6 +22,8 @@ export async function bffRequest(
   const auth = await request[shareToken ? "post" : "get"](
     "http://localhost:3000/api/auth/bff",
     {
+      // This GET only signs the existing session; never replay invite POSTs.
+      maxRetries: shareToken ? 0 : 2,
       headers: cookie ? { Cookie: cookie[1] } : {},
       ...(shareToken ? { data: { shareToken } } : {}),
     },
