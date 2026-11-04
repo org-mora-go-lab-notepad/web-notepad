@@ -124,6 +124,7 @@ export const ko: Messages = {
   selectGroup: "그룹 선택",
   selectGroupNamed: (name: string) => `그룹 선택: ${name}`,
   noteTabs: "메모 탭",
+  addTab: "탭 추가",
   newTab: "새 탭",
   emptyEditorNewTab: "빈 에디터에 새 탭 만들기",
   changeTabColor: "탭 색상 변경",

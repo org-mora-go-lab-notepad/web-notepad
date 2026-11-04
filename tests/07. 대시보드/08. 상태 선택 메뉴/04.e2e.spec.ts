@@ -18,12 +18,16 @@ test("4. 그룹별 Note와 완료 표시 여부를 새로고침 후에도 복원
     await openPanel(page, "dashboard-panel");
     await toggleDashboardStatus(page, "icebox");
     await toggleDashboardStatus(page, "done");
-    await page.locator("#dashboard-panel .side-panel-close").click();
+    if (viewport.width > 512)
+      await page.locator("#dashboard-panel .side-panel-close").click();
+    else await page.keyboard.press("Escape");
     await switchGroup(page, "Work");
     await openPanel(page, "dashboard-panel");
     await expect(dashboardColumn(page, "done")).toBeVisible();
     await expect(dashboardColumn(page, "icebox")).toHaveCount(0);
-    await page.locator("#dashboard-panel .side-panel-close").click();
+    if (viewport.width > 512)
+      await page.locator("#dashboard-panel .side-panel-close").click();
+    else await page.keyboard.press("Escape");
     await switchGroup(page, "Ungrouped");
     await openPanel(page, "dashboard-panel");
     await expect(dashboardColumn(page, "done")).toHaveCount(0);

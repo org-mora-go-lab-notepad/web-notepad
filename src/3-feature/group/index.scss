@@ -331,3 +331,18 @@
     padding-block: 3px;
   }
 }
+
+@media (max-width: 512px) {
+  .group .group-sidebar-header > button {
+    display: none;
+  }
+}
+
+@media (min-width: 513px) {
+  .group .group-sidebar-header > button {
+    border-color: transparent;
+    &:hover {
+      border-color: v.$line;
+    }
+  }
+}

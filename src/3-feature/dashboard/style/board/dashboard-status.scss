@@ -23,3 +23,17 @@
 .dashboard .dashboard-cards[hidden] {
   display: none;
 }
+
+.dashboard .dashboard-status-toggle {
+  .dashboard-status-label {
+    flex: 0 1 auto;
+  }
+  .dashboard-status-chevron {
+    margin-left: 7px;
+    flex-shrink: 0;
+  }
+}
+
+.dashboard .dashboard-status-toggle .dashboard-count {
+  padding-right: 0;
+}

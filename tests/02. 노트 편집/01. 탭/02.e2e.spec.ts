@@ -3,8 +3,8 @@ import { expect, test } from "@playwright/test";
 import { BOTH_VIEWPORTS } from "../../__constant__";
 import { createGroupFixture, createTabFixture } from "../../__fixture__";
 import {
-  addTabButton,
   dashboardColumn,
+  openAddTabCommand,
   openPanel,
   readStoredState,
   writeStoredState,
@@ -33,7 +33,7 @@ test("2. 새 탭은 현재 탭의 Note·Doing·Closed 상태를 이어받지 않
         settings: { tabColorCycle: ["red", "teal", "pink"] },
         nextTabNumber: 2,
       });
-      await addTabButton(page).click();
+      await (await openAddTabCommand(page)).click();
       await expect(page.locator(".tab-item")).toHaveCount(2);
       const saved = await readStoredState(page);
       const newTab = saved.groups[0].tabs.find((tab) => tab.id === "tab-2")!;

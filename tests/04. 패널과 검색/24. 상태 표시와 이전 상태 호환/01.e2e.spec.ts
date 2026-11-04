@@ -12,6 +12,7 @@ test("1. 옵션은 Closed 없이 Note와 Done을 제공하고 완료 컬럼을 �
     await page.locator(".dashboard-options-trigger").click();
     const menu = page.locator("#dashboard-options-menu");
     await expect(menu.getByRole("button")).toHaveText([
+      ...(viewport.width <= 512 ? ["Add Tab"] : []),
       "Note",
       "Done",
       "Edit Status",

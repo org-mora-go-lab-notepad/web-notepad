@@ -482,3 +482,9 @@
     margin-top: 1px;
   }
 }
+
+@media (max-width: 512px) {
+  .footer .group-select-command.is-active svg {
+    fill: currentColor;
+  }
+}

@@ -97,12 +97,24 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .dashboard .dashboard-add-tab {
-    order: 1;
-    flex-shrink: 0;
-  }
   .dashboard .side-panel-close {
-    order: 2;
-    flex-shrink: 0;
+    display: none;
+  }
+  .dashboard .dashboard-options {
+    margin-left: auto;
+    margin-right: 0;
+  }
+  .dashboard .dashboard-options-menu {
+    left: auto;
+    right: 12px;
+  }
+}
+
+@media (min-width: 513px) {
+  .dashboard .side-panel-header :is(.side-panel-action, .side-panel-close) {
+    border-color: transparent;
+    &:hover {
+      border-color: v.$line;
+    }
   }
 }

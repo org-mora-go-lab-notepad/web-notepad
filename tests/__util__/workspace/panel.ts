@@ -1,6 +1,6 @@
 import { expect, type Page } from "@playwright/test";
 
-import { closeMobileEditor } from "./editor";
+import { closeMobileEditor, openAddTabCommand } from "./editor";
 
 // The group button on the left of the bottom bar (icon + current group name).
 export const groupsCommand = (page: Page) =>
@@ -142,10 +142,7 @@ export async function createGroupWithTab(page: Page, name: string) {
     (await groupsCommand(page).getAttribute("aria-expanded")) === "true"
   )
     await groupsCommand(page).click();
-  await page
-    .getByRole("button", { name: "New tab", exact: true })
-    .first()
-    .click();
+  await (await openAddTabCommand(page)).click();
 }
 export async function createGroupsWithTabs(page: Page, ...names: string[]) {
   for (const name of names) {

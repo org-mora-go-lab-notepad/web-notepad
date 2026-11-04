@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { readStoredState } from "../../__util__";
+import { openAddTabCommand, readStoredState } from "../../__util__";
 
 test.use({
   isMobile: true,
@@ -12,10 +12,7 @@ test("9. 모바일에서 카드 화면에서 새 탭을 누르면 새 탭 하나
   page,
 }) => {
   await page.goto("/");
-  const surface = page.getByRole("button", {
-    name: "New tab",
-    exact: true,
-  });
+  const surface = await openAddTabCommand(page);
   await expect(page.locator(".initial-sync-lock")).toHaveCount(0);
   await expect(surface).toBeVisible();
   await expect(page.locator(".tab-item")).toHaveCount(0);

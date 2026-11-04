@@ -1,3 +1,5 @@
+import { ChevronDown, ChevronRight } from "lucide-react";
+
 import type { DashboardStatusProps } from "../../type";
 
 export function DashboardStatus({
@@ -28,7 +30,19 @@ export function DashboardStatus({
         >
           <span className="dashboard-status-label">{label}</span>
           <span className="dashboard-count">{count}</span>
-          <span aria-hidden="true">{collapsed ? "▸" : "▾"}</span>
+          {collapsed ? (
+            <ChevronRight
+              className="dashboard-status-chevron"
+              size={16}
+              aria-hidden="true"
+            />
+          ) : (
+            <ChevronDown
+              className="dashboard-status-chevron"
+              size={16}
+              aria-hidden="true"
+            />
+          )}
         </button>
       ) : (
         <>

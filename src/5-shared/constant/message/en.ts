@@ -120,6 +120,7 @@ export const en = {
   selectGroup: "Select group",
   selectGroupNamed: (name: string) => `Select group: ${name}`,
   noteTabs: "Note tabs",
+  addTab: "Add Tab",
   newTab: "New tab",
   emptyEditorNewTab: "Create a tab in the empty editor",
   changeTabColor: "Change tab color",

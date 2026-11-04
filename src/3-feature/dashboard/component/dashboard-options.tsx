@@ -3,6 +3,7 @@ import {
   CircleCheck,
   EllipsisVertical,
   Pencil,
+  Plus,
   StickyNote,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -15,6 +16,7 @@ import { DashboardStatusEditor } from "./dashboard-status-editor";
 
 export function DashboardOptions({
   groupName,
+  onAddTab,
   statusNames,
   onSaveStatusNames,
   iceboxVisible,
@@ -74,6 +76,20 @@ export function DashboardOptions({
           role="dialog"
           aria-label={t.dashboardOptions}
         >
+          {onAddTab && (
+            <button
+              className="dashboard-add-tab"
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                triggerRef.current?.focus({ preventScroll: true });
+                onAddTab();
+              }}
+            >
+              <Plus size={18} aria-hidden="true" />
+              <span>{t.addTab}</span>
+            </button>
+          )}
           <button
             className="dashboard-icebox-command"
             type="button"

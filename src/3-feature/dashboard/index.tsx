@@ -1,6 +1,6 @@
 "use client";
 
-import { Maximize2, Minimize2, Plus } from "lucide-react";
+import { Maximize2, Minimize2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import {
@@ -177,32 +177,27 @@ export function Dashboard({
       expanded={open && expanded}
       headerActions={
         <>
-          {mobileLayout && groupId !== ALL_SHARED_GROUP_ID && (
-            <button
-              type="button"
-              className="side-panel-action dashboard-add-tab"
-              aria-label={t.newTab}
-              onClick={() => {
-                const blank = tabs.find(
-                  (tab) => tab.open && !tab.content.trim(),
-                );
-                if (blank) {
-                  openCard(blank.id);
-                  return;
-                }
-                useNotepadStore.getState().addTab();
-                const id = getActiveGroup(
-                  useNotepadStore.getState(),
-                )?.activeTabId;
-                if (id) openCard(id);
-              }}
-            >
-              <Plus size={18} aria-hidden="true" />
-            </button>
-          )}
           {open && (
             <DashboardOptions
               key={groupId}
+              onAddTab={
+                mobileLayout && groupId !== ALL_SHARED_GROUP_ID
+                  ? () => {
+                      const blank = tabs.find(
+                        (tab) => tab.open && !tab.content.trim(),
+                      );
+                      if (blank) {
+                        openCard(blank.id);
+                        return;
+                      }
+                      useNotepadStore.getState().addTab();
+                      const id = getActiveGroup(
+                        useNotepadStore.getState(),
+                      )?.activeTabId;
+                      if (id) openCard(id);
+                    }
+                  : undefined
+              }
               groupId={groupId}
               groupName={
                 showGroupNames
