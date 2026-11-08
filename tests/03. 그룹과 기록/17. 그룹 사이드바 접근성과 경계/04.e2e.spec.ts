@@ -1,7 +1,10 @@
 import { expect, test } from "@playwright/test";
+
+import { authenticateBrowser } from "../../__util__";
 test("4. 그룹 영역 버튼은 고유한 실제 목록과 펼침 상태를 제공한다", async ({
   page,
 }) => {
+  await authenticateBrowser(page.context());
   await test.step(
     "시나리오: 4. 그룹 영역 버튼은 고유한 실제 목록과 펼침 상태를 제공한다 — 준비 조건부터 공개 UI 또는 API 실행과 사용자 결과 검증까지 독립적으로 추적한다",
     async () => {

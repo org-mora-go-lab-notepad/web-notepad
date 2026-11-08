@@ -10,7 +10,7 @@ test("4. 북마크된 카드의 상태 색상은 원본 북마크에도 반영�
   page,
 }) => {
   await seedStatusIntegrity(page);
-  await moveDashboardCard(page, "Done");
+  await moveDashboardCard(page, "done");
   const group = await readActiveGroup(page);
   expect(group.tabs[0].tabColor).toBe("teal");
   expect(group.bookmarks[0]).toMatchObject({

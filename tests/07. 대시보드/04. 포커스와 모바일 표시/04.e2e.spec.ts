@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { dashboardPanel, seedScrollableDashboard } from "../../__util__";
 
-test("4. 모바일에서 아래로 스크롤하면 Doing, Ready, To Do, Done을 차례로 상단에 고정한다", async ({
+test("4. 모바일에서 아래로 스크롤하면 Waiting, In Progress, Done, Closed를 차례로 상단에 고정한다", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 800 });
@@ -19,16 +19,13 @@ test("4. 모바일에서 아래로 스크롤하면 Doing, Ready, To Do, Done을 
   const stickyY = headerBox.y + headerBox.height;
 
   const list = panel.locator(".dashboard-list");
-  await expect
-    .poll(() => list.evaluate((element) => element.scrollTop))
-    .toBeGreaterThan(0);
   await list.evaluate((element) => {
     element.scrollTop = 0;
   });
   await expect
-    .poll(async () => (await titles.doing.boundingBox())!.y)
+    .poll(async () => (await titles.todo.boundingBox())!.y)
     .toBeCloseTo(initialY, 0);
-  for (const title of [titles.doing, titles.ready, titles.todo, titles.done]) {
+  for (const title of [titles.todo, titles.ready, titles.doing, titles.done]) {
     await title.evaluate((element) =>
       element.scrollIntoView({ block: "start" }),
     );

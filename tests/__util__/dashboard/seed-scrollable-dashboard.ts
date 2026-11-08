@@ -11,10 +11,11 @@ export async function seedScrollableDashboard(page: Page) {
       createGroupFixture(
         "ungrouped",
         "Ungrouped",
-        Array.from({ length: 30 }, (_, index) =>
+        Array.from({ length: 44 }, (_, index) =>
           createTabFixture(`tab-${index}`, `Task ${index}\nBody`, {
-            tabColor:
-              index % 3 === 0 ? "gray" : index % 3 === 1 ? "indigo" : "teal",
+            tabColor: (["gray", "orange", "indigo", "teal"] as const)[
+              index % 4
+            ],
           }),
         ),
         { dashboardVisibility: { icebox: false, done: true } },

@@ -21,7 +21,7 @@ test("2. 상태 이동은 사용자 지정 색상 주기의 대상 색상을 사
       },
     },
   );
-  await moveDashboardCard(page, "Doing");
+  await moveDashboardCard(page, "in-progress");
   const tab = (await readActiveGroup(page)).tabs[0];
   expect(tab.tabColor).toBe("pink");
   expect(tab.dashboardStatus).toBe("in-progress");

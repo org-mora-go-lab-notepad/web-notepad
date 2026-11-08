@@ -32,8 +32,7 @@ test("5. 참여한 그룹은 참여 대신 나가기를 제공하며 다른 사�
       (item: { id: string }) => item.id === id,
     ),
   ).toBe(true);
-  await selectBoardPost(guest, group.name, id);
   await expect(
-    guest.getByRole("link", { name: "Join this group" }),
-  ).toBeVisible();
+    guest.locator('.board-entry[data-group-id="' + id + '"]'),
+  ).toHaveCount(0);
 });

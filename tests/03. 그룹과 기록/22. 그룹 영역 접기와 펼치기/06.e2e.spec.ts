@@ -1,10 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-import { groupsCommand } from "../../__util__";
+import { authenticateBrowser, groupsCommand } from "../../__util__";
 
 test("6. My Group과 Shared Group은 생성·전체 그룹 사이를 절반씩 차지하고 중복 경계선을 없앤다", async ({
   page,
 }) => {
+  await authenticateBrowser(page.context());
   for (const width of [1280, 320]) {
     await page.setViewportSize({ width, height: 800 });
     await page.goto("/");

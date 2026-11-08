@@ -47,6 +47,7 @@ function GroupSidebar({
     (state) => state.settings.groupPosition,
   );
   const sharing = useContext(GroupSharingContext);
+  const authenticated = sharing?.authenticated === true;
   const [accessAction, setAccessAction] = useState<{
     groupId: string;
     action: "leave" | "revoke";
@@ -117,8 +118,10 @@ function GroupSidebar({
 
   const hasAccess = (group: GroupEntry) =>
     !isSharedGroupId(group.id) ||
-    sharing?.accessByGroup[group.id]?.active !== false;
-  const pendingRows = otherRows.filter((group) => !hasAccess(group));
+    sharing?.accessByGroup[group.id]?.active === true;
+  const pendingRows = otherRows.filter(
+    (group) => isSharedGroupId(group.id) && !sharing?.accessByGroup[group.id],
+  );
   const accessLoading = sharing?.loading || checkingAccess;
 
   useEffect(() => {
@@ -211,14 +214,17 @@ function GroupSidebar({
           >
             {[
               { id: "my", name: t.myGroup },
-              { id: "shared", name: t.shareGroupSection },
+              ...(authenticated
+                ? [{ id: "shared", name: t.shareGroupSection }]
+                : []),
             ].map((section, sectionIndex, allSections) => {
               const rows = otherRows.filter((group) => {
                 if (section.id === "shared")
                   return isSharedGroupId(group.id) && hasAccess(group);
                 if (
                   isSharedGroupId(group.id) &&
-                  sharing?.accessByGroup[group.id]?.active !== false
+                  (!authenticated ||
+                    sharing?.accessByGroup[group.id]?.active !== false)
                 )
                   return false;
                 return section.id === "my";
@@ -460,34 +466,38 @@ function GroupSidebar({
                 <Layers size={18} aria-hidden="true" />
                 <span>{t.allGroup}</span>
               </button>
-              <button
-                type="button"
-                aria-pressed={activeGroupId === ALL_MY_GROUP_ID}
-                onContextMenu={(event) =>
-                  requestFooterPin(event, `group:${ALL_MY_GROUP_ID}`)
-                }
-                onClick={() => {
-                  setFooterMenuOpen(null);
-                  selectGroup(ALL_MY_GROUP_ID);
-                }}
-              >
-                <Layers size={18} aria-hidden="true" />
-                <span>{t.allMyGroup}</span>
-              </button>
-              <button
-                type="button"
-                aria-pressed={activeGroupId === ALL_SHARED_GROUP_ID}
-                onContextMenu={(event) =>
-                  requestFooterPin(event, `group:${ALL_SHARED_GROUP_ID}`)
-                }
-                onClick={() => {
-                  setFooterMenuOpen(null);
-                  selectGroup(ALL_SHARED_GROUP_ID);
-                }}
-              >
-                <Layers size={18} aria-hidden="true" />
-                <span>{t.allSharedGroup}</span>
-              </button>
+              {authenticated && (
+                <>
+                  <button
+                    type="button"
+                    aria-pressed={activeGroupId === ALL_MY_GROUP_ID}
+                    onContextMenu={(event) =>
+                      requestFooterPin(event, `group:${ALL_MY_GROUP_ID}`)
+                    }
+                    onClick={() => {
+                      setFooterMenuOpen(null);
+                      selectGroup(ALL_MY_GROUP_ID);
+                    }}
+                  >
+                    <Layers size={18} aria-hidden="true" />
+                    <span>{t.allMyGroup}</span>
+                  </button>
+                  <button
+                    type="button"
+                    aria-pressed={activeGroupId === ALL_SHARED_GROUP_ID}
+                    onContextMenu={(event) =>
+                      requestFooterPin(event, `group:${ALL_SHARED_GROUP_ID}`)
+                    }
+                    onClick={() => {
+                      setFooterMenuOpen(null);
+                      selectGroup(ALL_SHARED_GROUP_ID);
+                    }}
+                  >
+                    <Layers size={18} aria-hidden="true" />
+                    <span>{t.allSharedGroup}</span>
+                  </button>
+                </>
+              )}
               {ungrouped && (
                 <button
                   type="button"

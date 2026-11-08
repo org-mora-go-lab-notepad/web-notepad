@@ -1,6 +1,9 @@
 import { expect, test } from "@playwright/test";
 
+import { authenticateBrowser } from "../../__util__";
+
 test("9. 게시판은 프런트 중계 없이 BFF를 직접 호출한다", async ({ page }) => {
+  await authenticateBrowser(page.context());
   const businessRequests: string[] = [];
   page.on("request", (request) => {
     const url = new URL(request.url());

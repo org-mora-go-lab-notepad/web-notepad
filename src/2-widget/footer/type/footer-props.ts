@@ -3,6 +3,7 @@ import type { GroupEntry } from "@/src/4-entity/notepad";
 export type FooterProps = {
   // A group was created or changed today.
   hasGroupUpdateToday: boolean;
+  authenticated: boolean;
   dashboardOpen: boolean;
   activeGroupName: string;
   groupsOpen: boolean;

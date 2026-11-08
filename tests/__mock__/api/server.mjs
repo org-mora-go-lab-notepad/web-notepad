@@ -186,7 +186,7 @@ export function createMockApiServer({
       send(403, { error: "Invalid origin" });
       return;
     }
-    if (!grant.user && pathname !== "/api/board") {
+    if (!grant.user) {
       send(401, { error: "Unauthorized" });
       return;
     }

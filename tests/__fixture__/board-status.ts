@@ -2,8 +2,11 @@ import type { Page } from "@playwright/test";
 
 import type { BoardPost } from "@/src/4-entity/notepad";
 
+import { authenticateBrowser } from "../__util__/auth";
+
 export const statusBoardPost: BoardPost = {
   id: "status-board",
+  viewerRole: "member",
   groupName: "Five status board",
   title: "Five status board",
   ownerName: "Owner",
@@ -62,6 +65,7 @@ export const statusBoardPost: BoardPost = {
   ],
 };
 export async function mockStatusBoard(page: Page, post = statusBoardPost) {
+  await authenticateBrowser(page.context());
   await page.route("**/api/board", (route) =>
     route.fulfill({ json: { posts: [post] } }),
   );

@@ -10,7 +10,7 @@ test("4. 카드 상태 변경 후 편집과 새로고침에도 내용과 새 상
   page,
 }) => {
   await seedStatusIntegrity(page);
-  await moveDashboardCard(page, "Doing");
+  await moveDashboardCard(page, "in-progress");
   await page.locator("textarea").fill("Updated integrity\nnew body");
   await page.reload();
   await expect(page.locator("textarea")).toHaveValue(

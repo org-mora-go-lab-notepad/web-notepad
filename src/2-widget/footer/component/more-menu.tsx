@@ -19,6 +19,7 @@ import type { MoreMenuProps } from "../type";
 const subscribeToClient = () => () => undefined;
 
 export function MoreMenu({
+  authenticated,
   searchOpen,
   unpinnedItems,
   onActivate,
@@ -64,7 +65,9 @@ export function MoreMenu({
     { id: "action:search", label: t.search, Icon: Search },
     { id: "action:bookmarks", label: t.bookmark, Icon: Bookmark },
     { id: "action:settings", label: t.settings, Icon: Settings },
-    { id: "account:board", label: t.board, Icon: MessageSquare },
+    ...(authenticated
+      ? [{ id: "account:board", label: t.board, Icon: MessageSquare }]
+      : []),
   ];
   return (
     <div className="footer-more" ref={container}>

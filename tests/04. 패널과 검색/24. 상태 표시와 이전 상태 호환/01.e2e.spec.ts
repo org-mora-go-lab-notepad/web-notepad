@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { BOTH_VIEWPORTS } from "../../__constant__";
 import { dashboardColumn, openPanel, seedDashboardTabs } from "../../__util__";
-test("1. 옵션은 Closed 없이 Note와 Done을 제공하고 완료 컬럼을 열고 닫는다", async ({
+test("1. 옵션은 To Do와 Closed를 제공하고 종료 컬럼을 열고 닫는다", async ({
   page,
 }) => {
   for (const viewport of BOTH_VIEWPORTS) {
@@ -13,11 +13,11 @@ test("1. 옵션은 Closed 없이 Note와 Done을 제공하고 완료 컬럼을 �
     const menu = page.locator("#dashboard-options-menu");
     await expect(menu.getByRole("button")).toHaveText([
       ...(viewport.width <= 512 ? ["Add Tab"] : []),
-      "Note",
-      "Done",
+      "To Do",
+      "Closed",
       "Edit Status",
     ]);
-    const done = menu.getByRole("button", { name: "Done", exact: true });
+    const done = menu.getByRole("button", { name: "Closed", exact: true });
     await expect(done.locator("svg").first()).toHaveClass(
       /lucide-circle-check/,
     );

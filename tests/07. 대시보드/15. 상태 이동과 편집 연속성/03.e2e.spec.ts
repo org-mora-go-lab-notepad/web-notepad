@@ -23,7 +23,7 @@ test("3. 백그라운드 카드의 상태 변경은 현재 편집 탭을 전환�
       await test.step(
         "실행 2: 3. 백그라운드 카드의 상태 변경은 현재 편집 탭을 전환하지 않는다 — 사용자가 접근할 수 있는 공개 UI 또는 API 경계를 통해 요구 동작을 수행한다",
         async () => {
-          await moveDashboardCard(page, "Doing");
+          await moveDashboardCard(page, "in-progress");
         },
         { box: true },
       );

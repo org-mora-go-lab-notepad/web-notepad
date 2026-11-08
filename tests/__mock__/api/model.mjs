@@ -391,7 +391,7 @@ export class MockWorkspace {
   }
   board(user, origin, signLink) {
     return Object.values(this.state.groups)
-      .filter((group) => group.sharingActive)
+      .filter((group) => group.sharingActive && group.members[user.id])
       .sort((a, b) => b.updatedAt - a.updatedAt || a.id.localeCompare(b.id))
       .map((group) => {
         const notes = group.data.tabs.filter(
@@ -399,11 +399,7 @@ export class MockWorkspace {
         );
         return {
           id: group.id,
-          viewerRole: group.members[user?.id]
-            ? group.ownerId === user.id
-              ? "owner"
-              : "member"
-            : null,
+          viewerRole: group.ownerId === user.id ? "owner" : "member",
           groupName: group.data.name,
           ownerName: group.members[group.ownerId]?.name ?? "",
           title: group.data.name,

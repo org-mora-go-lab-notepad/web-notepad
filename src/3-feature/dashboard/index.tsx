@@ -10,7 +10,6 @@ import {
   getDashboardColumns,
   getTabStatus,
   isSharedGroupId,
-  type TabStatus,
   UNGROUPED_GROUP_ID,
   useNotepadStore,
 } from "@/src/4-entity/notepad";
@@ -30,14 +29,6 @@ import {
   useDashboardScroll,
 } from "./hook";
 import type { DashboardProps } from "./type";
-
-const MOBILE_STATUS_ORDER: TabStatus[] = [
-  "in-progress",
-  "ready",
-  "todo",
-  "done",
-  "icebox",
-];
 
 export function Dashboard({
   renderTabEditor,
@@ -114,13 +105,6 @@ export function Dashboard({
     ...(iceboxVisible ? [{ status: "icebox" as const, tabs: iceboxTabs }] : []),
     ...columns,
   ];
-  const displayColumns = mobileLayout
-    ? [...visibleColumns].sort(
-        (left, right) =>
-          MOBILE_STATUS_ORDER.indexOf(left.status) -
-          MOBILE_STATUS_ORDER.indexOf(right.status),
-      )
-    : visibleColumns;
   const visibleTabs = [
     ...columns.flatMap((column) => column.tabs),
     ...(iceboxVisible ? iceboxTabs : []),
@@ -249,7 +233,7 @@ export function Dashboard({
             className={`dashboard-board ${iceboxVisible ? "has-icebox" : ""} ${doneVisible ? "has-done" : ""}`}
             ref={boardRef}
           >
-            {displayColumns.map((column) => (
+            {visibleColumns.map((column) => (
               <DashboardColumn
                 key={`${groupId}:${column.status}`}
                 groupId={groupId}

@@ -1,18 +1,12 @@
 import { expect } from "@playwright/test";
 
 import { boardTest as test } from "../../__fixture__";
-import {
-  authenticateBrowser,
-  openMoreMenu,
-  selectBoardPost,
-} from "../../__util__";
+import { openMoreMenu, selectBoardPost } from "../../__util__";
 
-test("2. Board는 계정 메뉴에서 제거하고 Menu 마지막 항목으로 항상 보드 목록을 연다", async ({
+test("2. Board는 계정 메뉴에서 제거하고 로그인하면 Menu 마지막 항목으로 보드 목록을 연다", async ({
   page,
-  context,
   boardPost,
 }) => {
-  await authenticateBrowser(context);
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/");

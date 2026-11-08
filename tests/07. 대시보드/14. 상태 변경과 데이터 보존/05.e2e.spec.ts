@@ -24,7 +24,7 @@ test("5. 하나의 카드 상태를 옮겨도 같은 그룹의 다른 북마크�
       ],
     },
   );
-  await moveDashboardCard(page, "Doing");
+  await moveDashboardCard(page, "in-progress");
   expect(
     (await readActiveGroup(page)).bookmarks.find(
       (bookmark) => bookmark.id === "b2",

@@ -10,7 +10,7 @@ import {
   writeStoredState,
 } from "../../__util__";
 
-test("2. 새 탭은 현재 탭의 Note·Doing·Closed 상태를 이어받지 않고 To Do로 생성한다", async ({
+test("2. 새 탭은 현재 탭의 상태를 이어받지 않고 Waiting으로 생성한다", async ({
   page,
 }) => {
   for (const viewport of BOTH_VIEWPORTS) {
@@ -39,11 +39,17 @@ test("2. 새 탭은 현재 탭의 Note·Doing·Closed 상태를 이어받지 않
       const newTab = saved.groups[0].tabs.find((tab) => tab.id === "tab-2")!;
       expect(newTab.tabColor).toBe("red");
       expect(newTab.dashboardStatus).toBe("todo");
-      await page.locator("textarea:visible").fill("New ready note");
+      await page.locator("textarea:visible").fill("New waiting note");
       await openPanel(page, "dashboard-panel");
+      const labels = page.locator(
+        viewport.width <= 512
+          ? ".dashboard-column-status .dashboard-status-label:visible"
+          : ".dashboard-statuses .dashboard-status-label:visible",
+      );
+      await expect(labels.filter({ hasText: /^Waiting$/ })).toBeVisible();
       await expect(
         dashboardColumn(page, "todo").locator(".dashboard-card"),
-      ).toContainText("New ready note");
+      ).toContainText("New waiting note");
     }
   }
 });

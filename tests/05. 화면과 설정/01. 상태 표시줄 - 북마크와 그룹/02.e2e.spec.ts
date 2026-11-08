@@ -14,7 +14,6 @@ test("2. 더보기의 Bookmark 명령은 북마크 팝업을 연다", async ({ p
     "Search",
     "Bookmark",
     "Settings",
-    "Board",
   ]);
   await menu.getByRole("button", { name: "Bookmark" }).click();
   await expect(page.locator("#bookmarks-panel")).toHaveAttribute(

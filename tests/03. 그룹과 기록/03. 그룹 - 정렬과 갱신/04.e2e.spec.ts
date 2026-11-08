@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import {
+  authenticateBrowser,
   groupsCommand,
   openMoreMenu,
   openSystemGroupMenu,
@@ -9,6 +10,7 @@ import {
 test("4. 사이드바 아래 Group과 More 메뉴에서 기본 그룹과 가이드를 연다", async ({
   page,
 }) => {
+  await authenticateBrowser(page.context());
   await page.goto("/");
   await groupsCommand(page).click();
   const sidebar = page.locator("#groups-menu");

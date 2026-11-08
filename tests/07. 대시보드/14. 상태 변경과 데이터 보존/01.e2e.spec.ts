@@ -11,7 +11,7 @@ test("1. 상태 변경 뒤에도 노트 내용과 줄 선택 및 저장 기준�
   page,
 }) => {
   await seedStatusIntegrity(page);
-  await moveDashboardCard(page, "Doing");
+  await moveDashboardCard(page, "in-progress");
   expect((await readActiveGroup(page)).tabs[0]).toMatchObject({
     id: "tab-1",
     content: "Integrity task\nkept body",

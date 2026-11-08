@@ -6,7 +6,7 @@ import {
   seedScrollableDashboard,
 } from "../../__util__";
 
-test("5. 모바일에서 위로 스크롤하면 To Do·Ready·Doing를 다시 상단에 고정한다", async ({
+test("5. 모바일에서 위로 스크롤하면 Done·In Progress·Waiting을 다시 상단에 고정한다", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 800 });
@@ -18,7 +18,7 @@ test("5. 모바일에서 위로 스크롤하면 To Do·Ready·Doing를 다시 �
   await panel
     .locator('.dashboard-column-status[data-status="done"]')
     .evaluate((element) => element.scrollIntoView({ block: "start" }));
-  for (const status of ["todo", "ready", "in-progress"] as const) {
+  for (const status of ["in-progress", "ready", "todo"] as const) {
     await dashboardColumn(page, status)
       .locator(".dashboard-cards")
       .evaluate((element) => element.scrollIntoView({ block: "start" }));

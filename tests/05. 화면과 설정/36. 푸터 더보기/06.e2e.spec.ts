@@ -19,11 +19,15 @@ test("6. 모바일 네 푸터 진입점은 로그인 전후 같은 간격이며 
       );
     }
     await page.goto("/");
-    await expect(page.locator(".footer .auth-command")).toBeVisible();
+    await expect(
+      page.locator(
+        loggedIn ? ".footer button.auth-command" : ".footer a.auth-command",
+      ),
+    ).toBeVisible();
     for (const width of [320, 390, 512]) {
       await page.setViewportSize({ width, height: 844 });
       const commands = page.locator(
-        ".footer .group-select-command, .footer .dashboard-command, .footer .auth-command, .footer .more-command",
+        ".footer .group-select-command, .footer .dashboard-command, .footer .auth-command:not(.is-loading), .footer .more-command",
       );
       await expect(commands).toHaveCount(4);
       await expect(commands.nth(2)).toBeVisible();

@@ -1,9 +1,14 @@
 import { expect, test } from "@playwright/test";
 
 import { createGroupFixture, createTabFixture } from "../../__fixture__";
-import { openBoard, seedStoredStateOnLoad } from "../../__util__";
+import {
+  authenticateBrowser,
+  openBoard,
+  seedStoredStateOnLoad,
+} from "../../__util__";
 
 test("6. 보드 Notes는 다섯 상태의 카드 전체를 합산한다", async ({ page }) => {
+  await authenticateBrowser(page.context());
   await seedStoredStateOnLoad(page, {
     activeGroupId: "count-group",
     groups: [

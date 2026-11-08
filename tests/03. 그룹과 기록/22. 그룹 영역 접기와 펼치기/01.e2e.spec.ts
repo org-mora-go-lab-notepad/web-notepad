@@ -3,7 +3,7 @@ import { expect } from "@playwright/test";
 import { sharingTest as test } from "../../__fixture__";
 import { groupsCommand } from "../../__util__";
 
-test("1. 공유 그룹은 로컬 목록을 먼저 표시하고 소유권 확인 후 갱신한다", async ({
+test("1. 공유 그룹은 현재 참여 권한을 확인한 뒤에만 표시한다", async ({
   sharing: { owner, guest, id },
 }) => {
   let release!: () => void;
@@ -23,6 +23,9 @@ test("1. 공유 그룹은 로컬 목록을 먼저 표시하고 소유권 확인 
       await groupsCommand(owner).click();
     await expect(
       owner.locator('#group-shared-list [data-group-id="' + id + '"]'),
+    ).toHaveCount(0);
+    await expect(
+      owner.locator("#group-shared-list .group-access-skeleton"),
     ).toBeVisible();
     await expect(
       owner.locator(

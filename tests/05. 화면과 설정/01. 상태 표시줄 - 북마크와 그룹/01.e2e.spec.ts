@@ -60,15 +60,14 @@ test("1. 메뉴 하단에는 그룹 아이콘과 Group Option을 두고 더보�
     await group.click();
     await expect(page.locator("#group-system-menu > button")).toHaveText([
       "All Group",
-      "All My Group",
-      "All Shared Group",
+
       "Ungrouped",
     ]);
     await more.click();
     await expect(page.locator("#group-system-menu")).toHaveCount(0);
     await expect(
       page.locator("#group-more-menu").getByRole("button"),
-    ).toHaveText(["Guide", "Search", "Bookmark", "Settings", "Board"]);
+    ).toHaveText(["Guide", "Search", "Bookmark", "Settings"]);
     await page.keyboard.press("Escape");
     await expect(more).toBeFocused();
     await expect(page.locator("#groups-menu")).toBeVisible();

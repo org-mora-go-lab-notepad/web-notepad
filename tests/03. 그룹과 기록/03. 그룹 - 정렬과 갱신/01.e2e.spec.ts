@@ -16,10 +16,9 @@ test("1. 기본 사이드바는 My Group 목록과 하단 시스템 그룹을 �
   const systemGroups = await openSystemGroupMenu(page);
   await expect(systemGroups.locator(":scope > button")).toHaveText([
     "All Group",
-    "All My Group",
-    "All Shared Group",
     "Ungrouped",
   ]);
+  await expect(page.locator("#group-shared-list")).toHaveCount(0);
   await expect(items.filter({ hasText: "Closed" })).toHaveCount(0);
   await expect(items.first()).toContainText("가방");
 

@@ -27,7 +27,7 @@ test("2. 취소·Escape·바깥 클릭으로 상태 이름 편집을 닫으면 �
         exact: true,
       });
       await editor
-        .getByRole("textbox", { name: "To Do", exact: true })
+        .getByRole("textbox", { name: "Waiting", exact: true })
         .fill("Unsaved");
       if (method === "cancel")
         await editor

@@ -33,7 +33,7 @@ test("1. PC와 모바일에서 우측 세로 점 메뉴로 상태를 전환하�
     expect(iconBox.height).toBeCloseTo(14.4 * 1.2, 1);
     await trigger.click();
     const menu = panel.getByRole("dialog", { name: "Card options" });
-    await expect(menu.locator(".dashboard-done-command")).toHaveText("Done");
+    await expect(menu.locator(".dashboard-done-command")).toHaveText("Closed");
     await expect(
       menu.locator(".dashboard-icebox-command > svg").first(),
     ).toHaveClass(/lucide-sticky-note/);

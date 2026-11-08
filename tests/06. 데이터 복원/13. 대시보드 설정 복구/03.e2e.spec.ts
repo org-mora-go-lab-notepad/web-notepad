@@ -29,7 +29,7 @@ test("3. 상태 표시명이 배열로 손상되면 기본 상태명을 사용�
         async () => {
           await expect(
             dashboardColumn(page, "todo").locator(".dashboard-column-status"),
-          ).toContainText("To Do");
+          ).toContainText("Waiting");
         },
         { box: true },
       );
