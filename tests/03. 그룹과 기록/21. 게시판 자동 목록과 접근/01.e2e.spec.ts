@@ -13,7 +13,9 @@ test("1. role admin은 관리자 화면을 열거나 관리 동작을 활성화�
   );
   await openBoard(page);
   await expect(page.locator(".board-entry")).toHaveCount(0);
-  await expect(page.locator(".board-content")).toContainText("Retry");
+  await expect(
+    page.getByRole("button", { name: "Try again", exact: true }),
+  ).toBeVisible();
   await expect(
     page.locator(
       ".board-admin-badge, .board-admin-actions, .board-form, .board-publish, .board-remove-confirm",

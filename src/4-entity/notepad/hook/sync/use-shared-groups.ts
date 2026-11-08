@@ -339,6 +339,8 @@ export function useSharedGroups(hydrated: boolean) {
         refreshQueued = true;
         return new Promise<void>((resolve) => refreshWaiters.push(resolve));
       }
+      const requestUserId = userId;
+      const requestSession = sessionRequest;
       refreshing = true;
       setCheckingGroups(true);
       setLoadError(false);
@@ -346,7 +348,12 @@ export function useSharedGroups(hydrated: boolean) {
         const response = await bffFetch("/api/groups", { cache: "no-store" });
         if (!response.ok) throw Error("Groups unavailable");
         const result = (await response.json()) as { groups: SharedRecord[] };
-        if (!active) return;
+        if (
+          !active ||
+          userId !== requestUserId ||
+          sessionRequest !== requestSession
+        )
+          return;
         const allowedIds = new Set(result.groups.map((record) => record.id));
         setAccessByGroup(
           Object.fromEntries(
@@ -417,7 +424,14 @@ export function useSharedGroups(hydrated: boolean) {
         }
         if (active) setGroupsLoaded(true);
       } catch {
-        if (active) setLoadError(true);
+        if (
+          active &&
+          userId === requestUserId &&
+          sessionRequest === requestSession
+        ) {
+          setAccessByGroup({});
+          setLoadError(true);
+        }
       } finally {
         refreshing = false;
         if (active) setLoading(false);

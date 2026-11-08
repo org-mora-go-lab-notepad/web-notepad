@@ -21,6 +21,8 @@ test("7. 비로그인 사용자의 메뉴와 푸터에 Board를 표시하지 않
     await expect(
       menu.getByRole("button", { name: "Guide", exact: true }),
     ).toBeVisible();
-    await expect(page.locator("a.auth-command")).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Continue with Kakao" }),
+    ).toBeVisible();
   }
 });

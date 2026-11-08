@@ -11,7 +11,7 @@ export async function seedScrollableDashboard(page: Page) {
       createGroupFixture(
         "ungrouped",
         "Ungrouped",
-        Array.from({ length: 30 }, (_, index) =>
+        Array.from({ length: 44 }, (_, index) =>
           createTabFixture(`tab-${index}`, `Task ${index}\nBody`, {
             tabColor: (["gray", "orange", "indigo", "teal"] as const)[
               index % 4
