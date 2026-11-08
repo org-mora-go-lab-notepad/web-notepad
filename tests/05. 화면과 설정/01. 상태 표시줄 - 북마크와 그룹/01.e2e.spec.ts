@@ -60,8 +60,7 @@ test("1. 메뉴 하단에는 그룹 아이콘과 Group Option을 두고 더보�
     await group.click();
     await expect(page.locator("#group-system-menu > button")).toHaveText([
       "All Group",
-      "All My Group",
-      "All Shared Group",
+
       "Ungrouped",
     ]);
     await more.click();

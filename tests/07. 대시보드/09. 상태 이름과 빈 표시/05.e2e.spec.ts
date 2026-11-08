@@ -13,7 +13,7 @@ test("5. 공유 그룹의 Edit Status 이름은 협업자에게 같은 상태 �
     await openPanel(page, "dashboard-panel");
     await toggleDashboardStatus(page, "icebox");
   }
-  const defaults = ["Note", "To Do", "Ready", "Doing", "Done"];
+  const defaults = ["To Do", "Waiting", "In Progress", "Done", "Closed"];
   const names = ["Ideas", "Next", "Queued", "Working", "Shipped"];
   await owner.locator(".dashboard-options-trigger").click();
   await owner.getByRole("button", { name: "Edit Status", exact: true }).click();
@@ -42,10 +42,10 @@ test("5. 공유 그룹의 Edit Status 이름은 협업자에게 같은 상태 �
     exact: true,
   });
   await expect(
-    guestDialog.getByRole("textbox", { name: "Ready", exact: true }),
+    guestDialog.getByRole("textbox", { name: "In Progress", exact: true }),
   ).toHaveValue("Queued");
   await guestDialog
-    .getByRole("textbox", { name: "Ready", exact: true })
+    .getByRole("textbox", { name: "In Progress", exact: true })
     .fill("Prepared");
   const guestSaved = guest.waitForResponse(
     (response) =>
@@ -66,10 +66,6 @@ test("5. 공유 그룹의 Edit Status 이름은 협업자에게 같은 상태 �
             columns.map((column) => column.getAttribute("data-status")),
           ),
       )
-      .toEqual(
-        (page.viewportSize()?.width ?? 1280) <= 512
-          ? ["in-progress", "ready", "todo", "done", "icebox"]
-          : ["icebox", "todo", "ready", "in-progress", "done"],
-      );
+      .toEqual(["icebox", "todo", "ready", "in-progress", "done"]);
   }
 });

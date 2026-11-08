@@ -10,7 +10,7 @@ test("6. 전체 그룹에서 카드 상태를 바꿔도 원본 그룹과 다른 
   page,
 }) => {
   await seedStatusIntegrity(page, {}, {}, { activeGroupId: "all-group" });
-  await moveDashboardCard(page, "Doing");
+  await moveDashboardCard(page, "in-progress");
   const state = await readStoredState(page);
   expect(
     state.groups.find((group) => group.id === "ungrouped")?.tabs[0].tabColor,

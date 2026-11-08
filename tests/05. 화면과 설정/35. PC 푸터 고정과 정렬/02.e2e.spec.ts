@@ -22,12 +22,7 @@ test("2. PC의 그룹·더보기·계정 드롭다운 진입점은 모두 푸터
     await page.keyboard.press("Escape");
   };
 
-  for (const name of [
-    "All Group",
-    "All My Group",
-    "All Shared Group",
-    "Ungrouped",
-  ]) {
+  for (const name of ["All Group", "Ungrouped"]) {
     const menu = await openSystemGroupMenu(page);
     await expectPinMenu(menu.getByRole("button", { name, exact: true }));
   }

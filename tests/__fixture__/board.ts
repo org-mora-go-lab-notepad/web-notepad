@@ -11,6 +11,16 @@ export const boardTest = base.extend<{
   boardPost: BoardPost;
   boardOwnerToken: string;
 }>({
+  context: async ({ context, boardOwnerToken }, provide) => {
+    await context.addCookies([
+      {
+        name: SESSION_COOKIE,
+        value: boardOwnerToken,
+        url: "http://localhost:3000",
+      },
+    ]);
+    await provide(context);
+  },
   boardOwnerToken: async ({}, provide) => {
     await provide(
       signedSession({
@@ -60,7 +70,9 @@ export const boardTest = base.extend<{
     if (!shared.ok())
       throw Error("Cannot prepare shared group: " + shared.status());
     const { group } = await shared.json();
-    const { posts } = (await (await getApi(request, "/api/board")).json()) as {
+    const { posts } = (await (
+      await getApi(request, "/api/board", { headers })
+    ).json()) as {
       posts: BoardPost[];
     };
     const post = posts.find((item) => item.id === group.id);

@@ -11,7 +11,13 @@ import {
   writeStoredState,
 } from "../../../__util__";
 
-export const defaultLabels = ["Note", "To Do", "Ready", "Doing", "Done"];
+export const defaultLabels = [
+  "To Do",
+  "Waiting",
+  "In Progress",
+  "Done",
+  "Closed",
+];
 export const customLabels = ["Ideas", "Next", "Queued", "Working", "Shipped"];
 
 export async function seedDefaults(

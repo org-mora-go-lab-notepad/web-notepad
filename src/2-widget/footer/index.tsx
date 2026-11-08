@@ -12,7 +12,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { Auth } from "@/src/3-feature";
@@ -21,10 +21,15 @@ import {
   ALL_MY_GROUP_ID,
   ALL_SHARED_GROUP_ID,
   CORE_FOOTER_ITEM_IDS,
+  isSharedGroupId,
   UNGROUPED_GROUP_ID,
   useNotepadStore,
 } from "@/src/4-entity/notepad";
-import { useI18n, useMobileLayout } from "@/src/5-shared/hook";
+import {
+  GroupSharingContext,
+  useI18n,
+  useMobileLayout,
+} from "@/src/5-shared/hook";
 import {
   FOOTER_PIN_REQUEST_EVENT,
   type FooterPinRequestDetail,
@@ -37,6 +42,7 @@ const CORE_ITEMS = new Set<string>(CORE_FOOTER_ITEM_IDS);
 
 export function Footer({
   hasGroupUpdateToday,
+  authenticated,
   dashboardOpen,
   activeGroupName,
   groupsOpen,
@@ -55,11 +61,22 @@ export function Footer({
   const mobile = useMobileLayout();
   const dashboardSelected = dashboardOpen && (!mobile || !groupsOpen);
   const router = useRouter();
+  const sharing = useContext(GroupSharingContext);
   const footerItems = useNotepadStore((state) => state.settings.footerItems);
   const unpinnedItems = CORE_FOOTER_ITEM_IDS.filter(
     (id) => !footerItems.includes(id),
   );
-  const displayedItems = [...footerItems, ...unpinnedItems];
+  const canShowItem = (id: string) => {
+    if (id === "account:board") return authenticated;
+    if (!id.startsWith("group:")) return true;
+    const groupId = id.slice("group:".length);
+    if (groupId === ALL_MY_GROUP_ID || groupId === ALL_SHARED_GROUP_ID)
+      return authenticated;
+    if (isSharedGroupId(groupId))
+      return authenticated && Boolean(sharing?.accessByGroup[groupId]);
+    return true;
+  };
+  const displayedItems = [...footerItems, ...unpinnedItems].filter(canShowItem);
   const iconsOnly = useNotepadStore((state) => state.settings.footerIconsOnly);
   const setFooterItems = useNotepadStore((state) => state.setFooterItems);
   const [pinMenu, setPinMenu] = useState<{
@@ -156,6 +173,7 @@ export function Footer({
   };
 
   const activateItem = async (id: string) => {
+    if (!canShowItem(id)) return;
     if (id === "core:groups") {
       onToggleGroups();
       return;
@@ -458,11 +476,13 @@ export function Footer({
         </div>
       </div>
       <MoreMenu
+        authenticated={authenticated}
         unpinnedItems={unpinnedItems}
         searchOpen={searchOpen}
         onActivate={(id) => void activateItem(id)}
       />
       {pinMenu &&
+        canShowItem(pinMenu.id) &&
         createPortal(
           <div
             className="footer-pin-menu"

@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import { BOTH_VIEWPORTS } from "../../__constant__";
 import { createGroupFixture, createTabFixture } from "../../__fixture__";
 import { dashboardColumn, openPanel, writeStoredState } from "../../__util__";
-test("1. 카드 상태는 PC 기존 순서와 모바일 Doing Ready To Do Done Note 순서로 표시한다", async ({
+test("1. PC와 모바일 카드 상태는 To Do Waiting In Progress Done Closed 순서로 표시한다", async ({
   page,
 }) => {
   await writeStoredState(page, {
@@ -29,17 +29,13 @@ test("1. 카드 상태는 PC 기존 순서와 모바일 Doing Ready To Do Done N
   await openPanel(page, "dashboard-panel");
   await expect(
     page.locator(".dashboard-statuses .dashboard-status-label"),
-  ).toHaveText(["Note", "To Do", "Ready", "Doing", "Done"]);
+  ).toHaveText(["To Do", "Waiting", "In Progress", "Done", "Closed"]);
   for (const viewport of [...BOTH_VIEWPORTS, BOTH_VIEWPORTS[0]]) {
     await page.setViewportSize(viewport);
     const mobile = viewport.width <= 512;
     await expect(
       page.locator(".dashboard-column-status .dashboard-status-label"),
-    ).toHaveText(
-      mobile
-        ? ["Doing", "Ready", "To Do", "Done", "Note"]
-        : ["Note", "To Do", "Ready", "Doing", "Done"],
-    );
+    ).toHaveText(["To Do", "Waiting", "In Progress", "Done", "Closed"]);
     const positions = await page
       .locator(".dashboard-board > .dashboard-column")
       .evaluateAll((elements) =>

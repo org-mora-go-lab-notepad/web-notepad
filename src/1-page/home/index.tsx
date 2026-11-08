@@ -268,6 +268,7 @@ export function Home() {
       >
         <GroupSharingContext
           value={{
+            authenticated: shared.authenticated === true,
             loading: shared.loading || shared.checkingGroups,
             refreshGroups: shared.refreshGroups,
             accessByGroup: shared.accessByGroup,
@@ -296,6 +297,7 @@ export function Home() {
                 </div>
 
                 <Footer
+                  authenticated={shared.authenticated === true}
                   hasGroupUpdateToday={hasGroupUpdateToday}
                   dashboardOpen={
                     openPanel === "dashboard" || backgroundPanel === "dashboard"

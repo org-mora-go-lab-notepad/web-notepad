@@ -5,7 +5,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { GroupSharingAccess } from "@/src/5-shared/type";
 import { bffFetch } from "@/src/5-shared/util";
 
-import { UNGROUPED_GROUP_ID } from "../../constant";
+import {
+  ALL_GROUP_ID,
+  ALL_MY_GROUP_ID,
+  ALL_SHARED_GROUP_ID,
+  UNGROUPED_GROUP_ID,
+} from "../../constant";
 import { useNotepadStore } from "../../store";
 import type { GroupEntry, SharedGroupData } from "../../type";
 import {
@@ -37,6 +42,7 @@ const same = (left: unknown, right: unknown) =>
   JSON.stringify(left) === JSON.stringify(right);
 
 export function useSharedGroups(hydrated: boolean) {
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
   const [groupsLoaded, setGroupsLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
@@ -58,6 +64,7 @@ export function useSharedGroups(hydrated: boolean) {
     let active = true;
     let userId: string | null = null;
     let sessionChecked = false;
+    let sessionRequest = 0;
     let refreshing = false;
     let refreshQueued = false;
     const refreshWaiters: Array<() => void> = [];
@@ -492,6 +499,7 @@ export function useSharedGroups(hydrated: boolean) {
     };
 
     const refreshSession = async () => {
+      const request = ++sessionRequest;
       try {
         const response = await fetch("/api/auth/session", {
           cache: "no-store",
@@ -500,14 +508,16 @@ export function useSharedGroups(hydrated: boolean) {
         const result = (await response.json()) as {
           user?: { id?: string } | null;
         };
-        if (!active) return;
+        if (!active || request !== sessionRequest) return;
         const nextId = result.user?.id ?? null;
+        setAuthenticated(Boolean(nextId));
         if (sessionChecked && nextId === userId) {
           if (userId) await refreshGroups();
           return;
         }
         sessionChecked = true;
         userId = nextId;
+        setAccessByGroup({});
         setGroupsLoaded(false);
         setLoadError(false);
         baselines.clear();
@@ -531,7 +541,10 @@ export function useSharedGroups(hydrated: boolean) {
               ),
               activeGroupId: isSharedGroupId(state.activeGroupId)
                 ? UNGROUPED_GROUP_ID
-                : state.activeGroupId,
+                : state.activeGroupId === ALL_MY_GROUP_ID ||
+                    state.activeGroupId === ALL_SHARED_GROUP_ID
+                  ? ALL_GROUP_ID
+                  : state.activeGroupId,
             }));
           } finally {
             applying = false;
@@ -541,7 +554,8 @@ export function useSharedGroups(hydrated: boolean) {
         if (share) await joinInvite();
         else await refreshGroups();
       } catch {
-        if (active) {
+        if (active && request === sessionRequest) {
+          setAuthenticated(null);
           setLoading(false);
           setLoadError(true);
           if (share) setInviteStatus("error");
@@ -549,6 +563,10 @@ export function useSharedGroups(hydrated: boolean) {
       }
     };
 
+    const onAuthChanged = () => {
+      setAuthenticated(null);
+      void refreshSession();
+    };
     refreshRef.current = refreshGroups;
     const onShared = () => void refreshGroups();
     const onRestore = () => {
@@ -582,7 +600,7 @@ export function useSharedGroups(hydrated: boolean) {
       SHARED_TAB_DELETE_INTENT_EVENT,
       onSharedTabDeleteIntent,
     );
-    window.addEventListener("notepad-auth-changed", refreshSession);
+    window.addEventListener("notepad-auth-changed", onAuthChanged);
     window.addEventListener("online", onRestore);
     window.addEventListener("focus", onRestore);
     document.addEventListener("visibilitychange", onRestore);
@@ -599,7 +617,7 @@ export function useSharedGroups(hydrated: boolean) {
         SHARED_TAB_DELETE_INTENT_EVENT,
         onSharedTabDeleteIntent,
       );
-      window.removeEventListener("notepad-auth-changed", refreshSession);
+      window.removeEventListener("notepad-auth-changed", onAuthChanged);
       window.removeEventListener("online", onRestore);
     };
   }, [hydrated, inviteToken]);
@@ -622,6 +640,7 @@ export function useSharedGroups(hydrated: boolean) {
   const dismissInvite = useCallback(() => setInviteStatus(null), []);
 
   return {
+    authenticated,
     loading,
     checkingGroups,
     groupsLoaded,

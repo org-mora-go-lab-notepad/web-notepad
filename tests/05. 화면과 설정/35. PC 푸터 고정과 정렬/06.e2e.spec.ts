@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-import { openMoreMenu, writeStoredState } from "../../__util__";
+import {
+  authenticateBrowser,
+  openMoreMenu,
+  writeStoredState,
+} from "../../__util__";
 
 test.use({
   isMobile: true,
@@ -11,6 +15,7 @@ test.use({
 test("6. PC의 모든 고정 해제 설정이 있어도 모바일 기본 푸터는 유지한다", async ({
   page,
 }) => {
+  await authenticateBrowser(page.context());
   await writeStoredState(page, { settings: { footerItems: [] } });
   const group = page.locator(".footer-dock .group-select-command");
   const card = page.locator(".footer-dock .dashboard-command");

@@ -5,7 +5,7 @@ import {
   createTabFixture,
   signedSession,
 } from "../../__fixture__";
-import { openBoard, sessionHeaders } from "../../__util__";
+import { authenticateBrowser, openBoard, sessionHeaders } from "../../__util__";
 import { postApi } from "../../__util__/request";
 import { getApi } from "../../__util__/request";
 
@@ -14,13 +14,13 @@ test("3. 공유 그룹 이름의 HTML은 실행하지 않고 글자로 표시하
   request,
 }) => {
   const title = `<img src=x onerror="window.boardInjected=1"> ${crypto.randomUUID().slice(0, 8)}`;
-  const headers = sessionHeaders(
-    signedSession({
-      id: crypto.randomUUID(),
-      nickname: "Owner",
-      expiresAt: Date.now() + 300_000,
-    }),
-  );
+  const token = signedSession({
+    id: crypto.randomUUID(),
+    nickname: "Owner",
+    expiresAt: Date.now() + 300_000,
+  });
+  const headers = sessionHeaders(token);
+  await authenticateBrowser(page.context(), token);
   const result = await postApi(request, "/api/groups/share", {
     headers,
     data: {
@@ -48,9 +48,9 @@ test("3. 공유 그룹 이름의 HTML은 실행하지 않고 글자로 표시하
         () => (window as Window & { boardInjected?: number }).boardInjected,
       ),
     ).toBeUndefined();
-    expect(await (await getApi(request, "/api/board")).text()).toContain(
-      group.tabs[0].content,
-    );
+    expect(
+      await (await getApi(request, "/api/board", { headers })).text(),
+    ).toContain(group.tabs[0].content);
   } finally {
     await postApi(request, "/api/groups/revoke", {
       headers,

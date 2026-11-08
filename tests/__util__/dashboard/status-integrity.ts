@@ -9,7 +9,7 @@ import {
 } from "../../__fixture__";
 import { writeStoredState } from "../state";
 import { openPanel } from "../workspace";
-import { dashboardPanel } from "./dashboard";
+import { dashboardColumn, dashboardPanel } from "./dashboard";
 
 export async function seedStatusIntegrity(
   page: Page,
@@ -54,21 +54,11 @@ export async function seedStatusIntegrity(
   await openPanel(page, "dashboard-panel");
 }
 
-export async function moveDashboardCard(page: Page, label: string) {
-  const statuses: Record<string, string> = {
-    Note: "icebox",
-    "To Do": "todo",
-    Ready: "ready",
-    Doing: "in-progress",
-    Done: "done",
-  };
-  const status = statuses[label];
-  if (!status) throw Error("Unsupported status: " + label);
+export async function moveDashboardCard(
+  page: Page,
+  status: Parameters<typeof dashboardColumn>[1],
+) {
   await dashboardPanel(page)
     .locator(".dashboard-card", { hasText: "Integrity task" })
-    .dragTo(
-      dashboardPanel(page).locator(
-        '.dashboard-column[data-status="' + status + '"]',
-      ),
-    );
+    .dragTo(dashboardColumn(page, status));
 }

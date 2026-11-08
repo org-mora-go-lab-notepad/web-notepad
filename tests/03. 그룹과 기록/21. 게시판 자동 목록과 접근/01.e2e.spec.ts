@@ -12,19 +12,12 @@ test("1. role admin은 관리자 화면을 열거나 관리 동작을 활성화�
     route.fulfill({ status: 503, json: { error: "Unavailable" } }),
   );
   await openBoard(page);
-  await expect(page.locator(".board-entry")).toHaveCount(3);
-  await page
-    .getByRole("searchbox", { name: "Search shared groups" })
-    .fill("Product Notes");
-  await page
-    .locator('.board-entry[data-group-id="mock-product-notes"]')
-    .click();
+  await expect(page.locator(".board-entry")).toHaveCount(0);
+  await expect(page.locator(".board-content")).toContainText("Retry");
   await expect(
     page.locator(
       ".board-admin-badge, .board-admin-actions, .board-form, .board-publish, .board-remove-confirm",
     ),
   ).toHaveCount(0);
-  await expect(
-    page.getByRole("link", { name: "Join this group" }),
-  ).toBeVisible();
+  await expect(page.locator(".board-detail")).toHaveCount(0);
 });

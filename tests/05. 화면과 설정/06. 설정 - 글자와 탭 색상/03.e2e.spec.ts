@@ -23,9 +23,9 @@ test("3. Tab Colors의 세 순서에서 9가지 색상을 선택하며 기본값
   const panel = settingsPanel(page);
 
   await expect(panel.locator(".setting-color-status")).toHaveText([
-    "To Do",
-    "Ready",
-    "Doing",
+    "Waiting",
+    "In Progress",
+    "Done",
   ]);
   for (const order of [1, 2, 3]) {
     const radios = panel

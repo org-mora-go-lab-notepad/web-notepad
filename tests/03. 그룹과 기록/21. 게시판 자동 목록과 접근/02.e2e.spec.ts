@@ -10,7 +10,7 @@ import { authenticateBrowser, openBoard, sessionHeaders } from "../../__util__";
 import { postApi } from "../../__util__/request";
 import { getApi } from "../../__util__/request";
 
-test("2. Board는 로그인한 나의 공유 그룹과 다른 사용자의 공유 그룹을 모두 표시한다", async ({
+test("2. Board는 소유한 그룹을 표시하고 참여하지 않은 그룹은 직접 주소로도 열 수 없다", async ({
   page,
   context,
   request,
@@ -45,7 +45,13 @@ test("2. Board는 로그인한 나의 공유 그룹과 다른 사용자의 공�
     ).toBeVisible();
     await expect(
       page.locator(".board-entry", { hasText: group.name }),
-    ).toBeVisible();
+    ).toHaveCount(0);
+    await page.goto("/board?post=" + group.id);
+    await expect(page.locator(".board-list")).toBeVisible();
+    await expect(page.locator(".board-detail")).toHaveCount(0);
+    const board = await getApi(page.request, "/api/board");
+    expect(board.status()).toBe(200);
+    expect(await board.text()).not.toContain("Other private note");
     const ownGroups = (await (await getApi(page.request, "/api/groups")).json())
       .groups;
     expect(

@@ -344,6 +344,7 @@ export function MyPage() {
           <I18nContext value={settings.language}>
             <div className="my-page-mobile-footer">
               <Footer
+                authenticated={shared.authenticated === true}
                 hasGroupUpdateToday={groups.some((group) =>
                   isToday(group.updatedAt),
                 )}

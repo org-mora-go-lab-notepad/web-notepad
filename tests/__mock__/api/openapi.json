@@ -954,7 +954,7 @@
         "operationId": "listBoard",
         "tags": ["Board"],
         "summary": "공유 게시판 목록 조회",
-        "description": "A signed anonymous user (user:null) is allowed. Browser login cookies alone are not BFF authentication.",
+        "description": "Requires a signed login session and returns only active shared groups that the user owns or has joined.",
         "responses": {
           "200": {
             "description": "Success",

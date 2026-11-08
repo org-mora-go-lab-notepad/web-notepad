@@ -7,7 +7,7 @@ import {
   seedDashboardTabs,
 } from "../../__util__";
 
-test("2. 현재 그룹의 탭을 색상에 따라 To Do·Doing·Done 컬럼에 분류하고 개수를 표시한다", async ({
+test("2. 현재 그룹의 탭을 색상에 따라 Waiting·Done·Closed 컬럼에 분류하고 개수를 표시한다", async ({
   page,
 }) => {
   await seedDashboardTabs(page);

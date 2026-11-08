@@ -7,7 +7,7 @@ import {
   readActiveGroup,
   writeStoredState,
 } from "../../__util__";
-test("2. 이전 Closed 메모는 내용과 열린 상태를 보존하며 Done으로 복원한다", async ({
+test("2. 이전 closed 메모는 내용과 열린 상태를 보존하며 종료 컬럼에 표시한다", async ({
   page,
 }) => {
   await writeStoredState(page, {

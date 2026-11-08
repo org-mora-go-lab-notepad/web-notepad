@@ -3,7 +3,7 @@ import { expect } from "@playwright/test";
 import { boardTest as test } from "../../__fixture__";
 import { openBoard, selectBoardPost } from "../../__util__";
 
-test("6. 작은 모바일과 라이트 테마에서 목록과 참여 버튼이 화면 안에 표시된다", async ({
+test("6. 작은 모바일과 라이트 테마에서 목록과 초대 링크 복사 버튼이 화면 안에 표시된다", async ({
   page,
   boardPost,
 }) => {
@@ -27,7 +27,7 @@ test("6. 작은 모바일과 라이트 테마에서 목록과 참여 버튼이 �
   expect(blurEffects.header).toContain("blur(2px)");
   expect(blurEffects.footer).toContain("blur(2px)");
   await expect(page.getByTestId("board-note-resizer")).toHaveCount(0);
-  const button = page.getByRole("link", { name: "Join this group" });
+  const button = page.getByRole("button", { name: "Copy Invitation Link" });
   await button.scrollIntoViewIfNeeded();
   const box = (await button.boundingBox())!;
   expect(box.x).toBeGreaterThanOrEqual(0);

@@ -30,7 +30,7 @@ test("3. All Group도 상태 이름을 별도로 편집하고 개별 그룹 이�
       exact: true,
     });
     await editor
-      .getByRole("textbox", { name: "To Do", exact: true })
+      .getByRole("textbox", { name: "Waiting", exact: true })
       .fill("All tasks");
     await editor.getByRole("button", { name: "Save", exact: true }).click();
     await expect(

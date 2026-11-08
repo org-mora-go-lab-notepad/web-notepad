@@ -26,10 +26,10 @@ test("3. 기본 이름 초기화는 원래 이름을 복원하고 그룹별 사�
   ).toEqual({});
   await switchGroup(page, "Work");
   await expect(await dashboardLabels(page)).toHaveText([
-    "Note",
     "To Do",
+    "Waiting",
     "Work queue",
-    "Doing",
     "Done",
+    "Closed",
   ]);
 });

@@ -51,16 +51,21 @@ export function BoardPage() {
   const shared = useSharedGroups(hydrated);
   useEffect(markBoardReturn, []);
   useEffect(() => {
+    if (shared.authenticated === false) router.replace("/");
+  }, [router, shared.authenticated]);
+  useEffect(() => {
     document.documentElement.lang = settings.language;
     document.documentElement.style.setProperty(
       "--font-scale",
       String(settings.fontScale),
     );
   }, [settings.language, settings.fontScale]);
+  if (shared.authenticated === false) return null;
   return (
     <I18nContext value={settings.language}>
       <GroupSharingContext
         value={{
+          authenticated: shared.authenticated === true,
           loading: shared.loading || shared.checkingGroups,
           refreshGroups: shared.refreshGroups,
           accessByGroup: shared.accessByGroup,
@@ -69,11 +74,14 @@ export function BoardPage() {
       >
         <main className="board-page" id="board-page">
           <div className="board-page-container">
-            <Board onReturnHome={markBoardReturn} />
+            {shared.authenticated === true && (
+              <Board onReturnHome={markBoardReturn} />
+            )}
           </div>
         </main>
         <div className="board-mobile-footer">
           <Footer
+            authenticated={shared.authenticated === true}
             hasGroupUpdateToday={store.groups.some((group) =>
               isToday(group.updatedAt),
             )}
