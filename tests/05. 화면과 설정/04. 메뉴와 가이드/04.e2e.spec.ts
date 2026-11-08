@@ -1,10 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-import { openMoreMenu } from "../../__util__";
+import { authenticateBrowser, openMoreMenu } from "../../__util__";
 
-test("4. Menu는 Theme와 다섯 명령을 순서대로 표시하고 Tab으로 탐색한다", async ({
+test("4. 로그인한 사용자의 Menu는 Theme와 다섯 명령을 순서대로 표시하고 Tab으로 탐색한다", async ({
   page,
 }) => {
+  await authenticateBrowser(page.context());
   await page.goto("/");
   const menu = await openMoreMenu(page);
   const theme = menu.getByRole("switch", { name: "Theme", exact: true });

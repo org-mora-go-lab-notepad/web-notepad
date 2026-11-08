@@ -14,7 +14,7 @@ test("2. 현재 그룹의 탭을 색상에 따라 Waiting·Done·Closed 컬럼�
   await openPanel(page, "dashboard-panel");
   await expect(
     dashboardPanel(page).locator(".dashboard-statuses h3"),
-  ).toHaveText(["To Do1", "Ready0", "Doing1", "Done1"]);
+  ).toHaveText(["Waiting1", "In Progress0", "Done1", "Closed1"]);
   await expect(dashboardColumn(page, "todo")).toContainText("Alpha task");
   await expect(dashboardColumn(page, "in-progress")).toContainText("Beta task");
   await expect(dashboardColumn(page, "done")).toContainText("Gamma task");
